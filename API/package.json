@@ -1,0 +1,30 @@
+{
+  "name": "restapicust",
+  "version": "1.0.0",
+  "description": "REST API",
+  "main": "server.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codevonnie/fourthyearproject.git"
+  },
+  "keywords": [
+    "nodejs",
+    "neo4j"
+  ],
+  "author": "Yvonne Grealy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/codevonnie/fourthyearproject/issues"
+  },
+  "homepage": "https://github.com/codevonnie/fourthyearproject#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "body-parser": "~1.15.2"
+  },
+  "engines": {
+    "node": "~4.1.1" 
+  }
+}
