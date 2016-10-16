@@ -10,6 +10,3 @@ npm-debug.log
 # Docker
 Dockerfile
 docker-compose.yml
-
-# Node_modules folder
-node_modules/
