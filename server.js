@@ -20,114 +20,6 @@ app.use(bodyParser.json());
 var mongoose   = require('mongoose');
 mongoose.connect(config.database);
 app.set('superSecret', config.secret);
-var session = driver.session();
-/*
-var session = driver.session();
-session
-  .run( "CREATE (a:Person {name:'Arthur', title:'King'})" )
-  .then( function()
-  {
-session.run( "MATCH (a:Person) WHERE a.name = 'Arthur' RETURN a.name AS name, a.title AS title" )
-  })
-  .then( function( result ) {
-    console.log( result.records[0].get("title") + " " + result.records[0].get("name") );
-    console.log( result.records[1].get("title") + " " + result.records[1].get("name") );
-    console.log( result.records[2].get("title") + " " + result.records[2].get("name") );
-    session.close();
-    driver.close();
-  })
-*/
-
-/*
-var bname = "Bike Park Ireland.";
-var baddress = "123 Fake Street";
-var bphone = "09212345678";
-var bemail = "bpi@email.com";
-var bpassword = "mypass";
-
-//add Company 
-session
-  .run( "Merge (b:Business {name:'"+bname+"', address:'"+baddress+"', phone:'"+bphone+"', email:'"+bemail+"', password:'"+bpassword+"'})" )
-  .then( function()
-  {
-    console.log( "Company created successfully" );
-    session.close();
-    driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-
-  
-
-var name = "Bart Simpson";
-var address = "124 Evergreen Terrace";
-var phone = "0871409512";
-var icename = "Marge Simpson";
-var icephone = "0878274541";
-//var joined = +new Date("2012-02-10T13:19:11+0000");
-var myDate = new Date("2012-02-10T13:19:11+0000");
-var joined = myDate.getTime();
-var gender = "m";
-var dob = "20/4/2001";
-var email = "bs@email.com";
-var password = "mypass";
-
-//add Person
-session
-  .run( "Merge (a:Person {name:'"+name+"', address:'"+address+"', phone:'"+phone+"', icename:'"+icename+"', icephone:'"+icephone+"', joined:"+joined+", gender:'"+gender+"', dob:'"+dob+"', email:'"+email+"', password:'"+password+"'})" )
-  .then( function()
-  {
-    console.log( "Person created successfully" );
-    session.close();
-    driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-
-session.run( "MATCH (a:Person {name: '"+name+"'}), (b:Business {name: '"+bname+"'}) CREATE (a)-[r:MEMBER_OF]->(b)")
-.then( function()
-  {
-    console.log( "Person->Business relationship created" );
-    session.close();
-    driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-
-session.run( "MATCH (a:Person {name: '"+name+"'}), (b:Business {name: '"+bname+"'}) CREATE (b)-[r:HAS_MEMBER]->(a)")
-.then( function()
-  {
-    console.log( "Business->Person relationship created" );
-    session.close();
-    driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-
-/*
-  var deleteuser = "Fred Flintstone";
-
-
-  //delete Person
-session
-  .run( "Match (a:Person) WHERE a.name='"+deleteuser+"' DETACH DELETE a" )
-  .then( function()
-  {
-    console.log( "Person deleted successfully" );
-    session.close();
-    driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-
-*/
-
-  
 
 app.use(morgan('dev'));
 
@@ -249,8 +141,123 @@ router.use(function(req, res, next) {
 
         
         
-    })
+    })//addCompany
+
+router.post('/addperson', function(req, res) {
         
+        var session = driver.session();
+        var person = new Person();      // create a new instance of the Person model
+        person.name = req.body.name;
+        person.address = req.body.address;
+        person.phone = req.body.phone;
+        person.icename = req.body.icename;
+        person.icephone = req.body.icephone;
+        var joined = new Date(req.body.joined);
+        person.joined = joined.getTime();
+        person.gender =  req.body.gender;
+        var dob =  new Date(req.body.joined);
+        person.dob = dob.getTime();
+        person.email = req.body.email;
+        person.password = req.body.password;
+       
+        //add Person 
+        session
+          .run( "Merge (a:Person {name:'"+person.name+"', address:'"+person.address+"', phone:"+person.phone+", icename:'"+person.icename+"', icephone:"+person.icephone+", joined:"+person.joined+", gender:'"+person.gender+"', dob:'"+person.dob+"', email:'"+person.email+"', password:'"+person.password+"'})" )
+           
+        .then( function()
+        {
+          console.log( "Person created" );
+          res.json({ message: 'Person created!' });
+          session.close();
+          //driver.close();
+      })
+      .catch(function(error) {
+          console.log(error);
+          res.send(error);
+    })
+
+      
+    })//addPerson
+
+router.post('/addrelationship', function(req, res) {
+
+    var session = driver.session();
+    var person = new Person();      // create a new instance of the Person model
+    person.name = req.body.name;
+    var business = new Business();
+    business.bname = req.body.bname;
+   
+    session.run( "MATCH (a:Person {name: '"+person.name+"'}), (b:Business {name: '"+business.bname+"'}) CREATE (a)-[r:MEMBER_OF]->(b)")
+    session.run( "MATCH (a:Person {name: '"+person.name+"'}), (b:Business {name: '"+business.bname+"'}) CREATE (b)-[r:HAS_MEMBER]->(a)")
+   
+    .then( function()
+    {
+    console.log( "Person->Business relationship created" );
+    res.json({ message: 'Person->Business relationship created!' });
+    session.close();
+   // driver.close();
+  })
+  .catch(function(error) {
+    console.log(error);
+    res.send(error);
+  })
+})//addrelationship
+
+router.delete('/deleteperson', function(req, res) {
+
+    var session = driver.session();
+    var person = new Person();      // create a new instance of the Person model
+    person.name = req.body.name;
+       
+    session
+    .run( "Match (a:Person) WHERE a.name='"+person.name+"' DETACH DELETE a" )
+    .then( function()
+    {
+    console.log( "Person deleted" );
+    res.json({ message: 'Person deleted!' });
+    session.close();
+    //driver.close();
+  })
+  .catch(function(error) {
+    console.log(error);
+    res.send(error);
+  })
+})//deleteperson
+
+router.put('/updateperson', function(req, res) {
+
+    var session = driver.session();
+    var person = new Person();      // create a new instance of the Person model
+    person.name = req.body.name;
+    person.address = req.body.address;
+    person.phone = req.body.phone;
+    person.icename = req.body.icename;
+    person.icephone = req.body.icephone;
+    var joined = new Date(req.body.joined);
+    person.joined = joined.getTime();
+    person.gender =  req.body.gender;
+    var dob =  new Date(req.body.joined);
+    person.dob = dob.getTime();
+    person.email = req.body.email;
+    person.password = req.body.password;
+       
+    session
+    .run( "Match (a:Person) WHERE a.name='"+person.name+"' SET a.name='"+person.name+"', a.address='"+person.address+"', a.phone="+person.phone+", a.icename='"+person.icename+"', a.icephone="+person.icephone+", a.joined='"+person.joined+"', a.gender='"+person.gender+"', a.dob="+person.dob+", a.email='"+person.email+"', a.password='"+person.password+"'")
+    .then( function()
+    {
+    console.log( "Person updated" );
+    res.json({ message: 'Person updated!' });
+    session.close();
+    //driver.close();
+  })
+  .catch(function(error) {
+    console.log(error);
+    res.send(error);
+  })
+})//updateperson
+
+
+/* MongoDB routes        
 router.route('/persons')
 
     // get all persons (accessed at GET http://localhost:8080/api/persons)
@@ -307,7 +314,7 @@ router.route('/persons')
         });
     });
 
-
+*/
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
