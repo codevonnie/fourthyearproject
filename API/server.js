@@ -2,37 +2,132 @@
 var express     = require('express');
 var app         = express();
 var bodyParser  = require('body-parser');
-//var neo4j = require('neo4j-driver').v1;
+var neo4j = require('neo4j-driver').v1;
 var port = process.env.PORT || 8080;        // set our port
 var morgan = require('morgan');
 var jwt = require('jsonwebtoken');
 var config = require('./config');
 var Person = require('./app/models/person');
+var Business = require('./app/models/business');
 
-//var driver = neo4j.driver("bolt://hobby-gemhpbboojekgbkeihhpigol.dbs.graphenedb.com:24786", neo4j.auth.basic("app57975900-aEgAtX", "tGm6FwOKgU7sQyPDUACj"));
+var driver = neo4j.driver("bolt://hobby-gemhpbboojekgbkeihhpigol.dbs.graphenedb.com:24786", neo4j.auth.basic("app57975900-aEgAtX", "tGm6FwOKgU7sQyPDUACj"));
+
+
+// get our request parameters
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 var mongoose   = require('mongoose');
 mongoose.connect(config.database);
 app.set('superSecret', config.secret);
-
+var session = driver.session();
 /*
 var session = driver.session();
 session
   .run( "CREATE (a:Person {name:'Arthur', title:'King'})" )
   .then( function()
   {
-    return session.run( "MATCH (a:Person) WHERE a.name = 'Arthur' RETURN a.name AS name, a.title AS title" )
+session.run( "MATCH (a:Person) WHERE a.name = 'Arthur' RETURN a.name AS name, a.title AS title" )
   })
   .then( function( result ) {
     console.log( result.records[0].get("title") + " " + result.records[0].get("name") );
+    console.log( result.records[1].get("title") + " " + result.records[1].get("name") );
+    console.log( result.records[2].get("title") + " " + result.records[2].get("name") );
     session.close();
     driver.close();
   })
 */
 
-// get our request parameters
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+/*
+var bname = "Bike Park Ireland.";
+var baddress = "123 Fake Street";
+var bphone = "09212345678";
+var bemail = "bpi@email.com";
+var bpassword = "mypass";
+
+//add Company 
+session
+  .run( "Merge (b:Business {name:'"+bname+"', address:'"+baddress+"', phone:'"+bphone+"', email:'"+bemail+"', password:'"+bpassword+"'})" )
+  .then( function()
+  {
+    console.log( "Company created successfully" );
+    session.close();
+    driver.close();
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+
+  
+
+var name = "Bart Simpson";
+var address = "124 Evergreen Terrace";
+var phone = "0871409512";
+var icename = "Marge Simpson";
+var icephone = "0878274541";
+//var joined = +new Date("2012-02-10T13:19:11+0000");
+var myDate = new Date("2012-02-10T13:19:11+0000");
+var joined = myDate.getTime();
+var gender = "m";
+var dob = "20/4/2001";
+var email = "bs@email.com";
+var password = "mypass";
+
+//add Person
+session
+  .run( "Merge (a:Person {name:'"+name+"', address:'"+address+"', phone:'"+phone+"', icename:'"+icename+"', icephone:'"+icephone+"', joined:"+joined+", gender:'"+gender+"', dob:'"+dob+"', email:'"+email+"', password:'"+password+"'})" )
+  .then( function()
+  {
+    console.log( "Person created successfully" );
+    session.close();
+    driver.close();
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+
+session.run( "MATCH (a:Person {name: '"+name+"'}), (b:Business {name: '"+bname+"'}) CREATE (a)-[r:MEMBER_OF]->(b)")
+.then( function()
+  {
+    console.log( "Person->Business relationship created" );
+    session.close();
+    driver.close();
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+
+session.run( "MATCH (a:Person {name: '"+name+"'}), (b:Business {name: '"+bname+"'}) CREATE (b)-[r:HAS_MEMBER]->(a)")
+.then( function()
+  {
+    console.log( "Business->Person relationship created" );
+    session.close();
+    driver.close();
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+
+/*
+  var deleteuser = "Fred Flintstone";
+
+
+  //delete Person
+session
+  .run( "Match (a:Person) WHERE a.name='"+deleteuser+"' DETACH DELETE a" )
+  .then( function()
+  {
+    console.log( "Person deleted successfully" );
+    session.close();
+    driver.close();
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+
+*/
+
+  
 
 app.use(morgan('dev'));
 
@@ -119,32 +214,44 @@ router.use(function(req, res, next) {
 
 */
 
-router.route('/persons')
 
-    // create a person (accessed at POST http://localhost:8080/api/persons)
-    .post(function(req, res) {
+
+    router.post('/addCompany', function(req, res) {
         
-        var person = new Person();      // create a new instance of the Person model
-        person.name = req.body.name;  // set the persons name (comes from the request)
-        person.address = req.body.address;
-        person.phone = req.body.phone;
-        person.icename = req.body.icename;
-        person.icephone = req.body.icephone;
-        person.joined = req.body.joined;
-        person.gender = req.body.gender;
-        person.dob = req.body.dob;
-        person.email = req.body.email;
-        person.password = req.body.password;
-      
-        // save the person and check for errors
-        person.save(function(err) {
-            if (err)
-                res.send(err);
+        var business = new Business();      // create a new instance of the Person model
+        business.name = req.body.name;  // set the persons name (comes from the request)
+        business.address = req.body.address;
+        business.phone = req.body.phone;
+        business.email = req.body.email;
+        business.password = req.body.password;
 
-            res.json({ message: 'Person created!' });
+        //add Company 
+        session
+        .run( "Merge (b:Business {name:'"+business.name+"', address:'"+business.address+"', phone:'"+business.phone+"', email:'"+business.email+"', password:'"+business.email+"'})" )
+        
+        business.save(function(err) {
+        if (err)
+            res.send(err);
+
+        res.json({ message: 'Company created!' });
+        
         });
+            /*.then( function()
+            {
+                console.log( "Company created successfully" );
+                session.close();
+                driver.close();
+            })
+            .catch(function(error) {
+                console.log(error);
+            });*/
+
+
+        
         
     })
+        
+router.route('/persons')
 
     // get all persons (accessed at GET http://localhost:8080/api/persons)
     .get(function(req, res) {
