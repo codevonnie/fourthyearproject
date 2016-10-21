@@ -142,6 +142,24 @@ router.use(function(req, res, next) {
         
         
     })//addCompany
+    
+    //-----------------------------------    Get A COMPANY BY NAME AND A MEMBER BY NAME   -------------------------------- 
+router.get('/CompanyMembers', function (req, res) {
+  var session = driver.session();
+  session.run('MATCH (a:Person) RETURN a LIMIT 25')
+    .then(function(result) {
+      result.records.forEach(function(record){
+        console.log(record._fields[0].properties);
+      });
+      res.render('index')
+      session.close();
+      driver.close();
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send(error);
+    });
+});
 
 router.post('/addperson', function(req, res) {
         
