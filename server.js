@@ -142,6 +142,12 @@ router.use(function(req, res, next) {
         
         
     })//addCompany
+
+    router.post('/herro', function(req, res) {
+
+    return "Damn you Hans Blicks";
+});
+
     
     //-----------------------------------    Get A COMPANY BY NAME AND A MEMBER BY NAME   -------------------------------- 
 router.get('/CompanyMembers', function (req, res) {
@@ -151,7 +157,7 @@ router.get('/CompanyMembers', function (req, res) {
       result.records.forEach(function(record){
         console.log(record._fields[0].properties);
       });
-      res.render('index')
+      res.json({ result });
       session.close();
       driver.close();
     })
