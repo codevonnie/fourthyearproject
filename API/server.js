@@ -193,7 +193,7 @@ router.use(function(req, res, next) {
 
 
 
-//-----------------------------------    ADD A NEW COMPANY   -------------------------------- 
+//-----------------------------------    ADD A NEW Business   -------------------------------- 
 router.post('/addCompany', function (req, res) {
   var session = driver.session();
 
@@ -221,7 +221,7 @@ router.post('/addCompany', function (req, res) {
 });
 
 
-//-----------------------------------    DELETE A COMPANY BY NAME  -------------------------------- 
+//-----------------------------------    DELETE A Business BY NAME  -------------------------------- 
 router.delete('/deleteCompany', function (req, res) {
   var session = driver.session();
   var name = req.body.name;         //Set the Business name (comes from the request)
@@ -241,17 +241,21 @@ router.delete('/deleteCompany', function (req, res) {
 
 
 
-//-----------------------------------    Get A COMPANY BY NAME AND A MEMBER BY NAME   -------------------------------- 
-router.get('/CompanyMembers', function (req, res) {
-  var session = driver.session();
-  session.run('MATCH (a:Person) RETURN a LIMIT 25')
+/*-----------------------------------    GET ALL Business   -------------------------------- 
+* GET Request returns all the Buisness Nodes and sends them all as a JSON response to the client
+*/
+router.get('/BuisinessMembers', function (req, res) {
+  var session = driver.session();//Create a new session
+  session.run('MATCH (a:Business) RETURN a LIMIT 25')
     .then(function(result) {
-      result.records.forEach(function(record){
-        console.log(record._fields[0].properties);
+      var bizList = [];//create a new list
+      result.records.forEach(function(record){//Iterate over results
+       console.log(record._fields[0].properties);//log results
+       bizList.push(record._fields[0].properties)//Add The business To a list
       });
-      res.render('index')
-      session.close();
-      driver.close();
+      res.json({ message: bizList});//send the bizList as a response
+      session.close();//close the session
+      driver.close();////close driver
     })
     .catch(function (error) {
       console.log(error);
@@ -261,7 +265,7 @@ router.get('/CompanyMembers', function (req, res) {
 
 
 
-//-----------------------------------    CREATE A RELATIONSHIP BETWEEN COMPANY AND PERSON   -------------------------------- 
+//-----------------------------------    CREATE A RELATIONSHIP BETWEEN Business AND PERSON   -------------------------------- 
 router.post('/createRelationship', function (req, res) {
   var session = driver.session();
   var name = req.body.name;         //Set the Business name (comes from the request)
