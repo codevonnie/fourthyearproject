@@ -17,95 +17,6 @@ var driver = neo4j.driver("bolt://hobby-gemhpbboojekgbkeihhpigol.dbs.graphenedb.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-/*
-var session = driver.session();
-session
-  .run( "CREATE (a:Person {name:'Arthur', title:'King'})" )
-  .then( function()
-  {
-session.run( "MATCH (a:Person) WHERE a.name = 'Arthur' RETURN a.name AS name, a.title AS title" )
-  })
-  .then( function( result ) {
-    console.log( result.records[0].get("title") + " " + result.records[0].get("name") );
-    console.log( result.records[1].get("title") + " " + result.records[1].get("name") );
-    console.log( result.records[2].get("title") + " " + result.records[2].get("name") );
-    session.close();
-    driver.close();
-  })
-*/
-
-
-
-/*
-var name = "Bart Simpson";
-var address = "124 Evergreen Terrace";
-var phone = "0871409512";
-var icename = "Marge Simpson";
-var icephone = "0878274541";
-//var joined = +new Date("2012-02-10T13:19:11+0000");
-var myDate = new Date("2012-02-10T13:19:11+0000");
-var joined = myDate.getTime();
-var gender = "m";
-var dob = "20/4/2001";
-var email = "bs@email.com";
-var password = "mypass";
-
-//add Person
-session
-  .run( "Merge (a:Person {name:'"+name+"', address:'"+address+"', phone:'"+phone+"', icename:'"+icename+"', icephone:'"+icephone+"', joined:"+joined+", gender:'"+gender+"', dob:'"+dob+"', email:'"+email+"', password:'"+password+"'})" )
-  .then( function()
-  {
-    console.log( "Person created successfully" );
-    session.close();
-    driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-
-session.run( "MATCH (a:Person {name: '"+name+"'}), (b:Business {name: '"+bname+"'}) CREATE (a)-[r:MEMBER_OF]->(b)")
-.then( function()
-  {
-    console.log( "Person->Business relationship created" );
-    session.close();
-    driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-
-session.run( "MATCH (a:Person {name: '"+name+"'}), (b:Business {name: '"+bname+"'}) CREATE (b)-[r:HAS_MEMBER]->(a)")
-.then( function()
-  {
-    console.log( "Business->Person relationship created" );
-    session.close();
-    driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-
-/*
-  var deleteuser = "Fred Flintstone";
-
-
-  //delete Person
-session
-  .run( "Match (a:Person) WHERE a.name='"+deleteuser+"' DETACH DELETE a" )
-  .then( function()
-  {
-    console.log( "Person deleted successfully" );
-    session.close();
-    driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-
-*/
-
-
-
 app.use(morgan('dev'));
 
 var router = express.Router();
@@ -283,24 +194,6 @@ router.post('/createRelationship', function (req, res) {
       res.send(error);
     });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
