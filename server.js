@@ -155,7 +155,7 @@ router.delete('/deleteCompany', function (req, res) {
 /*-----------------------------------    GET ALL Business   -------------------------------- 
 * GET Request returns all the Buisness Nodes and sends them all as a JSON response to the client
 */
-router.get('/BuisinessMembers', function (req, res) {
+router.get('/businessMembers', function (req, res) {
   var session = driver.session();//Create a new session
   session.run('MATCH (a:Business) RETURN a LIMIT 25')
     .then(function(result) {
