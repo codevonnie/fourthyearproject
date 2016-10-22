@@ -27,8 +27,7 @@
     "mongoose": "~4.2.4",
     "morgan": "^1.7.0",
     "nodemon": "^1.11.0",
-    "neo4j-driver": "^1.1.0-M02",
-    "neo4j-driver": "^1.1.0-M02",
+    "neo4j-driver": "^1.1.0-M02"
   },
   "engines": {
     "node": "~4.6.1"
