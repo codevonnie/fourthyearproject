@@ -7,6 +7,8 @@ var port = process.env.PORT || 8080;        // set our port
 var morgan = require('morgan');
 var jwt = require('jsonwebtoken');
 var config = require('./config');
+var cors = require('cors');
+ 
 var Person = require('./app/models/person');
 var Business = require('./app/models/business');
 
@@ -16,7 +18,7 @@ var driver = neo4j.driver("bolt://hobby-gemhpbboojekgbkeihhpigol.dbs.graphenedb.
 // Get our request parameters
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
+app.use(cors());
 app.use(morgan('dev'));
 
 var router = express.Router();
