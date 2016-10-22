@@ -7,17 +7,17 @@ var PersonSchema = new Schema({
     phone: Number,
     icename: String,
     icephone: Number,
-    joined: Date,
+    joined: Number,
     gender: String,
-    dob: Date,
+    dob: Number,
     email: {
         type: String,
         unique: true,
-        required: true
+       // required: true
     },
     password: {
         type: String,
-        required: true
+        //required: true
     }
 });
 
