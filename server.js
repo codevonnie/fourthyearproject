@@ -310,7 +310,23 @@ router.put('/updateperson', function(req, res) {
   })
 })//updateperson
 
-
+/*-----------------------------------    GET ALL People   -------------------------------- 
+* GET Request returns all the Buisness Nodes and sends them all as a JSON response to the client
+*/
+router.get('/customers', function (req, res) {
+  var session = driver.session();//Create a new session
+  session.run('MATCH (a:Person) RETURN a LIMIT 25')
+    .then(function(result) {
+      //var persons = result.body;
+      res.json({ message: result});//send the bizList as a response
+      session.close();//close the session
+      driver.close();////close driver
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send(error);
+    });
+});
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
@@ -320,7 +336,3 @@ app.use('/api', router);
 // =============================================================================
 app.listen(port);
 console.log('Magic happens on port ' + port);
-
-
-
-
