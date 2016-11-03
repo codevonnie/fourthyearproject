@@ -216,7 +216,7 @@ router.post('/addperson', function(req, res) {
        
         //add Person 
         session
-          .run( "Merge (a:Person {name:'"+person.name+"', address:'"+person.address+"', phone:"+person.phone+", icename:'"+person.icename+"', icephone:"+person.icephone+", joined:"+person.joined+", gender:'"+person.gender+"', dob:'"+person.dob+"', email:'"+person.email+"', password:'"+person.password+"'})" )
+              .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', icename:'" + person.icename + "', icephone:'" + person.icephone + "', joined:'" + person.joined + "', gender:'" + person.gender + "', dob:'" + person.dob + "', email:'" + person.email + "', password:'" + person.password + "'})")
            
         .then( function()
         {
