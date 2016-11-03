@@ -38,29 +38,59 @@
             <br />
 
 
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-xs-1.5 col-md-2 sidebar affix">
-                        </br></br></br>
-                        <asp:Menu ID="Menu1" runat="server" CssClass="nav nav-sidebar active ">
+            <div class="container-fluid text-center">
+                <div class="row content">
+                    <div class="col-sm-2 sidenav">
+                        <asp:Menu ID="Menu2" runat="server" CssClass="nav nav-sidebar active  ">
                             <Items>
                                 <asp:MenuItem Text="Reports" Value="New Item"></asp:MenuItem>
                                 <asp:MenuItem Text="Analytics" Value="New Item"></asp:MenuItem>
-                                <asp:MenuItem Text="Customer" Value="New Item"></asp:MenuItem>
+                                <asp:MenuItem Text="Customer" Value="Customer" NavigateUrl="~/Web/Customer.aspx"></asp:MenuItem>
                                 <asp:MenuItem Text="Map" Value="New Item"></asp:MenuItem>
                                 <asp:MenuItem Text="Other" Value="New Item"></asp:MenuItem>
                             </Items>
                             <StaticMenuItemStyle HorizontalPadding="80px" VerticalPadding="10px" />
                         </asp:Menu>
-
+                    </div>
+                    <div class="col-sm-8 text-left">
+                        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                        </asp:ContentPlaceHolder>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="Container">
-            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-            </asp:ContentPlaceHolder>
+
+
+<%--
+
+
+
+
+            <div class="container-fluid">
+                <div class="col-xs-1 col-md-1 sidebar affix ">
+                    <br />
+                    <div class="row-fluid">
+                        <div class="span2">
+                            <asp:Menu ID="Menu1" runat="server" CssClass="nav nav-sidebar active ">
+                                <Items>
+                                    <asp:MenuItem Text="Reports" Value="New Item"></asp:MenuItem>
+                                    <asp:MenuItem Text="Analytics" Value="New Item"></asp:MenuItem>
+                                    <asp:MenuItem Text="Customer" Value="Customer" NavigateUrl="~/Web/Customer.aspx"></asp:MenuItem>
+                                    <asp:MenuItem Text="Map" Value="New Item"></asp:MenuItem>
+                                    <asp:MenuItem Text="Other" Value="New Item"></asp:MenuItem>
+                                </Items>
+                                <StaticMenuItemStyle HorizontalPadding="80px" VerticalPadding="10px" />
+                            </asp:Menu>
+                        </div>
+                    </div>
+                    <div class="span10">
+                        <div class="container center-block col-xs-2 col-md-2 ">
+                            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                            </asp:ContentPlaceHolder>
+                        </div>
+                    </div>
+                </div>
+            </div>--%>
         </div>
     </form>
 

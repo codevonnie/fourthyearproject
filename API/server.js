@@ -198,7 +198,7 @@ router.post('/login', function (req, res) {
       var bizList = [];
       console.log(req.body.email,req.body.password);
       result.records.forEach(function (record) {
-        console.log(record._fields[0].properties.email);
+        console.log(record._fields[0].properties);
         bizList.push(record._fields[0].properties)//send email only?
       });
       res.json({ message: bizList });
@@ -216,14 +216,9 @@ router.post('/login', function (req, res) {
 
 
 
-
-
-
-
-
-
-
-
+/*-----------------------------------    Add Person Fixed   -------------------------------- 
+* 
+*/
 router.post('/addperson', function (req, res) {
 
   var session = driver.session();
@@ -243,7 +238,8 @@ router.post('/addperson', function (req, res) {
 
   //add Person 
   session
-    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", icename:'" + person.icename + "', icephone:" + person.icephone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:'" + person.dob + "', email:'" + person.email + "', password:'" + person.password + "'})")
+    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', icename:'" + person.icename + "',"
+    +" icephone:'" + person.icephone + "', joined:'" + person.joined + "', gender:'" + person.gender + "', dob:'" + person.dob + "', email:'" + person.email + "', password:'" + person.password + "'})")
 
     .then(function () {
       console.log("Person created");
