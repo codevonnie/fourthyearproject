@@ -5,14 +5,17 @@ var bodyParser = require('body-parser');
 var neo4j = require('neo4j-driver').v1;
 var port = process.env.PORT || 8080;        // set our port
 var morgan = require('morgan');
-var jwt = require('jsonwebtoken');
-var config = require('./config');
+var jwt = require('jwt-simple');
+var config = require('./config/database');
 var cors = require('cors');
+var passport = require('passport');
  
 var Person = require('./app/models/person');
 var Business = require('./app/models/business');
 
 var driver = neo4j.driver("bolt://hobby-gemhpbboojekgbkeihhpigol.dbs.graphenedb.com:24786", neo4j.auth.basic("app57975900-aEgAtX", "tGm6FwOKgU7sQyPDUACj"));
+
+
 
 
 // Get our request parameters
@@ -21,64 +24,73 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('dev'));
 
+ app.use(passport.initialize());
+   
+ require('./config/passport')(passport);
+
 var router = express.Router();
+//var db = mongoose.connect(config.database);
 
 // middleware to use for all requests
 router.use(function (req, res, next) {
   // do logging
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'DELETE, PUT');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
   console.log('Something is happening.');
   next(); // make sure we go to the next routes and don't stop here
 });
 
-/* AUTHENTICATION STUFF
 
+// AUTHENTICATION STUFF
 // route to authenticate a person (POST http://localhost:8080/api/authenticate)
 router.post('/authenticate', function(req, res) {
+  
+  var session = driver.session();
 
-  // find the person
-  Person.findOne({
-    email: req.body.email
-  }, function(err, person) {
+  var person = new Person();  
+  person.email = req.body.email;
+  person.password = req.body.password;
+  console.log(person.email);
+  console.log(person.password);
 
-    if (err) throw err;
+  session
+    .run("Match (a:Person) WHERE a.email='" + person.email + "' AND a.password='" + person.password+"' Return a")
 
-    if (!person) {
-      res.json({ success: false, message: 'Authentication failed. Person not found.' });
-    } else if (person) {
-
-      // check if password matches
-      if (person.password != req.body.password) {
-        res.json({ success: false, message: 'Authentication failed. Wrong password.' });
-      } else {
-
-        // if person is found and password is right
+    .then(function (result) {
+      // if person is found and password is right
         // create a token
-        var token = jwt.sign(person, app.get('superSecret'), {
-          expiresIn: 1440 
-        });
-
-        // return the information including token as JSON
-        res.json({
-          success: true,
-          message: 'Enjoy your token!',
-          token: token
-        });
-      }   
-
-    }
-
-  });
+        if(result.records[0]==null){
+          res.json({ success: false, message: 'Authentication failed.' });
+        }
+        else{
+          var result=result.records;
+          console.log(result)
+          var token = jwt.encode(person, config.secret);
+          
+          // return the information including token as JSON
+          res.json({
+            success: true,
+            message: 'Enjoy your token!',
+            token: token,
+          })
+        }
+        
+        
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.json({ success: false, message: 'Authentication failed.' });
+    });
 });
 
 // route middleware to verify a token
 router.use(function(req, res, next) {
-
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
   // decode token
   if (token) {
-
     // verifies secret and checks exp
     jwt.verify(token, app.get('superSecret'), function(err, decoded) {      
       if (err) {
@@ -89,9 +101,7 @@ router.use(function(req, res, next) {
         next();
       }
     });
-
   } else {
-
     // if there is no token
     // return an error
     return res.status(403).send({ 
@@ -102,7 +112,6 @@ router.use(function(req, res, next) {
   }
 });
 
-*/
 
 
 
@@ -320,7 +329,3 @@ app.use('/api', router);
 // =============================================================================
 app.listen(port);
 console.log('Magic happens on port ' + port);
-
-
-
-
