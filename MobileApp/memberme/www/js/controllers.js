@@ -2,38 +2,16 @@ angular.module('starter.controllers', [])
  
 .controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state) {
   $scope.user = {
-    name: '',
+    email: '',
     password: ''
   };
  
   $scope.login = function() {
     AuthService.login($scope.user).then(function(msg) {
-      $state.go('inside');
+      $state.go('tab.profile');
     }, function(errMsg) {
       var alertPopup = $ionicPopup.alert({
         title: 'Login failed!',
-        template: errMsg
-      });
-    });
-  };
-})
- 
-.controller('RegisterCtrl', function($scope, AuthService, $ionicPopup, $state) {
-  $scope.user = {
-    name: '',
-    password: ''
-  };
- 
-  $scope.signup = function() {
-    AuthService.register($scope.user).then(function(msg) {
-      $state.go('outside.login');
-      var alertPopup = $ionicPopup.alert({
-        title: 'Register success!',
-        template: msg
-      });
-    }, function(errMsg) {
-      var alertPopup = $ionicPopup.alert({
-        title: 'Register failed!',
         template: errMsg
       });
     });

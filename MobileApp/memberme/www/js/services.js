@@ -31,19 +31,7 @@ angular.module('starter.services', [])
     $http.defaults.headers.common.Authorization = undefined;
     window.localStorage.removeItem(LOCAL_TOKEN_KEY);
   }
- 
-  var register = function(user) {
-    return $q(function(resolve, reject) {
-      $http.post(API_ENDPOINT.url + '/signup', user).then(function(result) {
-        if (result.data.success) {
-          resolve(result.data.msg);
-        } else {
-          reject(result.data.msg);
-        }
-      });
-    });
-  };
- 
+   
   var login = function(user) {
     return $q(function(resolve, reject) {
       $http.post(API_ENDPOINT.url + '/authenticate', user).then(function(result) {
@@ -65,7 +53,6 @@ angular.module('starter.services', [])
  
   return {
     login: login,
-    register: register,
     logout: logout,
     isAuthenticated: function() {return isAuthenticated;},
   };
