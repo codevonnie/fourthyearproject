@@ -6,22 +6,18 @@
 
 
 
-    <div id="loginModal" class="modal show col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2" tabindex="-1" aria-hidden="true">
-        <br />
-        <br />
-        <br />
-        <br />
+    <div id="loginModal" class="col-md-offset-2" tabindex="-1" aria-hidden="true">
         <br />
         <br />
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content ">
                 <div class="modal-header">
                     <h1 class="text-center">Login</h1>
                 </div>
                 <div class="modal-body">
 
                     <div class="form-group">
-                        <asp:TextBox ID="TbEmail" runat="server" class="form-control input-lg" placeholder="Email" TextMode="Email"></asp:TextBox>
+                        <asp:textbox id="TbEmail" runat="server" class="form-control input-lg" placeholder="Email" textmode="Email"></asp:textbox>
                     </div>
                     <div class="form-group">
                         <asp:TextBox ID="TbPassword" runat="server" class="form-control input-lg" placeholder="Password" TextMode="Password"></asp:TextBox>

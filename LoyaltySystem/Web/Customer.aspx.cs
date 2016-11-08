@@ -12,37 +12,41 @@ public partial class Web_Customer : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-      
+
     }
 
+    string port = "http://localhost:8100/";
 
+
+    /*Method Creates a new Customer Obj from the input form
+     */
     private Customer createCustomer()
     {
         Customer customer = new Customer();
-
-
-
         customer.name = TbName.Text.ToString();
         customer.address = TbAddress.Text.ToString();
-        customer.dob = (Convert.ToDateTime(TbDob.Text) - new DateTime(1970, 1, 1)).TotalMilliseconds;
+        customer.dob = Convert.ToDateTime(TbDob.Text);
         customer.gender = TbGender.Text.ToString();
         customer.contactNumber = Convert.ToInt32(TbContactNum.Text);
         customer.emergencyNumber = Convert.ToInt32(TbEmergencyNum.Text);
         customer.emergencyName = TbEmergencyName.Text;
         customer.email = TbEmail.Text.ToString();
-        customer.date = (DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;//Todays Date
+        customer.date = DateTime.Now;//Todays Date
 
         customer.guardianName = TbGuardianName.Text.ToString();
         customer.guardianNumber = TbGuardianNumber.Text.ToString();
+
+        customer.customerToken = Session["authToken"].ToString();//Store the authToken in customer.customerToken
 
         return customer;
     }
 
     private void newCustomerRequest(Customer customer)
     {
-        var client = new RestClient("http://localhost:8080/");
+        var client = new RestClient(port);
 
         var request = new RestRequest("api/addperson", Method.POST);
+        request.AddParameter("x-access-token", customer.customerToken);
         request.AddParameter("name", customer.name);
         request.AddParameter("password", "pass");//random password
         request.AddParameter("email", customer.email);
@@ -55,40 +59,40 @@ public partial class Web_Customer : System.Web.UI.Page
         request.AddParameter("icephone", customer.emergencyNumber);
 
 
+
         /* if (customer.guardianName !="" && customer.guardianNumber!="") {
              request.AddParameter("guardianName", customer.guardianName); 
              request.AddParameter("guardianNum", customer.guardianNumber); 
          }*/
 
         IRestResponse response = client.Execute(request);
-        var content = response.Content; // raw content as string
+        var content = response.Content;
 
 
-        //dynamic jsonObject = JsonConvert.DeserializeObject<BuisinessRoot>(response.Content);
-        //var bizObj = jsonObject as BuisinessRoot;
+        dynamic jsonObject = JsonConvert.DeserializeObject<BuisinessRoot>(response.Content);
+        var bizObj = jsonObject as BuisinessRoot;
 
-        //If the Message is Empty
-        //if (bizObj.message.Count != 0)
-        //{
-        //isLogedIn = true;
-        //Successful Login
-        //Server.Transfer("Default.aspx", true);
-        // }
-        // else
-        // {
-        //Nothing returned means Request Failed
-        // }
+        //If the Message is not Empty
+        if (bizObj.message.Count != 0)
+        {
+            //Successful Login
+            Server.Transfer("Default.aspx", true);
+            newRelationshipRequest(customer, bizObj);
+        }
+        else
+        {
+
+        }
 
     }
 
-    private void newRelationshipRequest(Customer customer)
+    private void newRelationshipRequest(Customer customer, BuisinessRoot biz)
     {
-        BuisinessRoot buis = new BuisinessRoot();
-        var client = new RestClient("http://localhost:8080/");
+        var client = new RestClient(port);
 
-        var request = new RestRequest("api/addperson", Method.POST);
+        var request = new RestRequest("api/addrelationship", Method.POST);
         request.AddParameter("name", customer.name);
-        request.AddParameter("name", buis.message[0].name);//HARD CODDED FOR NOW FROM WHO EVER IS LOGGED IN
+        request.AddParameter("name", biz.message[0].name);//HARD CODDED FOR NOW FROM WHO EVER IS LOGGED IN
 
         //CACHE THE BUISNESS NAME TO SEND WITH THE CREATE RELATIONSHIP REQUEST
 
@@ -102,6 +106,5 @@ public partial class Web_Customer : System.Web.UI.Page
     {
         Customer cus = createCustomer();//CREATE A NEW CUSTOMER
         newCustomerRequest(cus);//ADD THE NEW CUSTOMER TO THE DATABASE
-        //newRelationshipRequest(cus);//ADD A NEW RELATIONSHIP BETWEEN BUISINESS -> CUSTOMER
     }
 }

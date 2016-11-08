@@ -11,36 +11,40 @@ using System.Web.UI.WebControls;
 
 public partial class LoginPage : System.Web.UI.Page
 {
-    private Boolean isLogedIn = false;
-
     protected void Page_Load(object sender, EventArgs e)
     {
  
     }
 
+    private class Token
+    {
+        public string success { get; set; }
+        public string message { get; set; }
+        public string token { get; set; }
+    }
 
     private void UserLogin()
     {
-        var client = new RestClient("http://localhost:8080/");
+        var client = new RestClient("https://restapicust.herokuapp.com");
 
-        var request = new RestRequest("api/login", Method.POST);
+        var request = new RestRequest("api/authenticate", Method.POST);
         request.AddParameter("email", TbEmail.Text); //email fro Textbox
         request.AddParameter("password", TbPassword.Text); //pwd from Textbox
 
         IRestResponse response = client.Execute(request);
         var content = response.Content; // raw content as string
 
-
         //Deserialize the result into the class provided
-        dynamic jsonObject = JsonConvert.DeserializeObject<BuisinessRoot>(response.Content);
-        var bizObj = jsonObject as BuisinessRoot;
+        dynamic jsonObject = JsonConvert.DeserializeObject<Token>(response.Content);
+        var bizObj = jsonObject as Token;
+
+        Session["authToken"] = bizObj.token;// store the token in a session
 
         //If the Message is Empty
-        if (bizObj.message.Count != 0)
+        if (bizObj.token != "")
         {
-            isLogedIn = true;
             //Successful Login
-            Server.Transfer("Default.aspx", true);
+            Server.Transfer("Default.aspx", true);        
         }
         else
         {

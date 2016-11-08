@@ -25,7 +25,7 @@ public partial class _Default : System.Web.UI.Page
         var client = new RestClient("https://restapicust.herokuapp.com");
 
         var request = new RestRequest("api/businessMembers", Method.GET);  //----------------------Get Customers not Business
-
+        request.AddParameter("x-access-token", Session["authToken"].ToString());
         IRestResponse response = client.Execute(request);
         var content = response.Content; // raw content as string
 
