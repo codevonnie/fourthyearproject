@@ -33,13 +33,17 @@ var router = express.Router();
 
 // middleware to use for all requests
 app.use(function (req, res, next) {
-  // do logging
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'DELETE, PUT');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
-  console.log('Something is happening.');
-  next(); // make sure we go to the next routes and don't stop here
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+    
+    if (req.method === 'OPTIONS') {
+        res.end();
+    } 
+    
+    else {
+        next();
+    }
 });
 
 
