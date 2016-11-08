@@ -11,7 +11,7 @@
             <asp:Label ID="LblName" runat="server" Text="Name Of Participant" Font-Bold="True"></asp:Label>
             <asp:TextBox ID="TbName" runat="server" CssClass="form-control" placeholder="Enter Name"></asp:TextBox>
         </div>
-                <div class="form-group">
+        <div class="form-group">
             <asp:Label ID="LblGender" runat="server" Text="Sex" Font-Bold="True"></asp:Label>
             <asp:TextBox ID="TbGender" runat="server" CssClass="form-control" placeholder="Male/Female"></asp:TextBox>
         </div>
@@ -32,6 +32,10 @@
             <asp:TextBox ID="TbEmergencyNum" runat="server" CssClass="form-control" placeholder="Emergency Contact Number" TextMode="Phone"></asp:TextBox>
         </div>
         <div class="form-group">
+            <asp:Label ID="LblEmergencyName" runat="server" Text="Emergency Contact Name" Font-Bold="True"></asp:Label>
+            <asp:TextBox ID="TbEmergencyName" runat="server" CssClass="form-control" placeholder="Emergency Contact Name"></asp:TextBox>
+        </div>
+        <div class="form-group">
             <asp:Label ID="LblAddress" runat="server" Text="Address" Font-Bold="True"></asp:Label>
             <asp:TextBox ID="TbAddress" runat="server" CssClass="form-control" placeholder="Current Address"></asp:TextBox>
         </div>
@@ -49,7 +53,7 @@
             <asp:Button ID="BtnSubmit" class="btn btn-primary btn-block" runat="server" Text="Submit" OnClick="BtnSubmit_Click" />
         </div>
 
- <%--       <fieldset class="form-group">
+        <%--       <fieldset class="form-group">
             <legend>Radio buttons</legend>
             <div class="form-check">
                 <label class="form-check-label">

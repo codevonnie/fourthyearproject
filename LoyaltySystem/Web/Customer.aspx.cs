@@ -2,6 +2,7 @@
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -11,7 +12,7 @@ public partial class Web_Customer : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-
+      
     }
 
 
@@ -19,14 +20,17 @@ public partial class Web_Customer : System.Web.UI.Page
     {
         Customer customer = new Customer();
 
+
+
         customer.name = TbName.Text.ToString();
         customer.address = TbAddress.Text.ToString();
-        customer.dob = Convert.ToDateTime(TbDob.Text);
+        customer.dob = (Convert.ToDateTime(TbDob.Text) - new DateTime(1970, 1, 1)).TotalMilliseconds;
         customer.gender = TbGender.Text.ToString();
         customer.contactNumber = Convert.ToInt32(TbContactNum.Text);
         customer.emergencyNumber = Convert.ToInt32(TbEmergencyNum.Text);
+        customer.emergencyName = TbEmergencyName.Text;
         customer.email = TbEmail.Text.ToString();
-        customer.date = DateTime.Now.ToString("dd/MM/yyyy");//Todays Date
+        customer.date = (DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;//Todays Date
 
         customer.guardianName = TbGuardianName.Text.ToString();
         customer.guardianNumber = TbGuardianNumber.Text.ToString();
@@ -47,8 +51,8 @@ public partial class Web_Customer : System.Web.UI.Page
         request.AddParameter("joined", customer.date);
         request.AddParameter("address", customer.address);
         request.AddParameter("dob", customer.dob);
-        request.AddParameter("icename", "icename");
-        request.AddParameter("icephone", 6756765);
+        request.AddParameter("icename", customer.emergencyName);
+        request.AddParameter("icephone", customer.emergencyNumber);
 
 
         /* if (customer.guardianName !="" && customer.guardianNumber!="") {
@@ -98,6 +102,6 @@ public partial class Web_Customer : System.Web.UI.Page
     {
         Customer cus = createCustomer();//CREATE A NEW CUSTOMER
         newCustomerRequest(cus);//ADD THE NEW CUSTOMER TO THE DATABASE
-        newRelationshipRequest(cus);//ADD A NEW RELATIONSHIP BETWEEN BUISINESS -> CUSTOMER
+        //newRelationshipRequest(cus);//ADD A NEW RELATIONSHIP BETWEEN BUISINESS -> CUSTOMER
     }
 }
