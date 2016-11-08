@@ -32,20 +32,12 @@ var router = express.Router();
 //var db = mongoose.connect(config.database);
 
 // middleware to use for all requests
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
-    
-    if (req.method === 'OPTIONS') {
-        res.end();
-    } 
-    
-    else {
-        next();
-    }
+app.all('*', function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
 });
-
 
 // AUTHENTICATION STUFF
 // route to authenticate a person (POST http://localhost:8080/api/authenticate)
