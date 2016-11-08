@@ -32,7 +32,7 @@ var router = express.Router();
 //var db = mongoose.connect(config.database);
 
 // middleware to use for all requests
-router.use(function (req, res, next) {
+app.use(function (req, res, next) {
   // do logging
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Methods', 'DELETE, PUT');
