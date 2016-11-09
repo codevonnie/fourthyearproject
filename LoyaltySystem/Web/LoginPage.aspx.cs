@@ -11,7 +11,7 @@ using System.Web.UI.WebControls;
 
 public partial class LoginPage : System.Web.UI.Page
 {
-
+    string port = "http://localhost:8100/";
     protected void Page_Load(object sender, EventArgs e)
     {
  
