@@ -1,11 +1,10 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Customer.aspx.cs" Inherits="Web_Customer" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="AddCustomer.aspx.cs" Inherits="Web_Customer" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <br />
     <h1 class="text-center">ADD A NEW CUSTOMER</h1>
-
     <div class="container-fluid">
         <div class="form-group">
             <asp:Label ID="LblName" runat="server" Text="Name Of Participant" Font-Bold="True"></asp:Label>
@@ -52,35 +51,6 @@
         <div class="form-group">
             <asp:Button ID="BtnSubmit" class="btn btn-primary btn-block" runat="server" Text="Submit" OnClick="BtnSubmit_Click" />
         </div>
-
-        <%--       <fieldset class="form-group">
-            <legend>Radio buttons</legend>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked="checked" />
-                    Option one is this and that&mdash;be sure to include why it's great
-                </label>
-            </div>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2" />
-                    Option two can be something else and selecting it will deselect option one
-                </label>
-            </div>
-            <div class="form-check disabled">
-                <label class="form-check-label">
-                    <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3" disabled="disabled" />
-                    Option three is disabled
-                </label>
-            </div>
-        </fieldset>
-        <div class="form-check">
-            <label class="form-check-label">
-                <input type="checkbox" class="form-check-input">
-                Check me out
-            </label>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>--%>
     </div>
 
 

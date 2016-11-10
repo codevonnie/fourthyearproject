@@ -45,7 +45,11 @@
                             <Items>
                                 <asp:MenuItem Text="Reports" Value="New Item"></asp:MenuItem>
                                 <asp:MenuItem Text="Analytics" Value="New Item"></asp:MenuItem>
-                                <asp:MenuItem Text="Customer" Value="Customer" NavigateUrl="~/Web/Customer.aspx"></asp:MenuItem>
+                                <asp:MenuItem Text="Customer" Value="Customer">
+                                    <asp:MenuItem NavigateUrl="~/Web/AddCustomer.aspx" Text="Add" Value="Add"></asp:MenuItem>
+                                    <asp:MenuItem NavigateUrl="~/Web/UpdateCustomer.aspx" Text="Update" Value="Update"></asp:MenuItem>
+                                    <asp:MenuItem NavigateUrl="~/Web/DeleteCustomer.aspx" Text="Delete" Value="Delete"></asp:MenuItem>
+                                </asp:MenuItem>
                                 <asp:MenuItem Text="Map" Value="New Item"></asp:MenuItem>
                                 <asp:MenuItem Text="Other" Value="New Item"></asp:MenuItem>
                             </Items>
