@@ -9,6 +9,9 @@ var jwt = require('jwt-simple');
 var config = require('./config/database');
 var cors = require('cors');
 var passport = require('passport');
+
+var mongoose = require('mongoose');
+
  
 var Person = require('./app/models/person');
 var Business = require('./app/models/business');
@@ -24,19 +27,24 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('dev'));
 
- app.use(passport.initialize());
-   
- require('./config/passport')(passport);
+
+
+ //app.use(passport.initialize());
+  
+ //require('./config/passport')(passport);
+
 
 var router = express.Router();
 //var db = mongoose.connect(config.database);
 
 // middleware to use for all requests
-app.use(function (req, res, next) {
+
+app.all('*', function (req, res, next) {
   // do logging
   res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'DELETE, PUT');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header("Access-Control-Allow-Headers", "Content-Type, Accept");
+
 
   console.log('Something is happening.');
   next(); // make sure we go to the next routes and don't stop here
@@ -45,7 +53,10 @@ app.use(function (req, res, next) {
 
 // AUTHENTICATION STUFF
 // route to authenticate a person (POST http://localhost:8080/api/authenticate)
+/*
 router.post('/authenticate', function(req, res) {
+  
+  console.log('I am authenticating');
   
   var session = driver.session();
 
@@ -85,6 +96,7 @@ router.post('/authenticate', function(req, res) {
     });
 });
 
+
 // route middleware to verify a token
 /*router.use(function(req, res, next) {
   // check header or url parameters or post parameters for token
@@ -111,6 +123,47 @@ router.post('/authenticate', function(req, res) {
     
   }
 });*/
+
+
+// secure route
+router.get('/memberinfo', passport.authenticate('jwt', { session: false}), 
+function(req, res) {
+  console.log("IT'S ME");
+  var token = getToken(req.headers);
+  console.log("in memberinfo");
+  if (token) {
+    var decoded = jwt.decode(token, config.secret);
+    console.log(decoded);
+    Person.findOne({
+      email: decoded.email
+    }, function(err, person) {
+        if (err) throw err;
+ 
+        if (!person) {
+          return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
+        } else {
+          res.json({success: true, msg: 'Welcome in the member area ' + person.name + '!'});
+        }
+    });
+  } else {
+    return res.status(403).send({success: false, msg: 'No token provided.'});
+  }
+});
+ 
+getToken = function (headers) {
+  console.log("gettoken func");
+  if (headers && headers.authorization) {
+    var parted = headers.authorization.split(' ');
+    if (parted.length === 2) {
+      return parted[1];
+    } else {
+      return null;
+    }
+  } else {
+    return null;
+  }
+};
+
 
 
 
@@ -167,6 +220,7 @@ router.delete('/deleteCompany', function (req, res) {
 * GET Request returns all the Buisness Nodes and sends them all as a JSON response to the client
 */
 router.get('/businessMembers', function (req, res) {
+  console.log("in business members");
   var session = driver.session();//Create a new session
   session.run('MATCH (a:Business) RETURN a LIMIT 25')
     .then(function(result) {
