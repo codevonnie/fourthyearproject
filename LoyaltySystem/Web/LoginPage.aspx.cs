@@ -11,7 +11,8 @@ using System.Web.UI.WebControls;
 
 public partial class LoginPage : System.Web.UI.Page
 {
-    string port = "http://localhost:8100/";
+    // string port = "http://localhost:8100/";
+    string port = "https://restapicust.herokuapp.com/";
     protected void Page_Load(object sender, EventArgs e)
     {
 
@@ -65,15 +66,15 @@ public partial class LoginPage : System.Web.UI.Page
 
         //Deserialize the result into the class provided
         dynamic jsonObject = JsonConvert.DeserializeObject<PersonCredObject>(response.Content);
-        var bizObj = jsonObject as Token;
+        var bizObj = jsonObject as PersonCredObject;
 
         // Session["authToken"] = bizObj.access_token;// store the token in a session
 
         //If the Message is Empty
-        if (bizObj.access_token != "")
+        if (bizObj.message != null)
         {
             //Successful Login
-            Server.Transfer("Default.aspx", true);
+            Server.Transfer("Default.aspx", true); ///// ----------------need to add token to that user
         }
         else
         {
