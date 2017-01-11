@@ -5,11 +5,13 @@ var bodyParser = require('body-parser');
 var neo4j = require('neo4j-driver').v1;
 var port = process.env.PORT || 8080;        // set our port
 var morgan = require('morgan');
-var jwt = require('jwt-simple');
+//var jwt = require('jwt-simple');
 var config = require('./config/database');
 var cors = require('cors');
 var passport = require('passport');
 var mongoose = require('mongoose');
+var jwt = require('express-jwt');
+var request = require("request");
  
 var Person = require('./app/models/person');
 var Business = require('./app/models/business');
@@ -22,6 +24,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('dev'));
+
+var jwtCheck = jwt({
+  secret: 'jfeiosIJDL938jiJ0234Djbxm9Gfysd1ddLy',
+  audience: 'Az124jileIjfefneig89IUfjesu'
+});
+
+app.use('/addCompany', jwtCheck);
 
  //app.use(passport.initialize());
    
