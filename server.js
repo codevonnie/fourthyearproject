@@ -3,18 +3,22 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var neo4j = require('neo4j-driver').v1;
-var port = process.env.PORT || 8080;        // set our port
+var port = process.env.PORT || 8100;        // set our port
 var morgan = require('morgan');
 var jwt = require('jwt-simple');
 var config = require('./config/database');
 var cors = require('cors');
 var passport = require('passport');
+
 var mongoose = require('mongoose');
+
  
 var Person = require('./app/models/person');
 var Business = require('./app/models/business');
 
 var driver = neo4j.driver("bolt://hobby-gemhpbboojekgbkeihhpigol.dbs.graphenedb.com:24786", neo4j.auth.basic("app57975900-aEgAtX", "tGm6FwOKgU7sQyPDUACj"));
+
+
 
 
 // Get our request parameters
@@ -23,19 +27,24 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('dev'));
 
+
+
  //app.use(passport.initialize());
-   
+  
  //require('./config/passport')(passport);
+
 
 var router = express.Router();
 //var db = mongoose.connect(config.database);
 
 // middleware to use for all requests
+
 app.all('*', function (req, res, next) {
   // do logging
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
   res.header("Access-Control-Allow-Headers", "Content-Type, Accept");
+
 
   console.log('Something is happening.');
   next(); // make sure we go to the next routes and don't stop here
@@ -87,6 +96,35 @@ router.post('/authenticate', function(req, res) {
     });
 });
 
+
+// route middleware to verify a token
+/*router.use(function(req, res, next) {
+  // check header or url parameters or post parameters for token
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  // decode token
+  if (token) {
+    // verifies secret and checks exp
+    jwt.verify(token, app.get('superSecret'), function(err, decoded) {      
+      if (err) {
+        return res.json({ success: false, message: 'Failed to authenticate token.' });    
+      } else {
+        // if everything is good, save to request for use in other routes
+        req.decoded = decoded;    
+        next();
+      }
+    });
+  } else {
+    // if there is no token
+    // return an error
+    return res.status(403).send({ 
+        success: false, 
+        message: 'No token provided.' 
+    });
+    
+  }
+});*/
+
+
 // secure route
 router.get('/memberinfo', passport.authenticate('jwt', { session: false}), 
 function(req, res) {
@@ -125,7 +163,8 @@ getToken = function (headers) {
     return null;
   }
 };
-*/
+
+
 
 
 
@@ -240,7 +279,7 @@ router.post('/addperson', function(req, res) {
        
         //add Person 
         session
-              .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', icename:'" + person.icename + "', icephone:'" + person.icephone + "', joined:'" + person.joined + "', gender:'" + person.gender + "', dob:'" + person.dob + "', email:'" + person.email + "', password:'" + person.password + "'})")
+          .run( "Merge (a:Person {name:'"+person.name+"', address:'"+person.address+"', phone:"+person.phone+", icename:'"+person.icename+"', icephone:"+person.icephone+", joined:"+person.joined+", gender:'"+person.gender+"', dob:'"+person.dob+"', email:'"+person.email+"', password:'"+person.password+"'})" )
            
         .then( function()
         {
