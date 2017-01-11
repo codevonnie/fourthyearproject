@@ -36,11 +36,25 @@ public partial class LoginPage : System.Web.UI.Page
         //Deserialize the result into the class provided
         dynamic jsonObject = JsonConvert.DeserializeObject<Token>(response.Content);
         var bizObj = jsonObject as Token;// ACCESS TOKEN USED TO GET AUTHENTICATED 
-
-
-
-
     }
+
+    private void checkLoginDetails()
+    {
+        var client = new RestClient("https://membermeauth.eu.auth0.com/oauth/token");
+        var request = new RestRequest(Method.POST);
+        request.AddHeader("content-type", "application/json");
+        request.AddParameter("application/json", "{\"client_id\":\"fXqMFIGFPGXAPLNm6ltd0NsGV6fWpvDM\",\"client_secret\":\"HHnBRmKTpK99fx4RYIVnxiJFQourT1RkbWnrs0jIUP1vdYrgWZ1104Tew7cb5-wp\",\"audience\":\"https://restapicust.herokuapp.com/api/\",\"grant_type\":\"client_credentials\"}", ParameterType.RequestBody);
+        IRestResponse response = client.Execute(request);
+
+        var content = response.Content; // raw content as string
+
+        //Deserialize the result into the class provided
+        dynamic jsonObject = JsonConvert.DeserializeObject<Token>(response.Content);
+        var bizObj = jsonObject as Token;// ACCESS TOKEN USED TO GET AUTHENTICATED 
+    }
+
+
+
 
     //private void UserLogin()
     //{
