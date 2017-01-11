@@ -5,13 +5,15 @@ var bodyParser = require('body-parser');
 var neo4j = require('neo4j-driver').v1;
 var port = process.env.PORT || 8100;        // set our port
 var morgan = require('morgan');
-var jwt = require('jwt-simple');
+//var jwt = require('jwt-simple');
 var config = require('./config/database');
 var cors = require('cors');
 var passport = require('passport');
 
 var mongoose = require('mongoose');
-
+var jwt = require('express-jwt');
+//var request = require("request");
+var rsaValidation = require('auth0-api-jwt-rsa-validation');
  
 var Person = require('./app/models/person');
 var Business = require('./app/models/business');
@@ -27,7 +29,20 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('dev'));
 
+var jwtCheck = jwt({
+    secret: rsaValidation(),
+    audience: 'https://restapicust.herokuapp.com/api/',
+    issuer: "https://membermeauth.eu.auth0.com/",
+    algorithms: ['RS256']
+});
 
+app.use(jwtCheck);
+
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({message:'Missing or invalid token'});
+  }
+});
 
  //app.use(passport.initialize());
   
@@ -51,9 +66,14 @@ app.all('*', function (req, res, next) {
 });
 
 
+
+
+
+//--------------------------LOOK HERE SCOTT!!!!!!!!!!!!!-------------------------------------------
+
 // AUTHENTICATION STUFF
 // route to authenticate a person (POST http://localhost:8080/api/authenticate)
-/*
+
 router.post('/authenticate', function(req, res) {
   
   console.log('I am authenticating');
@@ -96,35 +116,7 @@ router.post('/authenticate', function(req, res) {
     });
 });
 
-
-// route middleware to verify a token
-/*router.use(function(req, res, next) {
-  // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-  // decode token
-  if (token) {
-    // verifies secret and checks exp
-    jwt.verify(token, app.get('superSecret'), function(err, decoded) {      
-      if (err) {
-        return res.json({ success: false, message: 'Failed to authenticate token.' });    
-      } else {
-        // if everything is good, save to request for use in other routes
-        req.decoded = decoded;    
-        next();
-      }
-    });
-  } else {
-    // if there is no token
-    // return an error
-    return res.status(403).send({ 
-        success: false, 
-        message: 'No token provided.' 
-    });
-    
-  }
-});*/
-
-
+/*
 // secure route
 router.get('/memberinfo', passport.authenticate('jwt', { session: false}), 
 function(req, res) {

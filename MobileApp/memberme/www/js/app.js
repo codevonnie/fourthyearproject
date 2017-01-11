@@ -9,12 +9,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 
 .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
   $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
-    if (!AuthService.isAuthenticated()) {
+    /*if (!AuthService.isAuthenticated()) {
       console.log(next.name);
       if (next.name !== 'outside.login' && next.name !== 'outside.register') {
         event.preventDefault();
         $state.go('outside.login');
       }
-    }
+    }*/
   });
 });

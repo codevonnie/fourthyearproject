@@ -17,8 +17,9 @@ angular.module('starter.routes', ['ionic'])
     url: '/profile',
     views: {
       'profile': {
-        templateUrl: 'templates/profile.html',
-        controller: 'ProfileCtrl'
+        //controller: 'ProfileCtrl',
+        templateUrl: 'templates/profile.html'
+        //controller: 'ProfileCtrl'
       }
     }
   })
@@ -42,6 +43,6 @@ angular.module('starter.routes', ['ionic'])
 
   // if none of the above states are matched, use this as the fallback
   //$urlRouterProvider.otherwise('/tab/profile');
-  $urlRouterProvider.otherwise('/login');
+  $urlRouterProvider.otherwise('/profile');
 
 });
