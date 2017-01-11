@@ -23,9 +23,9 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('dev'));
 
- app.use(passport.initialize());
+ //app.use(passport.initialize());
    
- require('./config/passport')(passport);
+ //require('./config/passport')(passport);
 
 var router = express.Router();
 //var db = mongoose.connect(config.database);
@@ -44,6 +44,7 @@ app.all('*', function (req, res, next) {
 
 // AUTHENTICATION STUFF
 // route to authenticate a person (POST http://localhost:8080/api/authenticate)
+/*
 router.post('/authenticate', function(req, res) {
   
   console.log('I am authenticating');
@@ -124,7 +125,7 @@ getToken = function (headers) {
     return null;
   }
 };
-
+*/
 
 
 
