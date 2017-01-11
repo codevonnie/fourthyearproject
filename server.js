@@ -98,13 +98,12 @@ router.post('/authenticate', function(req, res) {
         else{
           var result=result.records;
           console.log(result)
-          var token = jwt.encode(person, config.secret);
+          //var token = jwt.encode(person, config.secret);
           
           // return the information including token as JSON
           res.json({
             success: true,
-            message: 'Enjoy your token!',
-            token: token,
+            results: result,
           })
         }
         
