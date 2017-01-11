@@ -59,77 +59,15 @@ app.all('*', function (req, res, next) {
   next(); // make sure we go to the next routes and don't stop here
 });
 
-/*
-//------------------------------------------Test auth-------------------------------
-var guard = function(req, res, next){
-  // we’ll use a case switch statement on the route requested
-  switch(req.path){
-    // if the request is for movie reviews we’ll check to see if the token has general scope
-    case '/addCompany' : {
-      var permissions = ['general'];
-      for(var i = 0; i < permissions.length; i++){
-        if(req.user.scope.includes(permissions[i])){
-          next();
-        } else {
-          res.send(403, {message:'Forbidden'});
-        }
-      }
-      break;
-    }
-    // Same for the reviewers
-    case '/reviewers': {
-      var permissions = ['general'];
-      for(var i = 0; i < permissions.length; i++){
-        if(req.user.scope.includes(permissions[i])){
-          next();
-        } else {
-          res.send(403, {message:'Forbidden'});
-        }
-      }
-      break;
-    }
-    // Same for publications
-    case '/publications': {
-      var permissions = ['general'];
-      for(var i = 0; i < permissions.length; i++){
-        if(req.user.scope.includes(permissions[i])){
-          next();
-        } else {
-          res.send(403, {message:'Forbidden'});
-        }
-      }
-      break;
-    }
-    // For the pending route, we’ll check to make sure the token has the scope of admin before returning the results.
-    case '/pending': {
-      var permissions = ['admin'];
-      console.log(req.user.scope);
-      for(var i = 0; i < permissions.length; i++){
-        if(req.user.scope.includes(permissions[i])){
-          next();
-        } else {
-          res.send(403, {message:'Forbidden'});
-        }
-      }
-      break;
-    }
-  }
-
-// existing app.use middleware
-
-app.use(guard);
-
-//-----------------------------------End test auth----------------------------
-*/
 
 
 
 
-
+//--------------------------LOOK HERE SCOTT!!!!!!!!!!!!!-------------------------------------------
 
 // AUTHENTICATION STUFF
 // route to authenticate a person (POST http://localhost:8080/api/authenticate)
-/*
+
 router.post('/authenticate', function(req, res) {
   
   console.log('I am authenticating');
@@ -171,7 +109,7 @@ router.post('/authenticate', function(req, res) {
       res.json({ success: false, message: 'Authentication failed.' });
     });
 });
-
+/*
 // secure route
 router.get('/memberinfo', passport.authenticate('jwt', { session: false}), 
 function(req, res) {
