@@ -9,20 +9,23 @@ angular.module('starter.services', [])
     var token = window.localStorage.getItem(LOCAL_TOKEN_KEY);
     if (token) {
       useCredentials(token);
+      console.log(token);
     }
   }
  
   function storeUserCredentials(token) {
     window.localStorage.setItem(LOCAL_TOKEN_KEY, token);
     useCredentials(token);
+    console.log(token);
   }
  
   function useCredentials(token) {
     isAuthenticated = true;
     authToken = token;
+    console.log(token);
  
     // Set the token as header for your requests!
-    $http.defaults.headers.common.Authorization = authToken;
+    $http.defaults.headers.common.Authorization = 'JWT ' + authToken;
   }
  
   function destroyUserCredentials() {
@@ -48,12 +51,30 @@ angular.module('starter.services', [])
   var logout = function() {
     destroyUserCredentials();
   };
+
+  var getInfo = function() {
+       return $q(function(resolve, reject) {
+         $http.get(API_ENDPOINT.url + '/memberinfo').then(function(result) {
+         console.log("in members service");
+         console.log(result);
+           if (result.status.success) {
+
+             window.localStorage.setItem('members', JSON.stringify(result.data));
+             console.log(JSON.stringify(result.data));
+           } else {
+             reject(result.data.msg);
+             console.log("getMembers failed")
+           }
+         });
+       });
+     };
  
   loadUserCredentials();
  
   return {
     login: login,
     logout: logout,
+    getInfo: getInfo,
     isAuthenticated: function() {return isAuthenticated;},
   };
 })
