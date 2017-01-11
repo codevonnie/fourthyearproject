@@ -11,7 +11,8 @@ var cors = require('cors');
 var passport = require('passport');
 var mongoose = require('mongoose');
 var jwt = require('express-jwt');
-var request = require("request");
+//var request = require("request");
+var rsaValidation = require('auth0-api-jwt-rsa-validation');
  
 var Person = require('./app/models/person');
 var Business = require('./app/models/business');
@@ -26,11 +27,19 @@ app.use(cors());
 app.use(morgan('dev'));
 
 var jwtCheck = jwt({
-  secret: 'jfeiosIJDL938jiJ0234Djbxm9Gfysd1ddLy',
-  audience: 'Az124jileIjfefneig89IUfjesu'
+    secret: rsaValidation(),
+    audience: 'https://restapicust.herokuapp.com/api/',
+    issuer: "https://membermeauth.eu.auth0.com/",
+    algorithms: ['RS256']
 });
 
-app.use('/addCompany', jwtCheck);
+app.use(jwtCheck);
+
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({message:'Missing or invalid token'});
+  }
+});
 
  //app.use(passport.initialize());
    
@@ -49,6 +58,73 @@ app.all('*', function (req, res, next) {
   console.log('Something is happening.');
   next(); // make sure we go to the next routes and don't stop here
 });
+
+/*
+//------------------------------------------Test auth-------------------------------
+var guard = function(req, res, next){
+  // we’ll use a case switch statement on the route requested
+  switch(req.path){
+    // if the request is for movie reviews we’ll check to see if the token has general scope
+    case '/addCompany' : {
+      var permissions = ['general'];
+      for(var i = 0; i < permissions.length; i++){
+        if(req.user.scope.includes(permissions[i])){
+          next();
+        } else {
+          res.send(403, {message:'Forbidden'});
+        }
+      }
+      break;
+    }
+    // Same for the reviewers
+    case '/reviewers': {
+      var permissions = ['general'];
+      for(var i = 0; i < permissions.length; i++){
+        if(req.user.scope.includes(permissions[i])){
+          next();
+        } else {
+          res.send(403, {message:'Forbidden'});
+        }
+      }
+      break;
+    }
+    // Same for publications
+    case '/publications': {
+      var permissions = ['general'];
+      for(var i = 0; i < permissions.length; i++){
+        if(req.user.scope.includes(permissions[i])){
+          next();
+        } else {
+          res.send(403, {message:'Forbidden'});
+        }
+      }
+      break;
+    }
+    // For the pending route, we’ll check to make sure the token has the scope of admin before returning the results.
+    case '/pending': {
+      var permissions = ['admin'];
+      console.log(req.user.scope);
+      for(var i = 0; i < permissions.length; i++){
+        if(req.user.scope.includes(permissions[i])){
+          next();
+        } else {
+          res.send(403, {message:'Forbidden'});
+        }
+      }
+      break;
+    }
+  }
+
+// existing app.use middleware
+
+app.use(guard);
+
+//-----------------------------------End test auth----------------------------
+*/
+
+
+
+
 
 
 // AUTHENTICATION STUFF

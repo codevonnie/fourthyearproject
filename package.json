@@ -22,6 +22,7 @@
   "homepage": "https://github.com/codevonnie/fourthyearproject#readme",
   "dependencies": {
     "@ionic/cloud-angular": "^0.7.0",
+    "auth0-api-jwt-rsa-validation": "0.0.1",
     "body-parser": "~1.15.2",
     "cors": "^2.8.1",
     "express": "^4.14.0",
