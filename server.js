@@ -14,7 +14,7 @@ var mongoose = require('mongoose');
 var jwt = require('express-jwt');
 //var request = require("request");
 var rsaValidation = require('auth0-api-jwt-rsa-validation');
- 
+
 var Person = require('./app/models/person');
 var Business = require('./app/models/business');
 
@@ -30,23 +30,23 @@ app.use(cors());
 app.use(morgan('dev'));
 
 var jwtCheck = jwt({
-    secret: rsaValidation(),
-    audience: 'https://restapicust.herokuapp.com/api/',
-    issuer: "https://membermeauth.eu.auth0.com/",
-    algorithms: ['RS256']
+  secret: rsaValidation(),
+  audience: 'https://restapicust.herokuapp.com/api/',
+  issuer: "https://membermeauth.eu.auth0.com/",
+  algorithms: ['RS256']
 });
 
 app.use(jwtCheck);
 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
-    res.status(401).json({message:'Missing or invalid token'});
+    res.status(401).json({ message: 'Missing or invalid token' });
   }
 });
 
- //app.use(passport.initialize());
-  
- //require('./config/passport')(passport);
+//app.use(passport.initialize());
+
+//require('./config/passport')(passport);
 
 
 var router = express.Router();
@@ -74,44 +74,44 @@ app.all('*', function (req, res, next) {
 // AUTHENTICATION STUFF
 // route to authenticate a person (POST http://localhost:8080/api/authenticate)
 
-router.post('/authenticate', function(req, res) {
-  
+router.post('/authenticate', function (req, res) {
+
   console.log('I am authenticating');
-  
+
   var session = driver.session();
 
-  var person = new Person();  
+  var person = new Person();
   person.email = req.body.email;
   person.password = req.body.password;
   console.log(person.email);
   console.log(person.password);
-
   session
-    .run("Match (a:Person) WHERE a.email='" + person.email + "' AND a.password='" + person.password+"' Return a")
+    .run("Match (a:Person) WHERE a.email='" + person.email + "' AND a.password='" + person.password + "' Return a")
 
     .then(function (result) {
       // if person is found and password is right
-        // create a token
-        if(result.records[0]==null){
-          res.json({ success: false, message: 'Authentication failed.' });
-        }
-        else{
-          var result=result.records;
-          console.log(result)
-          //var token = jwt.encode(person, config.secret);
-          
-          // return the information including token as JSON
-          res.json({
-            success: true,
-            results: result,
-          })
-        }
-        
-        
+      if (result.records[0] == null) {
+        res.json({ success: false, message: 'Authentication failed in.' });
+      }
+      else {
+        var credList = [];//create a new list
+
+        result.records.forEach(function (record) {//Iterate over results        
+          credList.push(record._fields[0].properties.name)//Add The person to the list
+           credList.push(record._fields[0].properties.dob)//Add The person to the list
+            credList.push(record._fields[0].properties.icename)//Add The person to the list
+            credList.push(record._fields[0].properties.icephone.low)//Add The person to the list
+        });
+
+         console.log(credList);//log results
+        res.json({ success: true, message: credList });//send the bizList as a response
+        session.close();//close the session
+        driver.close();////close driver
+      }
     })
     .catch(function (error) {
       console.log(error);
-      res.json({ success: false, message: 'Authentication failed.' });
+      res.json({ success: false, message: 'Authentication failed out.' });
     });
 });
 
@@ -214,13 +214,13 @@ router.get('/businessMembers', function (req, res) {
   console.log("in business members");
   var session = driver.session();//Create a new session
   session.run('MATCH (a:Business) RETURN a LIMIT 25')
-    .then(function(result) {
+    .then(function (result) {
       var bizList = [];//create a new list
-      result.records.forEach(function(record){//Iterate over results
-       console.log(record._fields[0].properties);//log results
-       bizList.push(record._fields[0].properties)//Add The business To a list
+      result.records.forEach(function (record) {//Iterate over results
+        console.log(record._fields[0].properties);//log results
+        bizList.push(record._fields[0].properties)//Add The business To a list
       });
-      res.json({ message: bizList});//send the bizList as a response
+      res.json({ message: bizList });//send the bizList as a response
       session.close();//close the session
       driver.close();////close driver
     })
@@ -251,117 +251,113 @@ router.post('/createRelationship', function (req, res) {
     });
 });
 
-router.post('/addperson', function(req, res) {
-        
-        var session = driver.session();
-        var person = new Person();      // create a new instance of the Person model
-        person.name = req.body.name;
-        person.address = req.body.address;
-        person.phone = req.body.phone;
-        person.icename = req.body.icename;
-        person.icephone = req.body.icephone;
-        var joined = new Date(req.body.joined);
-        person.joined = joined.getTime();
-        person.gender =  req.body.gender;
-        var dob =  new Date(req.body.joined);
-        person.dob = dob.getTime();
-        person.email = req.body.email;
-        person.password = req.body.password;
-       
-        //add Person 
-        session
-          .run( "Merge (a:Person {name:'"+person.name+"', address:'"+person.address+"', phone:"+person.phone+", icename:'"+person.icename+"', icephone:"+person.icephone+", joined:"+person.joined+", gender:'"+person.gender+"', dob:'"+person.dob+"', email:'"+person.email+"', password:'"+person.password+"'})" )
-           
-        .then( function()
-        {
-          console.log( "Person created" );
-          res.json({ message: 'Person created!' });
-          session.close();
-          //driver.close();
-      })
-      .catch(function(error) {
-          console.log(error);
-          res.send(error);
+router.post('/addperson', function (req, res) {
+
+  var session = driver.session();
+  var person = new Person();      // create a new instance of the Person model
+  person.name = req.body.name;
+  person.address = req.body.address;
+  person.phone = req.body.phone;
+  person.icename = req.body.icename;
+  person.icephone = req.body.icephone;
+  var joined = new Date(req.body.joined);
+  person.joined = joined.getTime();
+  person.gender = req.body.gender;
+  var dob = new Date(req.body.joined);
+  person.dob = dob.getTime();
+  person.email = req.body.email;
+  person.password = req.body.password;
+
+  //add Person 
+  session
+    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", icename:'" + person.icename + "', icephone:" + person.icephone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:'" + person.dob + "', email:'" + person.email + "', password:'" + person.password + "'})")
+
+    .then(function () {
+      console.log("Person created");
+      res.json({ message: 'Person created!' });
+      session.close();
+      //driver.close();
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send(error);
     })
 
-      
-    })//addPerson
 
-router.post('/addrelationship', function(req, res) {
+})//addPerson
 
-    var session = driver.session();
-    var person = new Person();      // create a new instance of the Person model
-    person.name = req.body.name;
-    var business = new Business();
-    business.bname = req.body.bname;
-   
-    session.run( "MATCH (a:Person {name: '"+person.name+"'}), (b:Business {name: '"+business.bname+"'}) CREATE (a)-[r:MEMBER_OF]->(b)")
-    session.run( "MATCH (a:Person {name: '"+person.name+"'}), (b:Business {name: '"+business.bname+"'}) CREATE (b)-[r:HAS_MEMBER]->(a)")
-   
-    .then( function()
-    {
-    console.log( "Person->Business relationship created" );
-    res.json({ message: 'Person->Business relationship created!' });
-    session.close();
-   // driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-    res.send(error);
-  })
+router.post('/addrelationship', function (req, res) {
+
+  var session = driver.session();
+  var person = new Person();      // create a new instance of the Person model
+  person.name = req.body.name;
+  var business = new Business();
+  business.bname = req.body.bname;
+
+  session.run("MATCH (a:Person {name: '" + person.name + "'}), (b:Business {name: '" + business.bname + "'}) CREATE (a)-[r:MEMBER_OF]->(b)")
+  session.run("MATCH (a:Person {name: '" + person.name + "'}), (b:Business {name: '" + business.bname + "'}) CREATE (b)-[r:HAS_MEMBER]->(a)")
+
+    .then(function () {
+      console.log("Person->Business relationship created");
+      res.json({ message: 'Person->Business relationship created!' });
+      session.close();
+      // driver.close();
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send(error);
+    })
 })//addrelationship
 
-router.delete('/deleteperson', function(req, res) {
+router.delete('/deleteperson', function (req, res) {
 
-    var session = driver.session();
-    var person = new Person();      // create a new instance of the Person model
-    person.name = req.body.name;
-       
-    session
-    .run( "Match (a:Person) WHERE a.name='"+person.name+"' DETACH DELETE a" )
-    .then( function()
-    {
-    console.log( "Person deleted" );
-    res.json({ message: 'Person deleted!' });
-    session.close();
-    //driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-    res.send(error);
-  })
+  var session = driver.session();
+  var person = new Person();      // create a new instance of the Person model
+  person.name = req.body.name;
+
+  session
+    .run("Match (a:Person) WHERE a.name='" + person.name + "' DETACH DELETE a")
+    .then(function () {
+      console.log("Person deleted");
+      res.json({ message: 'Person deleted!' });
+      session.close();
+      //driver.close();
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send(error);
+    })
 })//deleteperson
 
-router.put('/updateperson', function(req, res) {
+router.put('/updateperson', function (req, res) {
 
-    var session = driver.session();
-    var person = new Person();      // create a new instance of the Person model
-    person.name = req.body.name;
-    person.address = req.body.address;
-    person.phone = req.body.phone;
-    person.icename = req.body.icename;
-    person.icephone = req.body.icephone;
-    var joined = new Date(req.body.joined);
-    person.joined = joined.getTime();
-    person.gender =  req.body.gender;
-    var dob =  new Date(req.body.joined);
-    person.dob = dob.getTime();
-    person.email = req.body.email;
-    person.password = req.body.password;
-       
-    session
-    .run( "Match (a:Person) WHERE a.name='"+person.name+"' SET a.name='"+person.name+"', a.address='"+person.address+"', a.phone="+person.phone+", a.icename='"+person.icename+"', a.icephone="+person.icephone+", a.joined='"+person.joined+"', a.gender='"+person.gender+"', a.dob="+person.dob+", a.email='"+person.email+"', a.password='"+person.password+"'")
-    .then( function()
-    {
-    console.log( "Person updated" );
-    res.json({ message: 'Person updated!' });
-    session.close();
-    //driver.close();
-  })
-  .catch(function(error) {
-    console.log(error);
-    res.send(error);
-  })
+  var session = driver.session();
+  var person = new Person();      // create a new instance of the Person model
+  person.name = req.body.name;
+  person.address = req.body.address;
+  person.phone = req.body.phone;
+  person.icename = req.body.icename;
+  person.icephone = req.body.icephone;
+  var joined = new Date(req.body.joined);
+  person.joined = joined.getTime();
+  person.gender = req.body.gender;
+  var dob = new Date(req.body.joined);
+  person.dob = dob.getTime();
+  person.email = req.body.email;
+  person.password = req.body.password;
+
+  session
+    .run("Match (a:Person) WHERE a.name='" + person.name + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.icename='" + person.icename + "', a.icephone=" + person.icephone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.email='" + person.email + "', a.password='" + person.password + "'")
+    .then(function () {
+      console.log("Person updated");
+      res.json({ message: 'Person updated!' });
+      session.close();
+      //driver.close();
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send(error);
+    })
 })//updateperson
 
 
