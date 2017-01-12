@@ -85,7 +85,6 @@ router.post('/authenticate', function (req, res) {
     queryString = "Match (a:Business) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a"
 
   console.log(queryString);
-
   session
     .run(queryString)
     .then(function (result) {
