@@ -6,30 +6,24 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 public partial class LoginPage : System.Web.UI.Page
 {
-    // string port = "http://localhost:8100/";
-    string port = "https://restapicust.herokuapp.com/";
+    string port = "http://localhost:8100/";
+    // string port = "https://restapicust.herokuapp.com/";
     protected void Page_Load(object sender, EventArgs e)
     {
 
     }
 
-    //stores the token and token type res from AUTH0
-    public class Token
-    {
-        public string access_token { get; set; }
-        public string token_type { get; set; }
-    }
-
     //stores the successfull logged in user
-    public class PersonCredObject
+    public class BizCred
     {
         public bool success { get; set; }
-        public List<object> message { get; set; }
+        public string name { get; set; }
     }
 
 
@@ -42,11 +36,19 @@ public partial class LoginPage : System.Web.UI.Page
         request.AddParameter("application/json", "{\"client_id\":\"fXqMFIGFPGXAPLNm6ltd0NsGV6fWpvDM\",\"client_secret\":\"HHnBRmKTpK99fx4RYIVnxiJFQourT1RkbWnrs0jIUP1vdYrgWZ1104Tew7cb5-wp\",\"audience\":\"https://restapicust.herokuapp.com/api/\",\"grant_type\":\"client_credentials\"}", ParameterType.RequestBody);
         IRestResponse response = client.Execute(request);
 
-        var content = response.Content; // raw content as string
-
         //Deserialize the result into the class provided
         dynamic jsonObject = JsonConvert.DeserializeObject<Token>(response.Content);
         var bizObj = jsonObject as Token;// ACCESS TOKEN USED TO GET AUTHENTICATED 
+
+        System.Web.HttpCookie newCookie = new System.Web.HttpCookie("AuthCookie");
+        newCookie.Values.Add("AC_T", bizObj.access_token);
+        newCookie.Values.Add("TYPE", bizObj.token_type);
+        newCookie.Secure = true;
+        newCookie.Name = "AuthCookie";
+        newCookie.Expires = DateTime.Now.AddMinutes(10.0);
+        newCookie.Path = "~/";
+
+        Response.Cookies.Add(newCookie);
 
         checkLoginDetails(bizObj);
     }
@@ -55,32 +57,39 @@ public partial class LoginPage : System.Web.UI.Page
     private void checkLoginDetails(Token auth)
     {
         var client = new RestClient(port);
-
+       // client.CookieContainer = new System.Net.CookieContainer();
         var request = new RestRequest("api/authenticate", Method.POST);
         request.AddParameter("email", TbEmail.Text); //email fro Textbox
         request.AddParameter("password", TbPassword.Text); //pwd from Textbox
+        request.AddParameter("type", "business");
         request.AddHeader("Authorization", auth.token_type + " " + auth.access_token);
 
         IRestResponse response = client.Execute(request);
-        var content = response.Content; // raw content as string
 
         //Deserialize the result into the class provided
-        dynamic jsonObject = JsonConvert.DeserializeObject<PersonCredObject>(response.Content);
-        var bizObj = jsonObject as PersonCredObject;
+        dynamic jsonObject = JsonConvert.DeserializeObject<BizCred>(response.Content);
+        var bizObj = jsonObject as BizCred;
 
-        // Session["authToken"] = bizObj.access_token;// store the token in a session
-
-        //If the Message is Empty
-        if (bizObj.message != null)
+        //If Success
+        if (bizObj.success == true)
         {
+            System.Web.HttpCookie newCookie = new System.Web.HttpCookie("BIZ_DETAILS");
+            newCookie.Values.Add("BIZ_NAME", bizObj.name);
+            newCookie.Values.Add("AUTH_SUCC", bizObj.success.ToString());
+            newCookie.Secure = true;
+            newCookie.Name = "BIZ_DETAILS";
+            newCookie.Expires = DateTime.Now.AddMinutes(10.0);
+            newCookie.Path = "~/";
+
+            Response.Cookies.Add(newCookie);
             //Successful Login
-            Server.Transfer("Default.aspx", true); ///// ----------------need to add token to that user
+            Response.Redirect("Default.aspx", true);
+           // Server.Transfer("Default.aspx", true);
         }
         else
         {
             //Nothing returned means Request Failed
         }
-
     }
 
     /*Button click Event from singInBtn

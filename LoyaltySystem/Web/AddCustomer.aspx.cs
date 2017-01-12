@@ -5,18 +5,42 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web;
+using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 public partial class Web_Customer : System.Web.UI.Page
 {
+
+    private string port = "http://localhost:8100/";
+    // private System.Web.HttpCookie authCookie;
+
+    //SSL Cookie with Auth Token etc
+    private string _authtoken = "";
+    private string _authType = "";
+    private string _bizName = "";
+
+
     protected void Page_Load(object sender, EventArgs e)
     {
-
+        GetCookies();
     }
 
-    string port = "http://localhost:8100/";
-
+    private void GetCookies()
+    {
+        try
+        {
+            //SSL Cookie with Auth Token etc
+            _bizName = Request.Cookies["BIZ_DETAILS"]["BIZ_NAME"];
+            _authtoken = Request.Cookies["AuthCookie"]["AC_T"];
+            _authType = Request.Cookies["AuthCookie"]["TYPE"];
+        }
+        catch (Exception)
+        {
+            //Get a new Token? or ask use to Login again
+            Response.Redirect("LoginPage.aspx", true);
+        }
+    }
 
     /*Method Creates a new Customer Obj from the input form
      */
@@ -35,20 +59,18 @@ public partial class Web_Customer : System.Web.UI.Page
 
         customer.guardianName = TbGuardianName.Text.ToString();
         customer.guardianNumber = TbGuardianNumber.Text.ToString();
-
-        customer.customerToken = Session["authToken"].ToString();//Store the authToken in customer.customerToken ment to be in business
-
         return customer;
     }
 
     private void newCustomerRequest(Customer customer)
     {
         var client = new RestClient(port);
+        string password = Membership.GeneratePassword(6, 3);
 
-        var request = new RestRequest("api/addperson", Method.POST);
-        request.AddParameter("x-access-token", customer.customerToken);
+        var request = new RestRequest("api/addPerson", Method.POST);
+        request.AddHeader("Authorization", _authType + " " + _authtoken);
         request.AddParameter("name", customer.name);
-        request.AddParameter("password", "pass");//random password
+        request.AddParameter("password", "¬¬¬" + password);//random password
         request.AddParameter("email", customer.email);
         request.AddParameter("phone", customer.contactNumber);
         request.AddParameter("gender", customer.gender);
@@ -59,11 +81,12 @@ public partial class Web_Customer : System.Web.UI.Page
         request.AddParameter("icephone", customer.emergencyNumber);
 
 
-
-        /* if (customer.guardianName !="" && customer.guardianNumber!="") {
-             request.AddParameter("guardianName", customer.guardianName); 
-             request.AddParameter("guardianNum", customer.guardianNumber); 
-         }*/
+        //ONLY IF UNDER 18
+        //if (customer.guardianName != "" && customer.guardianNumber != "")
+        //{
+        //    request.AddParameter("guardianName", customer.guardianName);
+        //    request.AddParameter("guardianNum", customer.guardianNumber);
+        //}
 
         IRestResponse response = client.Execute(request);
         var content = response.Content;
@@ -91,10 +114,9 @@ public partial class Web_Customer : System.Web.UI.Page
         var client = new RestClient(port);
 
         var request = new RestRequest("api/addrelationship", Method.POST);
+        request.AddHeader("Authorization", _authType + " " + _authtoken);
         request.AddParameter("name", customer.name);
-        request.AddParameter("name", biz.message[0].name);//HARD CODDED FOR NOW FROM WHO EVER IS LOGGED IN
-
-        //CACHE THE BUISNESS NAME TO SEND WITH THE CREATE RELATIONSHIP REQUEST
+        request.AddParameter("name", _bizName);//lOGGED IN BIZ NAME
 
         IRestResponse response = client.Execute(request);
         var content = response.Content; // raw content as string
