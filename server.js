@@ -39,7 +39,7 @@ var jwtCheck = jwt({
 app.use(jwtCheck);
 
 app.use(function (err, req, res, next) {
-  if (err.name === 'UnauthorizedError') {
+  if (err.name === 'UnauthorizedError' || err.name === 'TypeError') {
     res.status(401).json({ message: 'Missing or invalid token' });
   }
 });
@@ -88,9 +88,9 @@ router.post('/authenticate', function (req, res) {
   session
     .run(queryString)
     .then(function (result) {
-      // If Person/Biz is found and UsrrName/password is Correct
+      // If Person/Biz is found and UsrName/password is Correct
       if (result.records[0] == null)
-        res.json({ success: false, message: 'Authentication failed, User Not Found' });
+        res.json({ success: false });
       else {
         var credList = [];//create a new list
         result.records.forEach(function (record) {//Iterate over results        
@@ -102,28 +102,29 @@ router.post('/authenticate', function (req, res) {
             credList.push(record._fields[0].properties.dob)
             credList.push(record._fields[0].properties.icename)
             credList.push(record._fields[0].properties.icephone.low)
+            //Send the Response Back [List]
+            res.json({ success: true, message: credList });
           }
           else {
             //Add The biz Details to the list
-            credList.push(record._fields[0].properties.name)//Add The 
+            //console.log(record._fields[0].properties.name);
+            res.json({ success: true, name: record._fields[0].properties.name })
           }
         });
 
-        //Send the Response Back [List]
-        res.json({ success: true, message: credList });
         session.close();//close the session
         driver.close();////close driver
       }
     })
     .catch(function (error) {
       console.log(error);
-      res.json({ success: false, message: 'Authentication failed' });
+      res.json({ success: false });
     });
 });
 
 /*
 // secure route
-router.get('/memberinfo', passport.authenticate('jwt', { session: false}), 
+router.get('/memberInfo', passport.authenticate('jwt', { session: false}), 
 function(req, res) {
   console.log("IT'S ME");
   var token = getToken(req.headers);
@@ -242,7 +243,7 @@ router.get('/businessMembers', function (req, res) {
 router.post('/createRelationship', function (req, res) {
   var session = driver.session();
   var name = req.body.name;         //Set the Business name (comes from the request)
-  var bname = req.body.bName;
+  var bname = req.body.name;
 
   session.run("MATCH (a:Person {name: '" + name + "'}), (b:Business {name: '" + bname + "'}) CREATE (a)-[r:IS_MY_ISLAND_HUSBAND]->(b)")
     .then(function () {
@@ -257,7 +258,7 @@ router.post('/createRelationship', function (req, res) {
     });
 });
 
-router.post('/addperson', function (req, res) {
+router.post('/addPerson', function (req, res) {
 
   var session = driver.session();
   var person = new Person();      // create a new instance of the Person model
@@ -274,9 +275,18 @@ router.post('/addperson', function (req, res) {
   person.email = req.body.email;
   person.password = req.body.password;
 
+  person.guardianName = null;
+  person.guardianNum  = null;
+
+  //Check to see if the person was under 18 and Added a Guardian
+  if (req.body.guardianName != null && req.body.guardianNum != null) {
+    person.guardianName = req.body.guardianName;
+    person.guardianNum = req.body.guardianNum;
+  }
+
   //add Person 
   session
-    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", icename:'" + person.icename + "', icephone:" + person.icephone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:'" + person.dob + "', email:'" + person.email + "', password:'" + person.password + "'})")
+    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", icename:'" + person.icename + "', icephone:" + person.icephone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:'" + person.dob + "', email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName+"', guardianNum:'" + person.guardianNum+"'})")
 
     .then(function () {
       console.log("Person created");
@@ -292,16 +302,16 @@ router.post('/addperson', function (req, res) {
 
 })//addPerson
 
-router.post('/addrelationship', function (req, res) {
+router.post('/addRelationship', function (req, res) {
 
   var session = driver.session();
   var person = new Person();      // create a new instance of the Person model
   person.name = req.body.name;
   var business = new Business();
-  business.bname = req.body.bname;
+  business.name = req.body.name;
 
-  session.run("MATCH (a:Person {name: '" + person.name + "'}), (b:Business {name: '" + business.bname + "'}) CREATE (a)-[r:MEMBER_OF]->(b)")
-  session.run("MATCH (a:Person {name: '" + person.name + "'}), (b:Business {name: '" + business.bname + "'}) CREATE (b)-[r:HAS_MEMBER]->(a)")
+  session.run("MATCH (a:Person {name: '" + person.name + "'}), (b:Business {name: '" + business.name + "'}) CREATE (a)-[r:MEMBER_OF]->(b)")
+  session.run("MATCH (a:Person {name: '" + person.name + "'}), (b:Business {name: '" + business.name + "'}) CREATE (b)-[r:HAS_MEMBER]->(a)")
 
     .then(function () {
       console.log("Person->Business relationship created");
@@ -315,7 +325,7 @@ router.post('/addrelationship', function (req, res) {
     })
 })//addrelationship
 
-router.delete('/deleteperson', function (req, res) {
+router.delete('/deletePerson', function (req, res) {
 
   var session = driver.session();
   var person = new Person();      // create a new instance of the Person model
@@ -335,7 +345,7 @@ router.delete('/deleteperson', function (req, res) {
     })
 })//deleteperson
 
-router.put('/updateperson', function (req, res) {
+router.put('/updatePerson', function (req, res) {
 
   var session = driver.session();
   var person = new Person();      // create a new instance of the Person model
@@ -351,6 +361,15 @@ router.put('/updateperson', function (req, res) {
   person.dob = dob.getTime();
   person.email = req.body.email;
   person.password = req.body.password;
+  
+  person.guardianName = null;
+  person.guardianNum  = null;
+
+  //Check to see if the person was under 18 and Added a Guardian
+  if (req.body.guardianName != null && req.body.guardianNum != null) {
+    person.guardianName = req.body.guardianName;
+    person.guardianNum = req.body.guardianNum;
+  }
 
   session
     .run("Match (a:Person) WHERE a.name='" + person.name + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.icename='" + person.icename + "', a.icephone=" + person.icephone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.email='" + person.email + "', a.password='" + person.password + "'")

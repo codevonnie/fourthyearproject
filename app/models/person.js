@@ -5,8 +5,8 @@ var PersonSchema = new Schema({
     name: String,
     address: String,
     phone: Number,
-    icename: String,
-    icephone: Number,
+    iceName: String,
+    icePhone: Number,
     joined: Number,
     gender: String,
     dob: Number,
@@ -15,6 +15,9 @@ var PersonSchema = new Schema({
         unique: true,
         required: true
     },
+    guardianName:String,
+    guardianNum:Number,
+
     password: {
         type: String,
         required: true
