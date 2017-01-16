@@ -27,7 +27,7 @@
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="Default.aspx">Dashboard</a></li>
                             <li><a href="AddCustomer.aspx">Settings</a></li>
-                            <asp:Button class="btn btn-primary btn-lg btn-block" ID="AddCustomerBtn" runat="server" Text="Sign In" OnClick="AddCustomerBtn_Click" />
+
                             <li><a href="#">Notifications</a></li>
                             <li><a href="LoginPage.aspx">Login</a></li>
                         </ul>
