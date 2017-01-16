@@ -11,10 +11,10 @@ public partial class MasterPage : System.Web.UI.MasterPage
     {
 
     }
-    protected void AddCustomerBtn_Click(object sender, EventArgs e)
+
+    private void MakeCookie()
     {
-        Server.Transfer("AddCustomer.aspx", true);
-        System.Web.HttpCookie authCookie = Request.Cookies["AuthCookie"];
+
     }
 
 }
