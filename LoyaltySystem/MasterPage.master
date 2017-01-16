@@ -5,7 +5,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>MASTERPAGE</title>
-    <link href="Content/bootstrap.css" rel="stylesheet" />
+
+    <link href="/Content/bootstrap.css" rel="stylesheet" />
     <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
 </head>
 <body>
@@ -25,7 +26,8 @@
                     <div id="navbar" class="navbar-collapse collapse">
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="Default.aspx">Dashboard</a></li>
-                            <li><a href="#">Settings</a></li>
+                            <li><a href="AddCustomer.aspx">Settings</a></li>
+                            <asp:Button class="btn btn-primary btn-lg btn-block" ID="AddCustomerBtn" runat="server" Text="Sign In" OnClick="AddCustomerBtn_Click" />
                             <li><a href="#">Notifications</a></li>
                             <li><a href="LoginPage.aspx">Login</a></li>
                         </ul>
@@ -69,7 +71,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="Scripts/jquery-3.1.1.min.js"></script>
-    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="/Scripts/bootstrap.min.js"></script>
 </body>
 </html>

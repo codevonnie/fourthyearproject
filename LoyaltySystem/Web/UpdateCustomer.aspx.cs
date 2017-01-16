@@ -20,26 +20,26 @@ public partial class Web_Customer : System.Web.UI.Page
 
     /*Method Creates a new Customer Obj from the input form
      */
-    private Customer createCustomer()
-    {
-        Customer customer = new Customer();
-        customer.name = TbName.Text.ToString();
-        customer.address = TbAddress.Text.ToString();
-        customer.dob = Convert.ToDateTime(TbDob.Text);
-        customer.gender = TbGender.Text.ToString();
-        customer.contactNumber = Convert.ToInt32(TbContactNum.Text);
-        customer.emergencyNumber = Convert.ToInt32(TbEmergencyNum.Text);
-        customer.emergencyName = TbEmergencyName.Text;
-        customer.email = TbEmail.Text.ToString();
-        customer.date = DateTime.Now;//Todays Date
+    //private Customer createCustomer()
+    //{
+    //    Customer customer = new Customer();
+    //    customer.name = TbName.Text.ToString();
+    //    customer.address = TbAddress.Text.ToString();
+    //    customer.dob = Convert.ToDateTime(TbDob.Text);
+    //    customer.gender = TbGender.Text.ToString();
+    //    customer.contactNumber = Convert.ToInt32(TbContactNum.Text);
+    //    customer.emergencyNumber = Convert.ToInt32(TbEmergencyNum.Text);
+    //    customer.emergencyName = TbEmergencyName.Text;
+    //    customer.email = TbEmail.Text.ToString();
+    //    customer.date = DateTime.Now;//Todays Date
 
-        customer.guardianName = TbGuardianName.Text.ToString();
-        customer.guardianNumber = TbGuardianNumber.Text.ToString();
+    //    customer.guardianName = TbGuardianName.Text.ToString();
+    //    customer.guardianNumber = TbGuardianNumber.Text.ToString();
 
-        customer.customerToken = Session["authToken"].ToString();//Store the authToken in customer.customerToken
+    //    customer.customerToken = Session["authToken"].ToString();//Store the authToken in customer.customerToken
 
-        return customer;
-    }
+    //    return customer;
+    //}
 
     private void newCustomerRequest(Customer customer)
     {
@@ -104,7 +104,7 @@ public partial class Web_Customer : System.Web.UI.Page
 
     protected void BtnSubmit_Click(object sender, EventArgs e)
     {
-        Customer cus = createCustomer();//CREATE A NEW CUSTOMER
-        newCustomerRequest(cus);//ADD THE NEW CUSTOMER TO THE DATABASE
+        //Customer cus = createCustomer();//CREATE A NEW CUSTOMER
+        //newCustomerRequest(cus);//ADD THE NEW CUSTOMER TO THE DATABASE
     }
 }
