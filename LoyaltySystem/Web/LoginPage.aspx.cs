@@ -61,6 +61,14 @@ public partial class LoginPage : System.Web.UI.Page
             #endregion
 
 
+
+
+            //CHANGE THE TEXT OF THE LOGIN BTN
+            (Master as MasterPage).logStatus(bizObj.success);
+
+
+
+
             // ------------------------ TEMP CACHE KEYS ETC ------------------------ 
             Cache["BizName"] = bizObj.name;
 
