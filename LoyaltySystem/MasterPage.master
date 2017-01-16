@@ -12,6 +12,8 @@
 <body>
     <form id="form1" runat="server">
         <div class="Container">
+
+            <!-- ======== HEADER MENU  ======== -->
             <div class="navbar navbar-inverse navbar-fixed-top">
                 <div class="container-fluid">
                     <div class="navbar-header">
@@ -29,7 +31,7 @@
                             <li><a href="AddCustomer.aspx">Settings</a></li>
 
                             <li><a href="#">Notifications</a></li>
-                            <li><a href="LoginPage.aspx">Login</a></li>
+                            <li><a id="logInBtn" runat="server" href="LoginPage.aspx">LogIn</a></li>
                         </ul>
                         <div class="navbar-form navbar-right">
                             <input type="text" class="form-control" placeholder="Search..." />
@@ -38,26 +40,51 @@
                 </div>
             </div>
             <br />
+            <br />
+            <br />
+            <br />
 
-
+            <!-- ======== SIDEBAR ======== -->
             <div class="container-fluid text-center">
                 <div class="row content">
-                    <div class="col-sm-2 sidenav">
-                        <asp:Menu ID="Menu2" runat="server" CssClass="nav nav-sidebar active  ">
-                            <Items>
-                                <asp:MenuItem Text="Reports" Value="New Item"></asp:MenuItem>
-                                <asp:MenuItem Text="Analytics" Value="New Item"></asp:MenuItem>
-                                <asp:MenuItem Text="Customer" Value="Customer">
-                                    <asp:MenuItem NavigateUrl="~/Web/AddCustomer.aspx" Text="Add" Value="Add"></asp:MenuItem>
-                                    <asp:MenuItem NavigateUrl="~/Web/UpdateCustomer.aspx" Text="Update" Value="Update"></asp:MenuItem>
-                                    <asp:MenuItem NavigateUrl="~/Web/DeleteCustomer.aspx" Text="Delete" Value="Delete"></asp:MenuItem>
-                                </asp:MenuItem>
-                                <asp:MenuItem Text="Map" Value="New Item"></asp:MenuItem>
-                                <asp:MenuItem Text="Other" Value="New Item"></asp:MenuItem>
-                            </Items>
-                            <StaticMenuItemStyle HorizontalPadding="80px" VerticalPadding="10px" />
-                        </asp:Menu>
+                    <div class="col-sm-2 sidenav nav nav-sidebar active">
+
+                        <!-- ======== CUSTOMER DROP DOWN ======== -->
+                        <div class="dropdown closed">
+                            <button class="btn btn-secondary dropdown-toggle"
+                                type="button" id="dropdownMenu4" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Customer
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a href="AddCustomer.aspx" class="btn btn-block" role="button" aria-pressed="true">Add</a>
+                                <div class="divider"></div>
+                                <a href="UpdateCustomer.aspx" class="btn btn-block" role="button" aria-pressed="true">Update</a>
+                                <div class="divider"></div>
+                                <a href="DeleteCustomer.aspx" class="btn btn-block " role="button" aria-pressed="true">Delete</a>
+                            </div>
+                        </div>
+                        <br />
+
+
+                        <!-- ======== MAP DROP DOWN ======== -->
+                        <div class="dropdown closed">
+                            <button class="btn btn-secondary dropdown-toggle"
+                                type="button" id="dropdownMenu5" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Map
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a href="AddCustomer.aspx" class="btn btn-block" role="button" aria-pressed="true">Add</a>
+                                <div class="divider"></div>
+                                <a href="UpdateCustomer.aspx" class="btn btn-block" role="button" aria-pressed="true">Update</a>
+                                <div class="divider"></div>
+                                <a href="DeleteCustomer.aspx" class="btn btn-block " role="button" aria-pressed="true">Delete</a>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- ======== CONTENT AREA ======== -->
                     <div class="col-sm-8 text-left">
                         <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
                         </asp:ContentPlaceHolder>
@@ -68,8 +95,7 @@
     </form>
 
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- ======== Bootstrap core JavaScript ======== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/Scripts/jquery-3.1.1.min.js"></script>
     <script src="/Scripts/bootstrap.min.js"></script>
