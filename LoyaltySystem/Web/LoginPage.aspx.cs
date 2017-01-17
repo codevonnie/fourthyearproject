@@ -63,7 +63,7 @@ public partial class LoginPage : System.Web.UI.Page
 
 
 
-            //CHANGE THE TEXT OF THE LOGIN BTN
+            //CHANGE THE TEXT OF THE LOGIN BTN CALLS METHODS ON THE MASTERPAGE
             (Master as MasterPage).logStatus(bizObj.success);
 
 

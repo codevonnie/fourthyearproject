@@ -1,0 +1,32 @@
+﻿
+
+
+.navbar-brand {
+    float: right;
+}
+
+
+.padRight65 {
+    padding-right: 65px;
+}
+
+.iconWidth {
+    min-width: 20px;
+}
+
+.textFontFamilyBody {
+    font-family: Trebuchet MS;
+}
+
+.textFontFamilyHeader {
+    font-family: Century Schoolbook;
+}
+	
+
+.customerHeader {
+    color: steelblue;
+}
+
+.whiteColor {
+    color: #9d9d9d;
+}
