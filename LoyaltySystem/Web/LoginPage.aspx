@@ -6,7 +6,7 @@
 
 
 
-    <div id="loginModal" class="col-md-offset-2" tabindex="-1" aria-hidden="true">
+    <div id="loginModal" aria-hidden="true">
         <br />
         <br />
         <div class="modal-dialog">
@@ -16,12 +16,20 @@
                 </div>
                 <div class="modal-body">
 
-                    <div class="form-group">
-                        <asp:textbox id="TbEmail" runat="server" class="form-control input-lg" placeholder="Email" textmode="Email"></asp:textbox>
+                    <div class="form-group input-group input-group-lg">
+                        <span class="input-group-addon">
+                            <i class="fa fa-envelope iconWidth"></i>
+                        </span>
+                        <asp:TextBox ID="TbEmail" runat="server" class="form-control" placeholder="Email" TextMode="Email"></asp:TextBox>
                     </div>
-                    <div class="form-group">
-                        <asp:TextBox ID="TbPassword" runat="server" class="form-control input-lg" placeholder="Password" TextMode="Password"></asp:TextBox>
+
+                    <div class="form-group input-group input-group-lg">
+                        <span class="input-group-addon">
+                            <i class="fa fa-lock iconWidth"></i>
+                        </span>
+                        <asp:TextBox ID="TbPassword" runat="server" class="form-control" placeholder="Password" TextMode="Password"></asp:TextBox>
                     </div>
+
                     <div class="form-group">
                         <asp:Button class="btn btn-primary btn-lg btn-block" ID="BtnSignIn" runat="server" Text="Sign In" OnClick="singInBtn_Click" />
                     </div>
