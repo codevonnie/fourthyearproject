@@ -11,4 +11,10 @@ public partial class Web_SignInPage : System.Web.UI.Page
     {
 
     }
+
+
+
+    protected void BtnCheckMember_Click(object sender, EventArgs e)
+    {
+    }
 }
