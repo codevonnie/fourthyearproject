@@ -1,15 +1,14 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="/MasterPage.master" AutoEventWireup="true" CodeFile="AddCustomer.aspx.cs" Inherits="Web_Customer" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="/MasterPage.master" AutoEventWireup="true" CodeFile="AddMember.aspx.cs" Inherits="Web_Customer" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
-    <br />
 
     <div class="modal-dialog">
         <div class="modal-content textFontFamilyBody">
             
             <div class="modal-header customerHeader">
-                <h1 class="text-center">Create New Customer</h1>
+                <h1 class="text-center">Create New Member</h1>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
@@ -98,7 +97,7 @@
 
             <div class="modal-footer">
                 <div class="form-group">
-                    <asp:Button ID="BtnSubmit" class="btn btn-primary btn-block" runat="server" Text="Submit" OnClick="BtnSubmit_Click" />
+                    <asp:Button ID="BtnSubmit" class="btn btn-primary btn-block btn-lg" runat="server" Text="Submit" OnClick="BtnSubmit_Click" />
                 </div>
             </div>
         </div>

@@ -21,7 +21,7 @@
 .textFontFamilyHeader {
     font-family: Century Schoolbook;
 }
-	
+
 
 .customerHeader {
     color: steelblue;
@@ -29,4 +29,9 @@
 
 .whiteColor {
     color: #9d9d9d;
+}
+
+.alignCenter {
+    margin-left: auto;
+    margin-right: auto;
 }

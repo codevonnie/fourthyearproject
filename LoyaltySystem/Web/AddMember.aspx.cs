@@ -86,8 +86,7 @@ public partial class Web_Customer : System.Web.UI.Page
 
     }
 
-    /*Method Creates a new Customer Obj from the input form
-     */
+    //---------------- Create/Return Customer Object ----------------
     private Customer createCustomer()
     {
         Customer customer = new Customer();
@@ -106,6 +105,8 @@ public partial class Web_Customer : System.Web.UI.Page
         return customer;
     }
 
+
+    //---------------- Post to API Route addPerson  ----------------
     private void newCustomerRequest(Customer customer)
     {
         var client = new RestClient(port);
