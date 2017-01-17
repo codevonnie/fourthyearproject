@@ -162,10 +162,6 @@ getToken = function (headers) {
   }
 };
 
-
-
-
-
 //-----------------------------------    ADD A NEW Business   -------------------------------- 
 router.post('/addCompany', function (req, res) {
   var session = driver.session();
@@ -258,25 +254,30 @@ router.post('/createRelationship', function (req, res) {
     });
 });
 
-router.post('/addPerson', function (req, res) {
 
+//-----------------------------------    Add a New Person To The DataBase   -------------------------------- 
+router.post('/addPerson', function (req, res) {
   var session = driver.session();
+  
   var person = new Person();      // create a new instance of the Person model
   person.name = req.body.name;
   person.address = req.body.address;
   person.phone = req.body.phone;
   person.icename = req.body.icename;
   person.icephone = req.body.icephone;
+  
   var joined = new Date(req.body.joined);
   person.joined = joined.getTime();
-  person.gender = req.body.gender;
+  
   var dob = new Date(req.body.joined);
   person.dob = dob.getTime();
+
+  person.gender = req.body.gender;
   person.email = req.body.email;
   person.password = req.body.password;
 
   person.guardianName = null;
-  person.guardianNum  = null;
+  person.guardianNum = null;
 
   //Check to see if the person was under 18 and Added a Guardian
   if (req.body.guardianName != null && req.body.guardianNum != null) {
@@ -284,47 +285,50 @@ router.post('/addPerson', function (req, res) {
     person.guardianNum = req.body.guardianNum;
   }
 
-  //add Person 
   session
-    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", icename:'" + person.icename + "', icephone:" + person.icephone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:'" + person.dob + "', email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName+"', guardianNum:'" + person.guardianNum+"'})")
+    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", icename:'" + person.icename + "', icephone:" + person.icephone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:'" + person.dob + "', email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
 
     .then(function () {
       console.log("Person created");
       res.json({ message: 'Person created!' });
       session.close();
-      //driver.close();
     })
     .catch(function (error) {
       console.log(error);
       res.send(error);
     })
-
-
 })//addPerson
 
+
+
+
 router.post('/addRelationship', function (req, res) {
-
   var session = driver.session();
-  var person = new Person();      // create a new instance of the Person model
-  person.name = req.body.name;
-  var business = new Business();
-  business.name = req.body.name;
+  session.run("MATCH (a:Person {name: '" + req.body.email + "'}), (b:Business {name: '" + req.body.bName + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
+    .then(function (result) {
+      console.log(result.records._fields + " Person->Business relationship created");
+     
+      result.records.forEach(function (record) {
+        console.log(record.length);       
+      });
 
-  session.run("MATCH (a:Person {name: '" + person.name + "'}), (b:Business {name: '" + business.name + "'}) CREATE (a)-[r:MEMBER_OF]->(b)")
-  session.run("MATCH (a:Person {name: '" + person.name + "'}), (b:Business {name: '" + business.name + "'}) CREATE (b)-[r:HAS_MEMBER]->(a)")
+      // IF count(*) Returns > 0, Entry has been made
+      if (result > 0)
+        res.json({ success: true, message: 'Person<-REL->Business' });
+      else
+        res.json({ success: false, message: 'Problem Creating Relationship Check Name/Email' });
 
-    .then(function () {
-      console.log("Person->Business relationship created");
-      res.json({ message: 'Person->Business relationship created!' });
       session.close();
-      // driver.close();
+      driver.close();
     })
-    .catch(function (error) {
-      console.log(error);
-      res.send(error);
+    .catch(function (err) {
+      console.log(err);
+      res.json({ success: false, message: err });
     })
 })//addrelationship
 
+
+//-----------------------------------    DELETE a Person From The Database   -------------------------------- 
 router.delete('/deletePerson', function (req, res) {
 
   var session = driver.session();
@@ -361,9 +365,9 @@ router.put('/updatePerson', function (req, res) {
   person.dob = dob.getTime();
   person.email = req.body.email;
   person.password = req.body.password;
-  
+
   person.guardianName = null;
-  person.guardianNum  = null;
+  person.guardianNum = null;
 
   //Check to see if the person was under 18 and Added a Guardian
   if (req.body.guardianName != null && req.body.guardianNum != null) {
