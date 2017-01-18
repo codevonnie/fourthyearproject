@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var neo4j = require('neo4j-driver').v1;
-var port = process.env.PORT || 8100;        // set our port
+var port = process.env.PORT || 8100;        // set the port if testing locally
 var morgan = require('morgan');
 //var jwt = require('jwt-simple');
 var config = require('./config/database');
@@ -73,7 +73,6 @@ router.post('/authenticate', function (req, res) {
 
   var queryString = "";
   var session = driver.session();
-
   console.log('I am authenticating');
   console.log(req.body.email);
   console.log(req.body.password);
@@ -98,10 +97,10 @@ router.post('/authenticate', function (req, res) {
           //If its A PERSON loggin In
           if (req.body.type === "person") {
             //Add The person Details to the list
-            credList.push(record._fields[0].properties.name)
-            credList.push(record._fields[0].properties.dob)
-            credList.push(record._fields[0].properties.icename)
-            credList.push(record._fields[0].properties.icephone.low)
+            credList.push(record._fields[0].properties.name);
+            credList.push(record._fields[0].properties.dob);
+            credList.push(record._fields[0].properties.iceName);
+            credList.push(record._fields[0].properties.icePhone.low);
             //Send the Response Back [List]
             res.json({ success: true, message: credList });
           }
@@ -265,13 +264,12 @@ router.post('/addPerson', function (req, res) {
   person.name = req.body.name;
   person.address = req.body.address;
   person.phone = req.body.phone;
-  person.icename = req.body.icename;
-  person.icephone = req.body.icephone;
-  var joined = new Date(req.body.joined);
-  person.joined = joined.getTime();
+  person.iceName = req.body.iceName;
+  person.icePhone = req.body.icePhone;
+  var joined = new Date(); // Person join date is the current date/time of entry
+  person.joined = joined.getTime(); // Join date is converted to milliseconds
   person.gender = req.body.gender;
-  var dob = new Date(req.body.joined);
-  person.dob = dob.getTime();
+  person.dob = req.body.dob;
   person.email = req.body.email;
   person.password = req.body.password;
 
@@ -286,7 +284,7 @@ router.post('/addPerson', function (req, res) {
 
   //add Person 
   session
-    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", icename:'" + person.icename + "', icephone:" + person.icephone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:'" + person.dob + "', email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName+"', guardianNum:'" + person.guardianNum+"'})")
+    .run("Merge (a:Person {name:'" + person.name + "',address:'" + person.address + "',phone:'" + person.phone + "',iceName:'" + person.iceName +"',icePhone:'" + person.icePhone + "',joined:" + person.joined + ",gender:'" + person.gender + ",dob:" + person.dob + "',email:'" +person.email + "',password:'" + person.password + "',guardianName:'" + person.guardianName+"',guardianNum:'" + person.guardianNum+"'})")
 
     .then(function () {
       console.log("Person created");
@@ -352,8 +350,8 @@ router.put('/updatePerson', function (req, res) {
   person.name = req.body.name;
   person.address = req.body.address;
   person.phone = req.body.phone;
-  person.icename = req.body.icename;
-  person.icephone = req.body.icephone;
+  person.iceName = req.body.iceName;
+  person.icePhone = req.body.icePhone;
   var joined = new Date(req.body.joined);
   person.joined = joined.getTime();
   person.gender = req.body.gender;
@@ -372,7 +370,7 @@ router.put('/updatePerson', function (req, res) {
   }
 
   session
-    .run("Match (a:Person) WHERE a.name='" + person.name + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.icename='" + person.icename + "', a.icephone=" + person.icephone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.email='" + person.email + "', a.password='" + person.password + "'")
+    .run("Match (a:Person) WHERE a.name='" + person.name + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.iceName='" + person.iceName + "', a.icePhone=" + person.icePhone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.email='" + person.email + "', a.password='" + person.password + "'")
     .then(function () {
       console.log("Person updated");
       res.json({ message: 'Person updated!' });
