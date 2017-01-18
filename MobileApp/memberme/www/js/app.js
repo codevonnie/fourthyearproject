@@ -5,16 +5,10 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.routes'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.routes', 'ja.qr'])
 
-.run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
+.run(function ($rootScope, $state) {
   $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
-    /*if (!AuthService.isAuthenticated()) {
-      console.log(next.name);
-      if (next.name !== 'outside.login' && next.name !== 'outside.register') {
-        event.preventDefault();
-        $state.go('outside.login');
-      }
-    }*/
+    
   });
 });

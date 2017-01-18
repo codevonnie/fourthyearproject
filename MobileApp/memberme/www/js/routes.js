@@ -1,7 +1,8 @@
 angular.module('starter.routes', ['ionic'])
 
 .config(function($stateProvider, $urlRouterProvider) {
-
+  
+    
   $stateProvider
 
   // setup an abstract state for the tabs directive
@@ -17,9 +18,8 @@ angular.module('starter.routes', ['ionic'])
     url: '/profile',
     views: {
       'profile': {
-        //controller: 'ProfileCtrl',
-        templateUrl: 'templates/profile.html'
-        //controller: 'ProfileCtrl'
+        templateUrl: 'templates/profile.html',
+        controller: 'ProfileCtrl'
       }
     }
   })
@@ -34,6 +34,16 @@ angular.module('starter.routes', ['ionic'])
       }
     }
   })
+
+  .state('tab.settings', {
+    url: '/settings',
+    views: {
+      'settings': {
+        templateUrl: 'templates/settings.html',
+        controller: 'SettingsCtrl'
+      }
+    }
+  })
   
   .state('login', {
     url: '/login',
@@ -43,6 +53,7 @@ angular.module('starter.routes', ['ionic'])
 
   // if none of the above states are matched, use this as the fallback
   //$urlRouterProvider.otherwise('/tab/profile');
-  $urlRouterProvider.otherwise('/profile');
+  $urlRouterProvider.otherwise('/login');
+
 
 });

@@ -3,23 +3,52 @@ angular.module('starter.controllers', [])
 .controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state) {
   $scope.user = {
     email: '',
-    password: ''
+    password: '',
+    type: 'person'
   };
  
-  $scope.login = function() {
-    AuthService.login($scope.user).then(function(msg) {
-      $state.go('tab.profile');
-    }, function(errMsg) {
+$scope.login = function(user) {
+  
+    var onSuccess = function () {
+       $state.go('tab.profile');
+
+    };
+
+    var onError = function () {
       var alertPopup = $ionicPopup.alert({
-        title: 'Login failed!',
-        template: errMsg
-      });
-    });
-  };
-})
+          title: 'Login failed!',
+          template: "Please try again"
+          });
+    };
+
+
+    AuthService.login().then(function() {
+      AuthService.getInfo(user).then(onSuccess, onError);
+        //$state.go('tab.profile');
+        });
+    }
+  })
+
  
 .controller('ProfileCtrl', function($scope, AuthService, API_ENDPOINT, $http, $state) {
+  
+    $scope.profile={};
+    $scope.qrcode='Scott is a poopyhead';
+    var profileData=window.localStorage.getItem('profile');
+    profileData=JSON.parse(profileData);
+    $scope.profile.name=profileData[0];
+    $scope.profile.dob=profileData[1];
+    $scope.profile.iceName=profileData[2];
+    $scope.profile.iceNum=profileData[3];
+    $scope.profile.joined=profileData[4];
+    $scope.profile.email=profileData[5];
+    $scope.profile.address=profileData[6];
+    $scope.profile.phone=profileData[7];
+  
+  
+  
   $scope.destroySession = function() {
+    console.log("destroy session");
     AuthService.logout();
   };
  
@@ -28,10 +57,16 @@ angular.module('starter.controllers', [])
     
     
   };
- 
+   
+})
+
+.controller('SettingsCtrl', function($scope, AuthService, $state) {
+  
   $scope.logout = function() {
+    console.log("enter logout");
     AuthService.logout();
     $state.go('login');
+    console.log("exit logout");
   };
 })
  
