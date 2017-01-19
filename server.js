@@ -20,6 +20,7 @@ var Business = require('./app/models/business');
 
 var driver = neo4j.driver("bolt://hobby-gemhpbboojekgbkeihhpigol.dbs.graphenedb.com:24786", neo4j.auth.basic("app57975900-aEgAtX", "tGm6FwOKgU7sQyPDUACj"));
 
+var cloudinary = require('cloudinary');
 
 
 
@@ -43,6 +44,16 @@ app.use(function (err, req, res, next) {
     res.status(401).json({ message: 'Missing or invalid token' });
   }
 });
+
+
+//----------------- Cloudinary Configuration  NOT WORKING-----------------
+cloudinary.config({
+  cloud_name: 'hlqysoka2',
+  api_key: '836473758946851',
+  api_secret: 'HvbKatij3YP8zxk_1I7DOY5m8mA'
+});
+
+
 
 //app.use(passport.initialize());
 
@@ -258,17 +269,17 @@ router.post('/createRelationship', function (req, res) {
 //-----------------------------------    Add a New Person To The DataBase   -------------------------------- 
 router.post('/addPerson', function (req, res) {
   var session = driver.session();
-  
+
   var person = new Person();      // create a new instance of the Person model
   person.name = req.body.name;
   person.address = req.body.address;
   person.phone = req.body.phone;
   person.icename = req.body.icename;
   person.icephone = req.body.icephone;
-  
+
   var joined = new Date(req.body.joined);
   person.joined = joined.getTime();
-  
+
   var dob = new Date(req.body.joined);
   person.dob = dob.getTime();
 
@@ -307,9 +318,9 @@ router.post('/addRelationship', function (req, res) {
   session.run("MATCH (a:Person {name: '" + req.body.email + "'}), (b:Business {name: '" + req.body.bName + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
     .then(function (result) {
       console.log(result.records._fields + " Person->Business relationship created");
-     
+
       result.records.forEach(function (record) {
-        console.log(record.length);       
+        console.log(record.length);
       });
 
       // IF count(*) Returns > 0, Entry has been made
@@ -388,6 +399,30 @@ router.put('/updatePerson', function (req, res) {
       res.send(error);
     })
 })//updateperson
+
+
+
+//-----------------------------------    Upload Images To Cloudinary NOT WORKING    -------------------------------- 
+/*router.post('/uploadPic', function (req, res) {
+  console.log("IN uploadPic")
+  var fileStream = req.body.fileStream;
+  var barCode = req.body.barCode;
+  console.log("Got array")
+console.log(fileStream)
+  
+
+
+cloudinary.v2.uploader.upload(fileStream, 
+    function(error, result) {
+      console.log(result); 
+      res.send(result);
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send(error);
+    })
+})*/
+
 
 
 
