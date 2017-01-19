@@ -140,7 +140,7 @@ router.post('/addCompany', function (req, res) {
 
 
   session
-    .run("Merge (b:Business {name:'" + business.name + "', address:'" + business.address + "', phone:'" + business.phone + "', email:'" + business.email + "', password:'" + business.email + "'})")
+    .run("Merge (b:Business {name:'" + business.name + "', address:'" + business.address + "', phone:'" + business.phone + "', email:'" + business.email + "', password:'" + business.password + "'})")
 
     .then(function () {
       console.log("Business created");
@@ -264,8 +264,6 @@ function newPersonObj(req) {
     person.guardianName = req.body.guardianName;
     person.guardianNum = req.body.guardianNum;
   }
-
-
   return person;
 }
 
