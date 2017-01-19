@@ -2,7 +2,9 @@
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
@@ -10,6 +12,7 @@ using System.Web.Configuration;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+
 
 public partial class Web_Customer : System.Web.UI.Page
 {
@@ -26,16 +29,16 @@ public partial class Web_Customer : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack) {
-            try
-            {
-                GetUsrSettings();
-            }
-            catch (Exception)
-            {
-                Response.Redirect("LoginPage.aspx", true);
-            };
+
+        try
+        {
+            GetUsrSettings();
         }
+        catch (Exception)
+        {
+            Response.Redirect("LoginPage.aspx", true);
+        };
+
     }
 
     private void GetUsrSettings()
@@ -107,8 +110,10 @@ public partial class Web_Customer : System.Web.UI.Page
 
 
     //---------------- Post to API Route addPerson  ----------------
-    private void newCustomerRequest(Customer customer)
+    private void newCustomerRequest(CloudinaryApi.results imgDetails)
     {
+        Customer customer = createCustomer();
+
         var client = new RestClient(port);
         string password = Membership.GeneratePassword(6, 3);
 
@@ -120,10 +125,17 @@ public partial class Web_Customer : System.Web.UI.Page
         request.AddParameter("phone", customer.contactNumber);
         request.AddParameter("gender", customer.gender);
         request.AddParameter("joined", customer.date.ToString("MMMM dd, yyyy"));
+        //var sec = customer.date.Millisecond;
+        //var fghfg = Convert.ToDateTime(sec);
+
         request.AddParameter("address", customer.address);
         request.AddParameter("dob", customer.dob.ToString("MMMM dd, yyyy"));
         request.AddParameter("icename", customer.emergencyName);
         request.AddParameter("icephone", customer.emergencyNumber);
+
+
+        request.AddParameter("profilePic", imgDetails.secure_url);
+
 
 
         //ONLY IF UNDER 18
@@ -175,7 +187,59 @@ public partial class Web_Customer : System.Web.UI.Page
 
     protected void BtnSubmit_Click(object sender, EventArgs e)
     {
-        Customer cus = createCustomer();//CREATE A NEW CUSTOMER
-        newCustomerRequest(cus);//ADD THE NEW CUSTOMER TO THE DATABASE
+        CloudinaryApi.results cloudImg = StoreImgOnCloudinary();
+
+        newCustomerRequest(cloudImg);//ADD THE NEW CUSTOMER TO THE DATABASE
+    }
+
+
+    private CloudinaryApi.results StoreImgOnCloudinary()
+    {
+        string key = WebConfigurationManager.AppSettings["CLOUDINARY_API_KEY"];
+        string secret = WebConfigurationManager.AppSettings["CLOUDINARY_API_SECRET"];
+        string name = WebConfigurationManager.AppSettings["CLOUDINARY_API_NAME"];
+
+        dynamic jsonObject = new CloudinaryApi.results();
+
+        CloudinaryDotNet.Account account = new CloudinaryDotNet.Account(name, key, secret);
+        CloudinaryDotNet.Cloudinary cloudinary = new CloudinaryDotNet.Cloudinary(account);
+
+
+        HttpPostedFile file = Request.Files["ctl00$ContentPlaceHolder1$ImagePath"];
+
+        //Check To See If File has contents
+        //------------------- error check file type ? ------------------------------
+        if (file != null && file.ContentLength > 0)
+        {
+            string fname = Path.GetFileName(file.FileName);
+            file.SaveAs(Server.MapPath(Path.Combine("~/App_Data/Images", fname)));
+
+            #region
+            // input = new byte[file.ContentLength];
+            //System.IO.Stream MyStream;
+            //// Initialize the stream.
+            //MyStream = file.InputStream;
+
+            //// Read the file into the byte array.
+            //MyStream.Read(input, 0, file.ContentLength);
+
+            //pathImg = "data:image/"
+            //                + Path.GetExtension(file.FileName).Replace(".", "")
+            //                + ";base64,"
+            //                + Convert.ToBase64String(input) + "\" />";
+            #endregion
+
+            CloudinaryDotNet.Actions.ImageUploadParams uploadParams = new CloudinaryDotNet.Actions.ImageUploadParams()
+            {
+                File = new CloudinaryDotNet.Actions.FileDescription(Server.MapPath("/App_Data/Images/" + file.FileName))
+            };
+
+            //Upload Image
+            CloudinaryDotNet.Actions.ImageUploadResult uploadResult = cloudinary.Upload(uploadParams);
+
+            jsonObject = JsonConvert.DeserializeObject<CloudinaryApi.results>(uploadResult.JsonObj.ToString());
+            File.Delete(Server.MapPath(Path.Combine("~/App_Data/Images", fname)));
+        }
+        return (jsonObject as CloudinaryApi.results);
     }
 }

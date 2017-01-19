@@ -14,6 +14,25 @@ public partial class Web_Customer : System.Web.UI.Page
     {
 
     }
+    protected void DragAndDrop_Click(object sender, EventArgs e)
+    {
+        var dfhfghgf = "";
+        //fileSelected.InnerText = "DROP MASTER";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     string port = "http://localhost:8100/";
 
