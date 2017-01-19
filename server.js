@@ -224,6 +224,23 @@ router.post('/createRelationship', function (req, res) {
 router.post('/addPerson', function (req, res) {
   var session = driver.session();
 
+  var person = newPersonObj(req);      // create a new instance of the Person model
+  session
+    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", iceName:'" + person.iceName + "', icePhone:" + person.icePhone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
+
+    .then(function () {
+      console.log("Person created");
+      res.json({ message: 'Person created!' });
+      session.close();
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send(error);
+    })
+})//addPerson
+
+
+function newPersonObj(req) {
   var person = new Person();      // create a new instance of the Person model
   person.name = req.body.name;
   person.address = req.body.address;
@@ -248,23 +265,12 @@ router.post('/addPerson', function (req, res) {
     person.guardianNum = req.body.guardianNum;
   }
 
-  session
-    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", iceName:'" + person.iceName + "', icePhone:" + person.icePhone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" +person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName+"', guardianNum:'" + person.guardianNum+"'})")
 
-    .then(function () {
-      console.log("Person created");
-      res.json({ message: 'Person created!' });
-      session.close();
-    })
-    .catch(function (error) {
-      console.log(error);
-      res.send(error);
-    })
-})//addPerson
+  return person;
+}
 
 
-
-
+//-----------------------------------    Add a Relationship Between Person + Company -------------------------------- 
 router.post('/addRelationship', function (req, res) {
   var session = driver.session();
   session.run("MATCH (a:Person {name: '" + req.body.email + "'}), (b:Business {name: '" + req.body.bName + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
@@ -288,10 +294,10 @@ router.post('/addRelationship', function (req, res) {
       console.log(err);
       res.json({ success: false, message: err });
     })
-})//addrelationship
+})//addRelationship
 
 
-//-----------------------------------    DELETE a Person From The Database   -------------------------------- 
+//-----------------------------------    DELETE A Person -------------------------------- 
 router.delete('/deletePerson', function (req, res) {
 
   var session = driver.session();
@@ -310,33 +316,14 @@ router.delete('/deletePerson', function (req, res) {
       console.log(error);
       res.send(error);
     })
-})//deleteperson
+})//deletePerson
 
+
+//----------------------------------- UPDATE A Person -------------------------------- 
 router.put('/updatePerson', function (req, res) {
 
   var session = driver.session();
-  var person = new Person();      // create a new instance of the Person model
-  person.name = req.body.name;
-  person.address = req.body.address;
-  person.phone = req.body.phone;
-  person.iceName = req.body.iceName;
-  person.icePhone = req.body.icePhone;
-  var joined = new Date(req.body.joined);
-  person.joined = joined.getTime();
-  person.gender = req.body.gender;
-  var dob = new Date(req.body.joined);
-  person.dob = dob.getTime();
-  person.email = req.body.email;
-  person.password = req.body.password;
-
-  person.guardianName = null;
-  person.guardianNum = null;
-
-  //Check to see if the person was under 18 and Added a Guardian
-  if (req.body.guardianName != null && req.body.guardianNum != null) {
-    person.guardianName = req.body.guardianName;
-    person.guardianNum = req.body.guardianNum;
-  }
+  var person = newPersonObj(req);
 
   session
     .run("Match (a:Person) WHERE a.name='" + person.name + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.iceName='" + person.iceName + "', a.icePhone=" + person.icePhone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.email='" + person.email + "', a.password='" + person.password + "'")
@@ -354,7 +341,7 @@ router.put('/updatePerson', function (req, res) {
 
 
 
-//-----------------------------------    Upload Images To Cloudinary NOT WORKING    -------------------------------- 
+//-----------------------------------    Upload Images To Cloudinary *NOT WORKING*    -------------------------------- 
 /*router.post('/uploadPic', function (req, res) {
   console.log("IN uploadPic")
   var fileStream = req.body.fileStream;
