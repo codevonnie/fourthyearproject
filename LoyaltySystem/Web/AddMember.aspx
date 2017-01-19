@@ -6,13 +6,13 @@
 
     <div class="modal-dialog">
         <div class="modal-content textFontFamilyBody">
-            
+
             <div class="modal-header customerHeader">
                 <h1 class="text-center">Create New Member</h1>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    
+
                     <asp:Label ID="LblName" runat="server" Text="Name Of Participant" Font-Bold="True"></asp:Label>
                     <div class="form-group input-group input-group">
                         <span class="input-group-addon">
@@ -62,7 +62,7 @@
                     </div>
                     <asp:Label ID="LblEmergencyName" runat="server" Text="Emergency Contact Name" Font-Bold="True"></asp:Label>
                     <div class="form-group input-group input-group">
-                        <span class="input-group-addon" >
+                        <span class="input-group-addon">
                             <i class="fa fa-user-plus iconWidth" aria-hidden="true"></i>
                         </span>
                         <asp:TextBox ID="TbEmergencyName" runat="server" CssClass="form-control" placeholder="Emergency Contact Name"></asp:TextBox>
@@ -92,6 +92,30 @@
                         </span>
                         <asp:TextBox ID="TbGuardianNumber" runat="server" CssClass="form-control" placeholder="Guardian Number" TextMode="Phone"></asp:TextBox>
                     </div>
+
+                    <asp:Label ID="LblUpload" runat="server" Text="Upload User Image" Font-Bold="True"></asp:Label>
+                    <div class="form-group input-group input-group boxArea">
+                        <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+
+                            <span class="input-group-addon">
+                                <i class="fa fa-phone iconWidth" aria-hidden="true"></i>
+                            </span>
+
+                            <div class="form-control" data-trigger="fileinput">
+                                <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                                <div class="fileinput-filename" runat="server" ></div>
+                            </div>
+
+                            <span class="input-group-addon btn btn-default btn-file">
+                                <span class="fileinput-new">Select file</span>
+                                <span class="fileinput-exists">Change</span>
+                                <input type="file" name="..." runat="server" id="ImagePath" />
+                            </span>
+
+                            <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -102,6 +126,5 @@
             </div>
         </div>
     </div>
-
 </asp:Content>
 

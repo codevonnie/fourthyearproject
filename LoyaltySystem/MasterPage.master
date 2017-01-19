@@ -9,6 +9,9 @@
     <link href="Content/bootstrap.css" rel="stylesheet" />
     <link href="Content/CustomStyleSheet.css" rel="stylesheet" />
     <link href="Content/font-awesome.css" rel="stylesheet" />
+    <link href="Content/jasny-bootstrap.min.css" rel="stylesheet" />
+
+
     <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
 </head>
 <body>
@@ -75,5 +78,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/Scripts/jquery-3.1.1.min.js"></script>
     <script src="/Scripts/bootstrap.min.js"></script>
+    <script src="/Scripts/jasny-bootstrap.min.js"></script>
+  
 </body>
 </html>
