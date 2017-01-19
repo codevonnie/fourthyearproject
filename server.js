@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var neo4j = require('neo4j-driver').v1;
-var port = process.env.PORT || 8100;        // set our port
+var port = process.env.PORT || 8100;        // set the port if testing locally
 var morgan = require('morgan');
 //var jwt = require('jwt-simple');
 var config = require('./config/database');
@@ -21,8 +21,6 @@ var Business = require('./app/models/business');
 var driver = neo4j.driver("bolt://hobby-gemhpbboojekgbkeihhpigol.dbs.graphenedb.com:24786", neo4j.auth.basic("app57975900-aEgAtX", "tGm6FwOKgU7sQyPDUACj"));
 
 var cloudinary = require('cloudinary');
-
-
 
 // Get our request parameters
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -45,7 +43,6 @@ app.use(function (err, req, res, next) {
   }
 });
 
-
 //----------------- Cloudinary Configuration  NOT WORKING-----------------
 cloudinary.config({
   cloud_name: 'hlqysoka2',
@@ -53,15 +50,7 @@ cloudinary.config({
   api_secret: 'HvbKatij3YP8zxk_1I7DOY5m8mA'
 });
 
-
-
-//app.use(passport.initialize());
-
-//require('./config/passport')(passport);
-
-
 var router = express.Router();
-//var db = mongoose.connect(config.database);
 
 // middleware to use for all requests
 
@@ -84,7 +73,6 @@ router.post('/authenticate', function (req, res) {
 
   var queryString = "";
   var session = driver.session();
-
   console.log('I am authenticating');
   console.log(req.body.email);
   console.log(req.body.password);
@@ -93,7 +81,7 @@ router.post('/authenticate', function (req, res) {
   if (req.body.type === "person")
     queryString = "Match (a:Person) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a";
   else if (req.body.type === "business")
-    queryString = "Match (a:Business) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a"
+    queryString = "Match (a:Business) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a";
 
   console.log(queryString);
   session
@@ -104,15 +92,20 @@ router.post('/authenticate', function (req, res) {
         res.json({ success: false });
       else {
         var credList = [];//create a new list
+        console.log(result);
         result.records.forEach(function (record) {//Iterate over results        
 
           //If its A PERSON loggin In
           if (req.body.type === "person") {
             //Add The person Details to the list
-            credList.push(record._fields[0].properties.name)
-            credList.push(record._fields[0].properties.dob)
-            credList.push(record._fields[0].properties.icename)
-            credList.push(record._fields[0].properties.icephone.low)
+            credList.push(record._fields[0].properties.name);
+            credList.push(record._fields[0].properties.dob);
+            credList.push(record._fields[0].properties.iceName);
+            credList.push(record._fields[0].properties.icePhone.low);
+            credList.push(record._fields[0].properties.joined);
+            credList.push(record._fields[0].properties.email);
+            credList.push(record._fields[0].properties.address);
+            credList.push(record._fields[0].properties.phone);
             //Send the Response Back [List]
             res.json({ success: true, message: credList });
           }
@@ -133,45 +126,6 @@ router.post('/authenticate', function (req, res) {
     });
 });
 
-/*
-// secure route
-router.get('/memberInfo', passport.authenticate('jwt', { session: false}), 
-function(req, res) {
-  console.log("IT'S ME");
-  var token = getToken(req.headers);
-  console.log("in memberinfo");
-  if (token) {
-    var decoded = jwt.decode(token, config.secret);
-    console.log(decoded);
-    Person.findOne({
-      email: decoded.email
-    }, function(err, person) {
-        if (err) throw err;
- 
-        if (!person) {
-          return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
-        } else {
-          res.json({success: true, msg: 'Welcome in the member area ' + person.name + '!'});
-        }
-    });
-  } else {
-    return res.status(403).send({success: false, msg: 'No token provided.'});
-  }
-});
- 
-getToken = function (headers) {
-  console.log("gettoken func");
-  if (headers && headers.authorization) {
-    var parted = headers.authorization.split(' ');
-    if (parted.length === 2) {
-      return parted[1];
-    } else {
-      return null;
-    }
-  } else {
-    return null;
-  }
-};
 
 //-----------------------------------    ADD A NEW Business   -------------------------------- 
 router.post('/addCompany', function (req, res) {
@@ -274,16 +228,14 @@ router.post('/addPerson', function (req, res) {
   person.name = req.body.name;
   person.address = req.body.address;
   person.phone = req.body.phone;
-  person.icename = req.body.icename;
-  person.icephone = req.body.icephone;
 
-  var joined = new Date(req.body.joined);
-  person.joined = joined.getTime();
-
-  var dob = new Date(req.body.joined);
-  person.dob = dob.getTime();
+  person.iceName = req.body.iceName;
+  person.icePhone = req.body.icePhone;
+  var joined = new Date(); // Person join date is the current date/time of entry
+  person.joined = joined.getTime(); // Join date is converted to milliseconds
 
   person.gender = req.body.gender;
+  person.dob = req.body.dob;
   person.email = req.body.email;
   person.password = req.body.password;
 
@@ -297,7 +249,7 @@ router.post('/addPerson', function (req, res) {
   }
 
   session
-    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", icename:'" + person.icename + "', icephone:" + person.icephone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:'" + person.dob + "', email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
+    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", iceName:'" + person.iceName + "', icePhone:" + person.icePhone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" +person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName+"', guardianNum:'" + person.guardianNum+"'})")
 
     .then(function () {
       console.log("Person created");
@@ -367,8 +319,8 @@ router.put('/updatePerson', function (req, res) {
   person.name = req.body.name;
   person.address = req.body.address;
   person.phone = req.body.phone;
-  person.icename = req.body.icename;
-  person.icephone = req.body.icephone;
+  person.iceName = req.body.iceName;
+  person.icePhone = req.body.icePhone;
   var joined = new Date(req.body.joined);
   person.joined = joined.getTime();
   person.gender = req.body.gender;
@@ -387,7 +339,7 @@ router.put('/updatePerson', function (req, res) {
   }
 
   session
-    .run("Match (a:Person) WHERE a.name='" + person.name + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.icename='" + person.icename + "', a.icephone=" + person.icephone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.email='" + person.email + "', a.password='" + person.password + "'")
+    .run("Match (a:Person) WHERE a.name='" + person.name + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.iceName='" + person.iceName + "', a.icePhone=" + person.icePhone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.email='" + person.email + "', a.password='" + person.password + "'")
     .then(function () {
       console.log("Person updated");
       res.json({ message: 'Person updated!' });
