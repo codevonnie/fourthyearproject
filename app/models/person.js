@@ -4,12 +4,17 @@ var Schema = mongoose.Schema;
 var PersonSchema = new Schema({
     name: String,
     address: String,
-    phone: Number,
+    phone: String,
     iceName: String,
-    icePhone: Number,
+    icePhone: String,
     joined: Number,
     gender: String,
     dob: Number,
+    imgUrl:{
+        type:String,
+        unique: true,
+        //required: true
+        },
     email: {
         type: String,
         unique: true,

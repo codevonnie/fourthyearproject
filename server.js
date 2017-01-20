@@ -74,14 +74,11 @@ router.post('/authenticate', function (req, res) {
   var queryString = "";
   var session = driver.session();
   console.log('I am authenticating');
-  console.log(req.body.email);
-  console.log(req.body.password);
-  console.log(req.body.type);
 
   if (req.body.type === "person")
-    queryString = "Match (a:Person) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a";
+    queryString = "Match (a:Person) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a LIMIT 1";
   else if (req.body.type === "business")
-    queryString = "Match (a:Business) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a";
+    queryString = "Match (a:Business) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a LIMIT 1";
 
   console.log(queryString);
   session
@@ -93,24 +90,48 @@ router.post('/authenticate', function (req, res) {
       else {
         var credList = [];//create a new list
         console.log(result);
-        result.records.forEach(function (record) {//Iterate over results        
 
+        //Loop over Results, should always just be 1 returned
+        result.records.forEach(function (record) {
           //If its A PERSON loggin In
           if (req.body.type === "person") {
-            //Add The person Details to the list
-            credList.push(record._fields[0].properties.name);
-            credList.push(record._fields[0].properties.dob);
-            credList.push(record._fields[0].properties.iceName);
-            credList.push(record._fields[0].properties.icePhone.low);
-            credList.push(record._fields[0].properties.joined);
-            credList.push(record._fields[0].properties.email);
-            credList.push(record._fields[0].properties.address);
-            credList.push(record._fields[0].properties.phone);
+
             //Send the Response Back [List]
-            res.json({ success: true, message: credList });
+            res.json({
+              success: true,
+              name: record._fields[0].properties.name,
+              age: record._fields[0].properties.age,
+              dob: record._fields[0].properties.dob.toString(),
+              address: record._fields[0].properties.address,
+              phone: record._fields[0].properties.phone,
+              iceName: record._fields[0].properties.iceName,
+              icePhone: record._fields[0].properties.icePhone,
+              joined: record._fields[0].properties.joined.toString(),
+              gender: record._fields[0].properties.gender,
+              email: record._fields[0].properties.email,
+              imgUrl: record._fields[0].properties.imgUrl,
+              guardianName: record._fields[0].properties.guardianName,
+              guardianNum: record._fields[0].properties.guardianNum,
+            });
+            /*JSON RESPONSE =
+              "success": true,
+              "name": "Paul Potts4564",
+              "dob": "2315648943215",
+              "address": "123 Fake Street5464",
+              "phone": "353879876543",
+              "iceName": "Bob Potts5464",
+              "icePhone": "353871234567",
+              "joined": "1484921393189",
+              "gender": "female",
+              "email": "test@email.com",
+              "imgUrl": "https://res.cloudinary.com/hlqysoka2/image/upload/v1484837295/itxmpiumdiu56q7sbebn.jpg",
+              "guardianName": "timtim",
+              "guardianNum": "1800696969"
+            */
+
           }
           else {
-            //Add The biz Details to the list
+            //Add The biz Details to the [list]
             //console.log(record._fields[0].properties.name);
             res.json({ success: true, name: record._fields[0].properties.name })
           }
@@ -199,7 +220,7 @@ router.get('/businessMembers', function (req, res) {
 
 
 
-/*-----------------------------------    POST Person   -------------------------------- 
+/*-----------------------------------    POST RETURN ALL Persons NOT FINISHED/WORKING -------------------------------- 
 * GET Request returns the Person Nodes and sends them all as a JSON response to the client
 */
 router.post('/findPerson', function (req, res) {
@@ -208,15 +229,41 @@ router.post('/findPerson', function (req, res) {
 
   var person = newPersonObj(req);
 
-    session
+  session
     .run("MATCH (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", iceName:'" + person.iceName + "', icePhone:" + person.icePhone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) RETURN a")
 
     .then(function (result) {
       var personList = [];//create a new list
-      
+
       result.records.forEach(function (record) {//Iterate over results
-        console.log(record._fields[0].properties);//log results
-        personList.push(record._fields[0].properties)//Add The business To a list
+
+        var jsonObj;
+        jsonObj = ({
+          success: true,
+          name: record._fields[0].properties.name,
+          age: record._fields[0].properties.age,
+          dob: record._fields[0].properties.dob,
+          address: record._fields[0].properties.address,
+          phone: record._fields[0].properties.phone,
+          iceName: record._fields[0].properties.iceName,
+          icePhone: record._fields[0].properties.icePhone,
+          joined: record._fields[0].properties.joined,
+          gender: record._fields[0].properties.gender,
+          email: record._fields[0].properties.email,
+          imgUrl: record._fields[0].properties.imgUrl,
+          guardianName: record._fields[0].properties.guardianName,
+          guardianNum: record._fields[0].properties.guardianNum,
+        });
+
+        /* JSON RESPONSE FOR PERSON 
+
+        */
+
+        //Send the Response Back
+        res.json({
+          success: true,
+          results: jsonObj,
+        });
       });
 
       res.json({ message: personList });//send the personList as a response
@@ -257,13 +304,17 @@ router.post('/createRelationship', function (req, res) {
 });
 
 
+
+
+
+
 //-----------------------------------    Add a New Person To The DataBase   -------------------------------- 
 router.post('/addPerson', function (req, res) {
   var session = driver.session();
 
   var person = newPersonObj(req);      // create a new instance of the Person model
   session
-    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", iceName:'" + person.iceName + "', icePhone:" + person.icePhone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
+    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
 
     .then(function () {
       console.log("Person created");
@@ -333,7 +384,7 @@ router.put('/updatePerson', function (req, res) {
   var person = newPersonObj(req);
 
   session
-    .run("Match (a:Person) WHERE a.name='" + person.name + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.iceName='" + person.iceName + "', a.icePhone=" + person.icePhone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.email='" + person.email + "', a.password='" + person.password + "'")
+    .run("Match (a:Person) WHERE a.name='" + person.name + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.iceName='" + person.iceName + "', a.icePhone=" + person.icePhone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.imgUrl='" + person.imgUrl + "', a.email='" + person.email + "', a.password='" + person.password + "'")
     .then(function () {
       console.log("Person updated");
       res.json({ message: 'Person updated!' });
@@ -349,7 +400,7 @@ router.put('/updatePerson', function (req, res) {
 
 //-----------------------------------    Create A New Person Object From Http Request  -------------------------------- 
 function newPersonObj(req) {
-  var person = new Person(); 
+  var person = new Person();
   person.name = req.body.name;
   person.address = req.body.address;
   person.phone = req.body.phone;
@@ -363,6 +414,7 @@ function newPersonObj(req) {
   person.dob = req.body.dob;
   person.email = req.body.email;
   person.password = req.body.password;
+  person.imgUrl = req.body.imgUrl;
 
   person.guardianName = null;
   person.guardianNum = null;
