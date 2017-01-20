@@ -75,6 +75,11 @@ router.post('/authenticate', function (req, res) {
   var session = driver.session();
   console.log('I am authenticating');
 
+  // if req.body.password.contains(¬¬¬)
+  //respond to user with change password and relocate them to set up new pass page
+
+
+
   if (req.body.type === "person")
     queryString = "Match (a:Person) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a LIMIT 1";
   else if (req.body.type === "business")
@@ -113,6 +118,7 @@ router.post('/authenticate', function (req, res) {
               guardianName: record._fields[0].properties.guardianName,
               guardianNum: record._fields[0].properties.guardianNum,
             });
+
             /*JSON RESPONSE =
               "success": true,
               "name": "Paul Potts4564",
@@ -314,12 +320,7 @@ router.post('/addPerson', function (req, res) {
 
   var person = newPersonObj(req);      // create a new instance of the Person model
   session
-<<<<<<< HEAD
-    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
-=======
-    .run("Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", iceName:'" + person.iceName + "', icePhone:" + person.icePhone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
->>>>>>> 36c57b93348bbdc554d935a3ff8c2e4fc3711690
-
+    .run("Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
     .then(function () {
       console.log("Person created");
       res.json({ message: 'Person created!' });
