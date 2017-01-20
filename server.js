@@ -138,7 +138,6 @@ router.post('/addCompany', function (req, res) {
   business.email = req.body.email;       //Set the Business Email
   business.password = req.body.password; //Set the Business Password
 
-
   session
     .run("Merge (b:Business {name:'" + business.name + "', address:'" + business.address + "', phone:'" + business.phone + "', email:'" + business.email + "', password:'" + business.password + "'})")
 
@@ -200,6 +199,44 @@ router.get('/businessMembers', function (req, res) {
 
 
 
+/*-----------------------------------    POST Person   -------------------------------- 
+* GET Request returns the Person Nodes and sends them all as a JSON response to the client
+*/
+router.post('/findPerson', function (req, res) {
+  console.log("in findPerson ");
+  var session = driver.session();
+
+  var person = newPersonObj(req);
+
+    session
+    .run("MATCH (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", iceName:'" + person.iceName + "', icePhone:" + person.icePhone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) RETURN a")
+
+    .then(function (result) {
+      var personList = [];//create a new list
+      
+      result.records.forEach(function (record) {//Iterate over results
+        console.log(record._fields[0].properties);//log results
+        personList.push(record._fields[0].properties)//Add The business To a list
+      });
+
+      res.json({ message: personList });//send the personList as a response
+      session.close();//close the session
+      driver.close();////close driver
+
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send(error);
+    });
+});
+
+
+
+
+
+
+
+
 //-----------------------------------    CREATE A RELATIONSHIP BETWEEN Business AND PERSON   -------------------------------- 
 router.post('/createRelationship', function (req, res) {
   var session = driver.session();
@@ -238,34 +275,6 @@ router.post('/addPerson', function (req, res) {
       res.send(error);
     })
 })//addPerson
-
-
-function newPersonObj(req) {
-  var person = new Person();      // create a new instance of the Person model
-  person.name = req.body.name;
-  person.address = req.body.address;
-  person.phone = req.body.phone;
-
-  person.iceName = req.body.iceName;
-  person.icePhone = req.body.icePhone;
-  var joined = new Date(); // Person join date is the current date/time of entry
-  person.joined = joined.getTime(); // Join date is converted to milliseconds
-
-  person.gender = req.body.gender;
-  person.dob = req.body.dob;
-  person.email = req.body.email;
-  person.password = req.body.password;
-
-  person.guardianName = null;
-  person.guardianNum = null;
-
-  //Check to see if the person was under 18 and Added a Guardian
-  if (req.body.guardianName != null && req.body.guardianNum != null) {
-    person.guardianName = req.body.guardianName;
-    person.guardianNum = req.body.guardianNum;
-  }
-  return person;
-}
 
 
 //-----------------------------------    Add a Relationship Between Person + Company -------------------------------- 
@@ -336,6 +345,43 @@ router.put('/updatePerson', function (req, res) {
       res.send(error);
     })
 })//updateperson
+
+
+//-----------------------------------    Create A New Person Object From Http Request  -------------------------------- 
+function newPersonObj(req) {
+  var person = new Person(); 
+  person.name = req.body.name;
+  person.address = req.body.address;
+  person.phone = req.body.phone;
+
+  person.iceName = req.body.iceName;
+  person.icePhone = req.body.icePhone;
+  var joined = new Date(); // Person join date is the current date/time of entry
+  person.joined = joined.getTime(); // Join date is converted to milliseconds
+
+  person.gender = req.body.gender;
+  person.dob = req.body.dob;
+  person.email = req.body.email;
+  person.password = req.body.password;
+
+  person.guardianName = null;
+  person.guardianNum = null;
+
+  //Check to see if the person was under 18 and Added a Guardian
+  if (req.body.guardianName != null && req.body.guardianNum != null) {
+    person.guardianName = req.body.guardianName;
+    person.guardianNum = req.body.guardianNum;
+  }
+  return person;
+}
+
+
+
+
+
+
+
+
 
 
 
