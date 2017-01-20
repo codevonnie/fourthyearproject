@@ -263,7 +263,7 @@ router.post('/addPerson', function (req, res) {
 
   var person = newPersonObj(req);      // create a new instance of the Person model
   session
-    .run("Merge (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", iceName:'" + person.iceName + "', icePhone:" + person.icePhone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
+    .run("Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", iceName:'" + person.iceName + "', icePhone:" + person.icePhone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
 
     .then(function () {
       console.log("Person created");
