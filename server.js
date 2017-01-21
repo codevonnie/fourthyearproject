@@ -1,26 +1,21 @@
 //Variables
-var express = require('express');
+var express = require('express'); 
 var app = express();
 var bodyParser = require('body-parser');
 var neo4j = require('neo4j-driver').v1;
 var port = process.env.PORT || 8100;        // set the port if testing locally
 var morgan = require('morgan');
-//var jwt = require('jwt-simple');
 var config = require('./config/database');
 var cors = require('cors');
 var passport = require('passport');
-
 var mongoose = require('mongoose');
 var jwt = require('express-jwt');
-//var request = require("request");
 var rsaValidation = require('auth0-api-jwt-rsa-validation');
-
+var cloudinary = require('cloudinary');
 var Person = require('./app/models/person');
 var Business = require('./app/models/business');
 
 var driver = neo4j.driver("bolt://hobby-gemhpbboojekgbkeihhpigol.dbs.graphenedb.com:24786", neo4j.auth.basic("app57975900-aEgAtX", "tGm6FwOKgU7sQyPDUACj"));
-
-var cloudinary = require('cloudinary');
 
 // Get our request parameters
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -53,7 +48,6 @@ cloudinary.config({
 var router = express.Router();
 
 // middleware to use for all requests
-
 app.all('*', function (req, res, next) {
   // do logging
   res.header("Access-Control-Allow-Origin", "*");
@@ -78,14 +72,12 @@ router.post('/authenticate', function (req, res) {
   // if req.body.password.contains(¬¬¬)
   //respond to user with change password and relocate them to set up new pass page
 
-
-
+  // check whether authentication request is from mobile app or web app - make appropriate database call
   if (req.body.type === "person")
     queryString = "Match (a:Person) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a LIMIT 1";
   else if (req.body.type === "business")
     queryString = "Match (a:Business) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a LIMIT 1";
 
-  console.log(queryString);
   session
     .run(queryString)
     .then(function (result) {
@@ -94,11 +86,10 @@ router.post('/authenticate', function (req, res) {
         res.json({ success: false });
       else {
         var credList = [];//create a new list
-        console.log(result);
 
         //Loop over Results, should always just be 1 returned
         result.records.forEach(function (record) {
-          //If its A PERSON loggin In
+          //If its A PERSON logging In
           if (req.body.type === "person") {
 
             //Send the Response Back [List]
@@ -166,7 +157,7 @@ router.post('/addCompany', function (req, res) {
   business.password = req.body.password; //Set the Business Password
 
   session
-    .run("Merge (b:Business {name:'" + business.name + "', address:'" + business.address + "', phone:'" + business.phone + "', email:'" + business.email + "', password:'" + business.password + "'})")
+    .run("Create (b:Business {name:'" + business.name + "', address:'" + business.address + "', phone:'" + business.phone + "', email:'" + business.email + "', password:'" + business.password + "'})")
 
     .then(function () {
       console.log("Business created");
@@ -175,54 +166,70 @@ router.post('/addCompany', function (req, res) {
       driver.close();
     })
     .catch(function (error) {
-      console.log(error);
-      res.send(error);
+      // if error is a business with this email address already exists, return fail response
+      var s=error.fields[0].message;
+      if(s.includes("already exists")){
+        res.json({ success: false });
+      }
+      else{
+        res.send(error);
+      }
+      
     });
 });
 
+//-----------------------------------    Add a New Person To The DataBase   -------------------------------- 
+router.post('/addPerson', function (req, res) {
+  var session = driver.session();
 
-//-----------------------------------    DELETE A Business BY NAME  -------------------------------- 
+  var person = newPersonObj(req);      // create a new instance of the Person model
+  session
+    .run("Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
+    .then(function () {
+      console.log("Person created");
+      res.json({ message: 'Person created!' });
+      session.close();
+    })
+    .catch(function (error) {
+      var s=error.fields[0].message;
+      if(s.includes("already exists")){
+        res.json({ success: false });
+      }
+      else{
+        res.send(error);
+      }
+    })
+})//addPerson
+
+
+//-----------------------------------    DELETE A Business BY EMAIL  -------------------------------- 
+
+        //-------------> Should probably add an extra authorisation step for deletion to avoid mistakes! <------------------
+
 router.delete('/deleteCompany', function (req, res) {
   var session = driver.session();
-  var name = req.body.name;         //Set the Business name (comes from the request)
-
-  session.run("MATCH (b:Business {name:'" + name + "'}) DELETE b")
+  var email = req.body.email;         //Set the Business email (comes from the request)
+ //query checks for business, deletes business, all of it's relationships and its members
+  session.run("MATCH (b:Business {email:'" + email + "'}) OPTIONAL MATCH (b)-[r]-(p) DETACH DELETE b, r, p return COUNT(*)")
+  
     .then(function () {
-      console.log("Business Deleted");
-      res.json({ message: 'Business Deleted!' });
+          
+      // IF count(*) Returns > 0, Entry has been made
+      if (result.records.length > 0)
+        res.json({ success: true, message: 'Business Deleted' });
+      else
+        res.json({ success: false, message: 'Problem Deleting Business Check Email/Password' });
+
       session.close();
       driver.close();
     })
     .catch(function (error) {
-      console.log(error);
+
       res.send(error);
     });
 });
 
 
-
-/*-----------------------------------    GET ALL Business   -------------------------------- 
-* GET Request returns all the Buisness Nodes and sends them all as a JSON response to the client
-*/
-router.get('/businessMembers', function (req, res) {
-  console.log("in business members");
-  var session = driver.session();//Create a new session
-  session.run('MATCH (a:Business) RETURN a LIMIT 25')
-    .then(function (result) {
-      var bizList = [];//create a new list
-      result.records.forEach(function (record) {//Iterate over results
-        console.log(record._fields[0].properties);//log results
-        bizList.push(record._fields[0].properties)//Add The business To a list
-      });
-      res.json({ message: bizList });//send the bizList as a response
-      session.close();//close the session
-      driver.close();////close driver
-    })
-    .catch(function (error) {
-      console.log(error);
-      res.send(error);
-    });
-});
 
 
 
@@ -283,69 +290,14 @@ router.post('/findPerson', function (req, res) {
     });
 });
 
-
-
-
-
-
-
-
-//-----------------------------------    CREATE A RELATIONSHIP BETWEEN Business AND PERSON   -------------------------------- 
-router.post('/createRelationship', function (req, res) {
-  var session = driver.session();
-  var name = req.body.name;         //Set the Business name (comes from the request)
-  var bname = req.body.name;
-
-  session.run("MATCH (a:Person {name: '" + name + "'}), (b:Business {name: '" + bname + "'}) CREATE (a)-[r:IS_MY_ISLAND_HUSBAND]->(b)")
-    .then(function () {
-      console.log("Relationship created");
-      res.json({ message: 'Relationship created!' });
-      session.close();
-      driver.close();
-    })
-    .catch(function (error) {
-      console.log(error);
-      res.send(error);
-    });
-});
-
-
-
-
-
-
-//-----------------------------------    Add a New Person To The DataBase   -------------------------------- 
-router.post('/addPerson', function (req, res) {
-  var session = driver.session();
-
-  var person = newPersonObj(req);      // create a new instance of the Person model
-  session
-    .run("Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
-    .then(function () {
-      console.log("Person created");
-      res.json({ message: 'Person created!' });
-      session.close();
-    })
-    .catch(function (error) {
-      console.log(error);
-      res.send(error);
-    })
-})//addPerson
-
-
 //-----------------------------------    Add a Relationship Between Person + Company -------------------------------- 
 router.post('/addRelationship', function (req, res) {
   var session = driver.session();
-  session.run("MATCH (a:Person {name: '" + req.body.email + "'}), (b:Business {name: '" + req.body.bName + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
+  session.run("MATCH (a:Person {email: '" + req.body.email + "'}), (b:Business {name: '" + req.body.bName + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
     .then(function (result) {
-      console.log(result.records._fields + " Person->Business relationship created");
-
-      result.records.forEach(function (record) {
-        console.log(record.length);
-      });
 
       // IF count(*) Returns > 0, Entry has been made
-      if (result > 0)
+      if (result.records.length > 0)
         res.json({ success: true, message: 'Person<-REL->Business' });
       else
         res.json({ success: false, message: 'Problem Creating Relationship Check Name/Email' });
@@ -364,20 +316,25 @@ router.post('/addRelationship', function (req, res) {
 router.delete('/deletePerson', function (req, res) {
 
   var session = driver.session();
-  var person = new Person();      // create a new instance of the Person model
-  person.name = req.body.name;
-
+  // find person by email and also find any relationships it may have - delete node and relationships
   session
-    .run("Match (a:Person) WHERE a.name='" + person.name + "' DETACH DELETE a")
-    .then(function () {
+    .run("Match (a:Person) WHERE a.email='" + req.body.email + "' OPTIONAL MATCH (a)-[r]-() DETACH DELETE a, r return COUNT(*)")
+    .then(function (result) {
       console.log("Person deleted");
-      res.json({ message: 'Person deleted!' });
+      console.log(result);
+      
+      // IF count(*) Returns > 0, Entry has been made
+      if (result.records.length > 0)
+        res.json({ success: true, message: 'User Deleted' });
+      else
+        res.json({ success: false, message: 'Problem Deleting User Check Name/Email' });
+      
       session.close();
-      //driver.close();
+      driver.close();
     })
     .catch(function (error) {
       console.log(error);
-      res.send(error);
+      res.json({ success: false, message: err });
     })
 })//deletePerson
 
@@ -389,16 +346,21 @@ router.put('/updatePerson', function (req, res) {
   var person = newPersonObj(req);
 
   session
-    .run("Match (a:Person) WHERE a.name='" + person.name + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.iceName='" + person.iceName + "', a.icePhone=" + person.icePhone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.imgUrl='" + person.imgUrl + "', a.email='" + person.email + "', a.password='" + person.password + "'")
-    .then(function () {
-      console.log("Person updated");
-      res.json({ message: 'Person updated!' });
+    .run("Match (a:Person) WHERE a.email='" + person.email + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.iceName='" + person.iceName + "', a.icePhone=" + person.icePhone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.imgUrl='" + person.imgUrl + "', a.email='" + person.email + "', a.password='" + person.password + "' return COUNT(*)") 
+    .then(function (result) {
+       
+       // IF count(*) Returns > 0, Updating has been made successfully
+      if (result.records.length > 0)
+        res.json({ success: true, message: 'User Details Updated' });
+      else
+        res.json({ success: false, message: 'Problem Updating User Check Name/Email' });
+      
       session.close();
       //driver.close();
     })
     .catch(function (error) {
       console.log(error);
-      res.send(error);
+      res.json({ success: false, message: err });
     })
 })//updateperson
 
@@ -433,6 +395,32 @@ function newPersonObj(req) {
 }
 
 
+
+/*-----------------------------------    GET ALL Business   -------------------------------- 
+* GET Request returns all the Buisness Nodes and sends them all as a JSON response to the client
+*/
+
+      //---------------> IS THIS A NECESSARY METHOD? <--------------------
+
+router.get('/businessMembers', function (req, res) {
+
+  var session = driver.session();//Create a new session
+  session.run('MATCH (a:Business) RETURN a LIMIT 25')
+    .then(function (result) {
+      var bizList = [];//create a new list
+      result.records.forEach(function (record) {//Iterate over results
+        console.log(record._fields[0].properties);//log results
+        bizList.push(record._fields[0].properties)//Add The business To a list
+      });
+      res.json({ message: bizList });//send the bizList as a response
+      session.close();//close the session
+      driver.close();////close driver
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send(error);
+    });
+});
 
 
 
@@ -470,7 +458,8 @@ cloudinary.v2.uploader.upload(fileStream,
 // all of our routes will be prefixed with /api
 app.use('/api', router);
 
-// START THE SERVER
-// =============================================================================
+// Server listens on local port or on Heroku port
+//=============================================================================
+
 app.listen(port);
 console.log('Magic happens on port ' + port);
