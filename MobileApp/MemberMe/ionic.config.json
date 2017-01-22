@@ -10,8 +10,14 @@
       "path": "/token",
       "proxyUrl": "http://127.0.0.1:8101"
     }
+  ],
+  "gulpStartupTasks": [
+    "sass",
+    "watch"
+  ],
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*",
+    "!www/**/*.map"
   ]
-  
 }
-
-

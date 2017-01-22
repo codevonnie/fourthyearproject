@@ -36,7 +36,9 @@ $scope.login = function(user) {
     $scope.qrcode='Scott is a poopyhead';
     var profileData=window.localStorage.getItem('profile');
     profileData=JSON.parse(profileData);
-    $scope.profile.name=profileData[0];
+    $scope.profile=profileData;
+    /*
+    $scope.profile.name=profileData.name;
     $scope.profile.dob=profileData[1];
     $scope.profile.iceName=profileData[2];
     $scope.profile.iceNum=profileData[3];
@@ -44,7 +46,7 @@ $scope.login = function(user) {
     $scope.profile.email=profileData[5];
     $scope.profile.address=profileData[6];
     $scope.profile.phone=profileData[7];
-  
+  */
   
   
   $scope.destroySession = function() {
@@ -68,6 +70,11 @@ $scope.login = function(user) {
     $state.go('login');
     console.log("exit logout");
   };
+})
+
+.controller('SosCtrl', function($scope, AuthService, $state) {
+  
+ 
 })
  
 .controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS) {

@@ -67,7 +67,8 @@ angular.module('starter.services', [])
            if (result.data.success) {
              resolve(result.data.msg);
              //window.localStorage.setItem('profile', result.data);
-             window.localStorage.setItem('profile', JSON.stringify(result.data.message));
+             console.log(result.data);
+             window.localStorage.setItem('profile', JSON.stringify(result.data));
            } else {
              reject(result.data.success);
              console.log("getMembers failed" + result.data.success);
