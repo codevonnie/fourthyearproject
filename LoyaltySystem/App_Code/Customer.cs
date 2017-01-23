@@ -12,13 +12,15 @@ public class Customer
     public string name { get; set; }
     public string address { get; set; }
     public string email { get; set; }
+    public string phone { get; set; }
     public DateTime dob { get; set; }
-    public string gender { get; set; }
-    public int contactNumber { get; set; }
-    public int emergencyNumber { get; set; }
-    public String emergencyName { get; set; }
+    public string contactNumber { get; set; }
+    public string icePhone { get; set; }
+    public String iceName { get; set; }
     public DateTime date { get; set; }
-    public string guardianNumber { get; set; }
+    public DateTime joined { get; set; }//milliseconds ?
+    public string guardianNum { get; set; }
     public string guardianName { get; set; }
     public string customerToken { get; set; }
+    public string imgUrl { get; set; }
 }

@@ -70,12 +70,11 @@ public partial class Web_Customer : System.Web.UI.Page
         request.AddParameter("password", "pass");//random password
         request.AddParameter("email", customer.email);
         request.AddParameter("phone", customer.contactNumber);
-        request.AddParameter("gender", customer.gender);
         request.AddParameter("joined", customer.date);
         request.AddParameter("address", customer.address);
         request.AddParameter("dob", customer.dob);
-        request.AddParameter("icename", customer.emergencyName);
-        request.AddParameter("icephone", customer.emergencyNumber);
+        request.AddParameter("icename", customer.iceName);
+        request.AddParameter("icephone", customer.icePhone);
 
 
 
