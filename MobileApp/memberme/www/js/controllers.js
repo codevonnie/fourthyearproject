@@ -37,18 +37,7 @@ $scope.login = function(user) {
     var profileData=window.localStorage.getItem('profile');
     profileData=JSON.parse(profileData);
     $scope.profile=profileData;
-    /*
-    $scope.profile.name=profileData.name;
-    $scope.profile.dob=profileData[1];
-    $scope.profile.iceName=profileData[2];
-    $scope.profile.iceNum=profileData[3];
-    $scope.profile.joined=profileData[4];
-    $scope.profile.email=profileData[5];
-    $scope.profile.address=profileData[6];
-    $scope.profile.phone=profileData[7];
-  */
-  
-  
+      
   $scope.destroySession = function() {
     console.log("destroy session");
     AuthService.logout();
