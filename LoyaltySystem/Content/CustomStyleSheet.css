@@ -36,9 +36,15 @@
     margin-right: auto;
 }
 
+.maxWidthContainer{
+    width: 200px;
+}
+
+
 
 .boxArea {
     display:block;
     width: 100%;
     height:100%;
 }
+

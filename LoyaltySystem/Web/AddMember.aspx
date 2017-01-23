@@ -21,14 +21,6 @@
                         <asp:TextBox ID="TbName" runat="server" CssClass="form-control" placeholder="Enter Name"></asp:TextBox>
                     </div>
 
-                    <asp:Label ID="LblGender" runat="server" Text="Sex" Font-Bold="True"></asp:Label>
-                    <div class="form-group input-group input-group">
-                        <span class="input-group-addon">
-                            <i class="fa fa-venus-mars iconWidth" aria-hidden="true"></i>
-                        </span>
-                        <asp:TextBox ID="TbGender" runat="server" CssClass="form-control" placeholder="Male/Female"></asp:TextBox>
-                    </div>
-
                     <asp:Label ID="LblEmail" runat="server" Text="Email Address" Font-Bold="True"></asp:Label>
                     <div class="form-group input-group input-group">
                         <span class="input-group-addon">

@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
+using System.Threading;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Security;
@@ -18,8 +19,7 @@ public partial class Web_Customer : System.Web.UI.Page
 {
 
     private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
-    //  private string port = WebConfigurationManager.AppSettings["API_PORT"];
-    // private System.Web.HttpCookie authCookie;
+    // private string port = WebConfigurationManager.AppSettings["API_PORT"];
 
     //SSL Cookie with Auth Token etc
     private object _auth_Token = "";
@@ -29,7 +29,6 @@ public partial class Web_Customer : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-
         try
         {
             GetUsrSettings();
@@ -96,15 +95,14 @@ public partial class Web_Customer : System.Web.UI.Page
         customer.name = TbName.Text.ToString();
         customer.address = TbAddress.Text.ToString();
         customer.dob = Convert.ToDateTime(TbDob.Text);
-        customer.gender = TbGender.Text.ToString();
-        customer.contactNumber = Convert.ToInt32(TbContactNum.Text);
-        customer.emergencyNumber = Convert.ToInt32(TbEmergencyNum.Text);
-        customer.emergencyName = TbEmergencyName.Text;
+        customer.contactNumber = TbContactNum.Text;
+        customer.icePhone = TbEmergencyNum.Text;
+        customer.iceName = TbEmergencyName.Text;
         customer.email = TbEmail.Text.ToString();
         customer.date = DateTime.Now;//Todays Date
 
         customer.guardianName = TbGuardianName.Text.ToString();
-        customer.guardianNumber = TbGuardianNumber.Text.ToString();
+        customer.guardianNum = TbGuardianNumber.Text.ToString();
         return customer;
     }
 
@@ -123,48 +121,40 @@ public partial class Web_Customer : System.Web.UI.Page
         request.AddParameter("password", "¬¬¬" + password);//random password
         request.AddParameter("email", customer.email);
         request.AddParameter("phone", customer.contactNumber);
-        request.AddParameter("gender", customer.gender);
         request.AddParameter("joined", customer.date.ToString("MMMM dd, yyyy"));
-        //var sec = customer.date.Millisecond;
-        //var fghfg = Convert.ToDateTime(sec);
+        request.AddParameter("address", customer.address);      
+        request.AddParameter("icename", customer.iceName);
+        request.AddParameter("icephone", customer.icePhone);
+        request.AddParameter("imgUrl", imgDetails.secure_url);
 
-        request.AddParameter("address", customer.address);
-        request.AddParameter("dob", customer.dob.ToString("MMMM dd, yyyy"));
-        request.AddParameter("icename", customer.emergencyName);
-        request.AddParameter("icephone", customer.emergencyNumber);
+        //http://stackoverflow.com/questions/5955883/datetimes-representation-in-milliseconds
+        //Needed to get milliseconds for database
+        string simpleDate = customer.dob.ToString("dd/MM/yyyy");
+        DateTime dt = DateTime.ParseExact(simpleDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+        var mil = dt.ToUniversalTime().Subtract(
+      new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+      ).TotalMilliseconds;
 
-
-        request.AddParameter("profilePic", imgDetails.secure_url);
-
+        request.AddParameter("dob", mil);
 
 
         //ONLY IF UNDER 18
-        if (customer.guardianName != "" && customer.guardianNumber != "")
+        if (customer.guardianName != "" && customer.guardianNum != "")
         {
             request.AddParameter("guardianName", customer.guardianName);
-            request.AddParameter("guardianNum", customer.guardianNumber);
+            request.AddParameter("guardianNum", customer.guardianNum);
         }
 
         IRestResponse response = client.Execute(request);
         var content = response.Content;
 
-
         //FIX RESPONSE JSON
-        // dynamic jsonObject = JsonConvert.DeserializeObject<BuisinessRoot>(response.Content);
-        // var bizObj = jsonObject as BuisinessRoot;
+        //dynamic jsonObject = JsonConvert.DeserializeObject<BuisinessRoot>(response.Content);
+        //var bizObj = jsonObject as BuisinessRoot;
 
         //If the Message is not Empty
         if (content != "")
-        {
-            //Successful Login
             Server.Transfer("Default.aspx", true);
-            //newRelationshipRequest(customer, bizObj);
-        }
-        else
-        {
-
-        }
-
     }
 
     /*
@@ -193,6 +183,7 @@ public partial class Web_Customer : System.Web.UI.Page
     }
 
 
+    // --------------------------- Upload image To The Database On Cloudinary --------------------------- 
     private CloudinaryApi.results StoreImgOnCloudinary()
     {
         string key = WebConfigurationManager.AppSettings["CLOUDINARY_API_KEY"];
@@ -238,6 +229,8 @@ public partial class Web_Customer : System.Web.UI.Page
             CloudinaryDotNet.Actions.ImageUploadResult uploadResult = cloudinary.Upload(uploadParams);
 
             jsonObject = JsonConvert.DeserializeObject<CloudinaryApi.results>(uploadResult.JsonObj.ToString());
+
+            //Remove the Image from storage again
             File.Delete(Server.MapPath(Path.Combine("~/App_Data/Images", fname)));
         }
         return (jsonObject as CloudinaryApi.results);

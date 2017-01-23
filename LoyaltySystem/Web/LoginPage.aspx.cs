@@ -77,7 +77,7 @@ public partial class LoginPage : System.Web.UI.Page
             Cache["AuthType"] = Encrypt.Base64Encode(auth.token_type);
 
             //Successful Login
-            Response.Redirect("Default.aspx", true);
+            Response.Redirect("AddMember.aspx", true);
         }
         else
         {
