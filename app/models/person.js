@@ -8,7 +8,6 @@ var PersonSchema = new Schema({
     iceName: String,
     icePhone: String,
     joined: Number,
-    gender: String,
     dob: Number,
     imgUrl:{
         type:String,

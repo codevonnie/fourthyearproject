@@ -1,5 +1,5 @@
 //Variables
-var express = require('express'); 
+var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var neo4j = require('neo4j-driver').v1;
@@ -103,7 +103,6 @@ router.post('/authenticate', function (req, res) {
               iceName: record._fields[0].properties.iceName,
               icePhone: record._fields[0].properties.icePhone,
               joined: record._fields[0].properties.joined.toString(),
-              gender: record._fields[0].properties.gender,
               email: record._fields[0].properties.email,
               imgUrl: record._fields[0].properties.imgUrl,
               guardianName: record._fields[0].properties.guardianName,
@@ -119,7 +118,6 @@ router.post('/authenticate', function (req, res) {
               "iceName": "Bob Potts5464",
               "icePhone": "353871234567",
               "joined": "1484921393189",
-              "gender": "female",
               "email": "test@email.com",
               "imgUrl": "https://res.cloudinary.com/hlqysoka2/image/upload/v1484837295/itxmpiumdiu56q7sbebn.jpg",
               "guardianName": "timtim",
@@ -167,14 +165,14 @@ router.post('/addCompany', function (req, res) {
     })
     .catch(function (error) {
       // if error is a business with this email address already exists, return fail response
-      var s=error.fields[0].message;
-      if(s.includes("already exists")){
+      var s = error.fields[0].message;
+      if (s.includes("already exists")) {
         res.json({ success: false });
       }
-      else{
+      else {
         res.send(error);
       }
-      
+
     });
 });
 
@@ -183,37 +181,41 @@ router.post('/addPerson', function (req, res) {
   var session = driver.session();
 
   var person = newPersonObj(req);      // create a new instance of the Person model
+
+  var joined = new Date(); // Person join date is the current date/time of entry
+  person.joined = joined.getTime(); // Join date is converted to milliseconds
+
   session
-    .run("Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
+    .run("Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:" + person.joined + ", dob:" + person.dob + ", email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'})")
     .then(function () {
       console.log("Person created");
       res.json({ message: 'Person created!' });
       session.close();
     })
     .catch(function (error) {
-      var s=error.fields[0].message;
-      if(s.includes("already exists")){
+      var s = error.fields[0].message;
+      if (s.includes("already exists")) {
         res.json({ success: false });
       }
-      else{
+      else {
         res.send(error);
       }
     })
 })//addPerson
 
 
-//-----------------------------------    DELETE A Business BY EMAIL  -------------------------------- 
+//-----------------------------------    DELETE A Business BY EMAIL  ---------------------------------------
 
-        //-------------> Should probably add an extra authorisation step for deletion to avoid mistakes! <------------------
+//-------------> Should probably add an extra authorisation step for deletion to avoid mistakes! <----------
 
 router.delete('/deleteCompany', function (req, res) {
   var session = driver.session();
   var email = req.body.email;         //Set the Business email (comes from the request)
- //query checks for business, deletes business, all of it's relationships and its members
+  //query checks for business, deletes business, all of it's relationships and its members
   session.run("MATCH (b:Business {email:'" + email + "'}) OPTIONAL MATCH (b)-[r]-(p) DETACH DELETE b, r, p return COUNT(*)")
-  
+
     .then(function () {
-          
+
       // IF count(*) Returns > 0, Entry has been made
       if (result.records.length > 0)
         res.json({ success: true, message: 'Business Deleted' });
@@ -233,24 +235,20 @@ router.delete('/deleteCompany', function (req, res) {
 
 
 
-/*-----------------------------------    POST RETURN ALL Persons NOT FINISHED/WORKING -------------------------------- 
-* GET Request returns the Person Nodes and sends them all as a JSON response to the client
-*/
+//-----------------------------------    POST Find Persons - Arivals WebApp -------------------*FIX*--------
+// Working if you leave guardianName/num as null or dont add them in request 
+// May need to Fix Timeout if person isnt found
 router.post('/findPerson', function (req, res) {
   console.log("in findPerson ");
   var session = driver.session();
 
   var person = newPersonObj(req);
-
   session
-    .run("MATCH (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:" + person.phone + ", iceName:'" + person.iceName + "', icePhone:" + person.icePhone + ", joined:" + person.joined + ", gender:'" + person.gender + "', dob:" + person.dob + ", email:'" + person.email + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) RETURN a")
+    .run("MATCH (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:" + person.joined + ", dob:" + person.dob + ", email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) RETURN a")
 
     .then(function (result) {
-      var personList = [];//create a new list
-
       result.records.forEach(function (record) {//Iterate over results
-
-        var jsonObj;
+        /*var jsonObj;//Create a new person object to add as the response
         jsonObj = ({
           success: true,
           name: record._fields[0].properties.name,
@@ -261,34 +259,28 @@ router.post('/findPerson', function (req, res) {
           iceName: record._fields[0].properties.iceName,
           icePhone: record._fields[0].properties.icePhone,
           joined: record._fields[0].properties.joined,
-          gender: record._fields[0].properties.gender,
           email: record._fields[0].properties.email,
           imgUrl: record._fields[0].properties.imgUrl,
           guardianName: record._fields[0].properties.guardianName,
           guardianNum: record._fields[0].properties.guardianNum,
-        });
-
-        /* JSON RESPONSE FOR PERSON 
-
-        */
+        });*/
 
         //Send the Response Back
         res.json({
           success: true,
-          results: jsonObj,
+          message: "Person Found!"
         });
+        console.log("Success: Found Person");
       });
-
-      res.json({ message: personList });//send the personList as a response
       session.close();//close the session
       driver.close();////close driver
 
     })
-    .catch(function (error) {
-      console.log(error);
-      res.send(error);
-    });
-});
+    .catch(function (err) {
+      console.log(err);
+      res.json({ success: false, message: err });
+    })
+})
 
 //-----------------------------------    Add a Relationship Between Person + Company -------------------------------- 
 router.post('/addRelationship', function (req, res) {
@@ -322,13 +314,13 @@ router.delete('/deletePerson', function (req, res) {
     .then(function (result) {
       console.log("Person deleted");
       console.log(result);
-      
+
       // IF count(*) Returns > 0, Entry has been made
       if (result.records.length > 0)
         res.json({ success: true, message: 'User Deleted' });
       else
         res.json({ success: false, message: 'Problem Deleting User Check Name/Email' });
-      
+
       session.close();
       driver.close();
     })
@@ -346,15 +338,15 @@ router.put('/updatePerson', function (req, res) {
   var person = newPersonObj(req);
 
   session
-    .run("Match (a:Person) WHERE a.email='" + person.email + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.iceName='" + person.iceName + "', a.icePhone=" + person.icePhone + ", a.joined='" + person.joined + "', a.gender='" + person.gender + "', a.dob=" + person.dob + ", a.imgUrl='" + person.imgUrl + "', a.email='" + person.email + "', a.password='" + person.password + "' return COUNT(*)") 
+    .run("Match (a:Person) WHERE a.email='" + person.email + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.iceName='" + person.iceName + "', a.icePhone=" + person.icePhone + ", a.joined='" + person.joined + "', a.dob=" + person.dob + ", a.imgUrl='" + person.imgUrl + "', a.email='" + person.email + "' return COUNT(*)")
     .then(function (result) {
-       
-       // IF count(*) Returns > 0, Updating has been made successfully
+
+      // IF count(*) Returns > 0, Updating has been made successfully
       if (result.records.length > 0)
         res.json({ success: true, message: 'User Details Updated' });
       else
         res.json({ success: false, message: 'Problem Updating User Check Name/Email' });
-      
+
       session.close();
       //driver.close();
     })
@@ -374,10 +366,8 @@ function newPersonObj(req) {
 
   person.iceName = req.body.iceName;
   person.icePhone = req.body.icePhone;
-  var joined = new Date(); // Person join date is the current date/time of entry
-  person.joined = joined.getTime(); // Join date is converted to milliseconds
 
-  person.gender = req.body.gender;
+  person.joined = req.body.joined;
   person.dob = req.body.dob;
   person.email = req.body.email;
   person.password = req.body.password;
@@ -396,11 +386,10 @@ function newPersonObj(req) {
 
 
 
-/*-----------------------------------    GET ALL Business   -------------------------------- 
+/*-----------------------------------    GET ALL Business   ----------------------------------- 
 * GET Request returns all the Buisness Nodes and sends them all as a JSON response to the client
 */
-
-      //---------------> IS THIS A NECESSARY METHOD? <--------------------
+//---------------------------> IS THIS A NECESSARY METHOD? Testing Only <-----------------
 
 router.get('/businessMembers', function (req, res) {
 
@@ -438,8 +427,8 @@ router.get('/businessMembers', function (req, res) {
   console.log("Got array")
 console.log(fileStream)
   
-
-
+ 
+ 
 cloudinary.v2.uploader.upload(fileStream, 
     function(error, result) {
       console.log(result); 
