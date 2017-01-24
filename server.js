@@ -338,7 +338,7 @@ router.put('/updatePerson', function (req, res) {
   var person = newPersonObj(req);
 
   session
-    .run("Match (a:Person) WHERE a.email='" + person.email + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone=" + person.phone + ", a.iceName='" + person.iceName + "', a.icePhone=" + person.icePhone + ", a.joined='" + person.joined + "', a.dob=" + person.dob + ", a.imgUrl='" + person.imgUrl + "', a.email='" + person.email + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + person.email + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone='" + person.phone + "', a.iceName='" + person.iceName + "', a.icePhone='" + person.icePhone + "', a.joined='" + person.joined + "', a.dob=" + person.dob + ", a.imgUrl='" + person.imgUrl + "', a.email='" + person.email + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
