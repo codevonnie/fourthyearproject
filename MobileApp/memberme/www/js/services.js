@@ -1,38 +1,43 @@
 angular.module('starter.services', [])
  
+ //AuthService - controls login, Authorization and logout
 .service('AuthService', function($q, $http, API_ENDPOINT) {
-  var LOCAL_TOKEN_KEY = 'yourTokenKey';
+  
+  //auth token variables
+  var LOCAL_TOKEN_KEY = 'yourTokenKey'; 
   var isAuthenticated = false;
   var authToken;
 
+  //POST method for getting Auth0 token - used in login function
   var options = { method: 'POST',
   url: 'https://membermeauth.eu.auth0.com/oauth/token',
   headers: { 'Content-Type': 'application/json' },
   data: '{"client_id":"fXqMFIGFPGXAPLNm6ltd0NsGV6fWpvDM","client_secret":"HHnBRmKTpK99fx4RYIVnxiJFQourT1RkbWnrs0jIUP1vdYrgWZ1104Tew7cb5-wp","audience":"https://restapicust.herokuapp.com/api/","grant_type":"client_credentials"}' };
 
- 
+  //retrieve saved token from local storage and send to useCredentials function
   function loadUserCredentials() {
     var token = window.localStorage.getItem(LOCAL_TOKEN_KEY);
-    if (token) {
+    if (token) { //if token is not null
       useCredentials(token);
     }
   }
-
+  //save Auth0 token to local storage
   function storeUserCredentials(token) {
     window.localStorage.setItem(LOCAL_TOKEN_KEY, token);
     useCredentials(token);
 
   }
- 
+  //set authenticated variables
   function useCredentials(token) {
     isAuthenticated = true;
     authToken = token;
     
  
-    // Set the token as header for your requests!
+    // Set the token as header for all requests
     $http.defaults.headers.common.Authorization = 'Bearer ' + authToken;
   }
-
+  
+  //reset auth variables and remove token from local storage
   function destroyUserCredentials() {
     authToken = undefined;
     isAuthenticated = false;
@@ -40,11 +45,12 @@ angular.module('starter.services', [])
     window.localStorage.removeItem(LOCAL_TOKEN_KEY);
   }
    
- 
+ //use POST call options
   var login = function(){
     return $q(function(resolve, reject) {
       $http(options).then(function(result) {
         if (result.statusText=="OK") {
+          //if successful send token to storeUserCredentials
           storeUserCredentials(result.data.access_token);
           resolve(result.data.msg);
         } else {
@@ -55,19 +61,18 @@ angular.module('starter.services', [])
     })
   }
   
- 
+  //logout func calls destroyUserCredentials function
   var logout = function() {
-    console.log("logout service");
     destroyUserCredentials();
   };
 
+  //method sends token and user email and password to api to be authenticated
   var getInfo = function(user) {
        return $q(function(resolve, reject) {
          $http.post(API_ENDPOINT.url + '/authenticate', user).then(function(result) {
            if (result.data.success) {
              resolve(result.data.msg);
-             //window.localStorage.setItem('profile', result.data);
-             console.log(JSON.stringify(result.data));
+             //if call successful, stringify JSON object and save to local storage
              window.localStorage.setItem('profile', JSON.stringify(result.data));
            } else {
              reject(result.data.success);
@@ -76,18 +81,16 @@ angular.module('starter.services', [])
          });
        });
      };
-
+     //sends updated profile details to server updatePerson method
      var updateProfile = function(user) {
        return $q(function(resolve, reject) {
          $http.put(API_ENDPOINT.url + '/updatePerson', user).then(function(result) {
            if (result.data.success) {
              resolve(result.data.msg);
-             //window.localStorage.setItem('profile', result.data);
-             console.log(JSON.stringify(result.data));
-             //window.localStorage.setItem('profile', JSON.stringify(result.data));
+
            } else {
              reject(result.data.success);
-             console.log("updatePerson failed" + result.data.success);
+
            }
          });
        });
