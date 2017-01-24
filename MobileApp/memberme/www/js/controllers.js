@@ -33,10 +33,22 @@ $scope.login = function(user) {
 .controller('ProfileCtrl', function($scope, AuthService, API_ENDPOINT, $http, $state) {
   
     $scope.profile={};
-    $scope.qrcode='Scott is a poopyhead';
+    $scope.toggle=false;
+    $scope.listCanSwipe = true
+    $scope.qrcode=window.localStorage.getItem('profile');
     var profileData=window.localStorage.getItem('profile');
     profileData=JSON.parse(profileData);
     $scope.profile=profileData;
+
+    $scope.edit = function() {
+      $scope.toggle=!$scope.toggle;
+      console.log($scope.profile.name);
+    }
+
+    $scope.submit = function() {
+      $scope.toggle=!$scope.toggle;
+      AuthService.updateProfile($scope.profile);
+    }
       
   $scope.destroySession = function() {
     console.log("destroy session");

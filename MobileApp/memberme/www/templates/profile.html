@@ -6,32 +6,84 @@
     <div class="card">
       <div class="item item-text-wrap">
         <ion-item class="item-thumbnail-left"><img ng-src="{{profile.imgUrl}}"></ion-item>
-        <div class="list">
-          <label class="item item-stacked-label">
-            <span class="input-label">Name</span>
-            <input type="text" placeholder="{{profile.name}}">
-          </label>
-          <label class="item item-input item-stacked-label">
-            <span class="input-label">DOB</span>
-            <input type="text" placeholder="{{profile.dob}}">
-          </label>
-          <label class="item item-input item-stacked-label">
-            <span class="input-label">Email</span>
-            <input type="text" placeholder="john@suhr.com">
-          </label>
-        </div>
+        <ion-list show-delete="shouldShowDelete" can-swipe="listCanSwipe">
+          <ion-item>
+            <h2>Name</h2>
+            <h3>{{profile.name}}</h3>
+             <ion-option-button class="button-info" ng-click="edit()">
+                Edit
+              </ion-option-button>
+              <div ng-show="toggle">
+                    <input type="text" ng-model="profile.name" placeholder="Enter new details"></input>
+                    <button ng-click="submit(profile)">Submit</button>
+                    </div>
+          </ion-item>
 
+          <ion-item>
+            <h2>Date of Birth</h2>
+            <h3>{{profile.dob}}</h3>
+          </ion-item>
 
+          <ion-item>
+            <h2>Emergency Contact</h2>
+            <h3>{{profile.iceName}}</h3>
+            <ion-option-button class="button-info" ng-click="edit()">
+                Edit
+              </ion-option-button>
+              <div ng-show="toggle">
+                    <input type="text" ng-model="profile.iceName" placeholder="Enter new details" ></input>
+                    <button ng-click="submit()">Submit</button>
+                    </div>
+          </ion-item>
 
-        <ion-item>Name: {{profile.name}} </ion-item>
-        <ion-item>DOB: {{profile.dob}} </ion-item>
-        <ion-item>Emergency Contact: {{profile.iceName}} </ion-item>
-        <ion-item>Emergency Contact No.: {{profile.iceNum}} </ion-item>
-        <ion-item>Join date: {{profile.joined}} </ion-item>
-        <ion-item>Email: {{profile.email}} </ion-item>
-        <ion-item>Address: {{profile.address}} </ion-item>
-        <ion-item>Phone No.: {{profile.phone}} </ion-item>
-        <ion-item><qr text="qrcode" size="size"></qr> </ion-item>
+          <ion-item>
+            <h2>Emergency Contact No.</h2>
+            <h3>{{profile.icePhone}}</h3>
+            <ion-option-button class="button-info" ng-click="edit()">
+                Edit
+              </ion-option-button>
+              <div ng-show="toggle">
+                    <input type="text" ng-model="profile.icePhone" placeholder="Enter new details" ></input>
+                    <button ng-click="submit()">Submit</button>
+                    </div>
+          </ion-item>
+
+          <ion-item>
+            <h2>Join Date</h2>
+            <h3>{{profile.joined}}</h3>
+          </ion-item>
+
+          <ion-item>
+            <h2>Email</h2>
+            <h3>{{profile.email}}</h3>
+          </ion-item>
+
+          <ion-item>
+            <h2>Address</h2>
+            <h3>{{profile.address}}</h3>
+            <ion-option-button class="button-info" ng-click="edit()">
+                Edit
+              </ion-option-button>
+              <div ng-show="toggle">
+                    <input type="text" ng-model="profile.address" placeholder="Enter new details" ></input>
+                    <button ng-click="submit()">Submit</button>
+                    </div>
+          </ion-item>
+
+          <ion-item>
+            <h2>Phone No.</h2>
+            <h3>{{profile.phone}}</h3>
+            <ion-option-button class="button-info" ng-click="edit()">
+                Edit
+              </ion-option-button>
+              <div ng-show="toggle">
+                    <input type="text" ng-model="profile.phone" placeholder="Enter new details"></input>
+                    <button ng-click="submit()">Submit</button>
+                    </div>
+          </ion-item>
+
+          <ion-item><qr text="qrcode" size="size"></qr> </ion-item>
+        </ion-list>
 
       </div>
     </div>

@@ -67,11 +67,27 @@ angular.module('starter.services', [])
            if (result.data.success) {
              resolve(result.data.msg);
              //window.localStorage.setItem('profile', result.data);
-             console.log(result.data);
+             console.log(JSON.stringify(result.data));
              window.localStorage.setItem('profile', JSON.stringify(result.data));
            } else {
              reject(result.data.success);
              console.log("getMembers failed" + result.data.success);
+           }
+         });
+       });
+     };
+
+     var updateProfile = function(user) {
+       return $q(function(resolve, reject) {
+         $http.put(API_ENDPOINT.url + '/updatePerson', user).then(function(result) {
+           if (result.data.success) {
+             resolve(result.data.msg);
+             //window.localStorage.setItem('profile', result.data);
+             console.log(JSON.stringify(result.data));
+             //window.localStorage.setItem('profile', JSON.stringify(result.data));
+           } else {
+             reject(result.data.success);
+             console.log("updatePerson failed" + result.data.success);
            }
          });
        });
@@ -84,6 +100,7 @@ angular.module('starter.services', [])
     options: options,
     logout: logout,
     getInfo: getInfo,
+    updateProfile: updateProfile,
     isAuthenticated: function() {return isAuthenticated;},
   };
 })
