@@ -30,17 +30,18 @@ $scope.login = function(user) {
   })
 
  
-.controller('ProfileCtrl', function($scope, AuthService, API_ENDPOINT, $http, $state) {
+.controller('ProfileCtrl', function($scope, AuthService, API_ENDPOINT, $http, $state, $ionicListDelegate) {
   
     $scope.profile={};
     $scope.toggle=false;
-    $scope.listCanSwipe = true
+    $scope.listCanSwipe = true;
     $scope.qrcode=window.localStorage.getItem('profile');
     var profileData=window.localStorage.getItem('profile');
     profileData=JSON.parse(profileData);
     $scope.profile=profileData;
 
     $scope.edit = function() {
+      $ionicListDelegate.closeOptionButtons();
       $scope.toggle=!$scope.toggle;
       console.log($scope.profile.name);
     }
