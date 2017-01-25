@@ -21,7 +21,7 @@
                         <asp:TextBox ID="TbName" runat="server" CssClass="form-control" placeholder="Enter Name"></asp:TextBox>
                     </div>
 
-                    <asp:Label ID="LblEmail" runat="server" Text="Email Address" Font-Bold="True"></asp:Label>
+                    <asp:Label ID="LblEmail" runat="server" Text="Email Address" TextMode="Email" Font-Bold="True"></asp:Label>
                     <div class="form-group input-group input-group">
                         <span class="input-group-addon">
                             <i class="fa fa-envelope-o iconWidth" aria-hidden="true"></i>
@@ -68,6 +68,29 @@
                         <asp:TextBox ID="TbAddress" runat="server" CssClass="form-control" placeholder="Current Address"></asp:TextBox>
                     </div>
 
+                    <asp:Label ID="LblUpload" runat="server" Text="Person's Image" Font-Bold="True"></asp:Label>
+                    <div class="form-group input-group input-group boxArea">
+                        <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+
+                            <span class="input-group-addon">
+                                <i class="fa fa-upload iconWidth" aria-hidden="true"></i>
+                            </span>
+
+                            <div class="form-control" data-trigger="fileinput">
+                                <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                                <div class="fileinput-filename" runat="server"></div>
+                            </div>
+
+                            <span class="input-group-addon btn btn-default btn-file">
+                                <span class="fileinput-new">Select file</span>
+                                <span class="fileinput-exists">Change</span>
+                                <input type="file" name="..." runat="server" id="ImagePath" />
+                            </span>
+
+                            <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                        </div>
+                    </div>
+
                     <h1 class="text-center">Under 18s Only</h1>
                     <asp:Label ID="LblGuardianName" runat="server" Text="Guardian Name" Font-Bold="True"></asp:Label>
                     <div class="form-group input-group input-group">
@@ -83,29 +106,6 @@
                             <i class="fa fa-phone iconWidth" aria-hidden="true"></i>
                         </span>
                         <asp:TextBox ID="TbGuardianNumber" runat="server" CssClass="form-control" placeholder="Guardian Number" TextMode="Phone"></asp:TextBox>
-                    </div>
-
-                    <asp:Label ID="LblUpload" runat="server" Text="Upload User Image" Font-Bold="True"></asp:Label>
-                    <div class="form-group input-group input-group boxArea">
-                        <div class="fileinput fileinput-new input-group" data-provides="fileinput">
-
-                            <span class="input-group-addon">
-                                <i class="fa fa-phone iconWidth" aria-hidden="true"></i>
-                            </span>
-
-                            <div class="form-control" data-trigger="fileinput">
-                                <i class="glyphicon glyphicon-file fileinput-exists"></i>
-                                <div class="fileinput-filename" runat="server" ></div>
-                            </div>
-
-                            <span class="input-group-addon btn btn-default btn-file">
-                                <span class="fileinput-new">Select file</span>
-                                <span class="fileinput-exists">Change</span>
-                                <input type="file" name="..." runat="server" id="ImagePath" />
-                            </span>
-
-                            <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
-                        </div>
                     </div>
 
                 </div>
