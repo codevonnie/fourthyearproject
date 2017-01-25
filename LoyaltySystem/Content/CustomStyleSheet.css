@@ -31,7 +31,7 @@
 }
 
 
-.ModalHeadColor{
+.ModalHeadColor {
     background-color: #e6f4f9;
     color: #5f667d;
 }
@@ -93,16 +93,26 @@
     }
 
 
-.RoundTop{
-    border-top-left-radius:6px;
-    border-top-right-radius:6px;
+.RoundTop {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
 }
 
-.RoundBottom{
-    border-bottom-left-radius:6px;
-    border-bottom-right-radius:6px;
+.RoundBottom {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
 }
 
+
+
+/*ICON CSS Here*/
+.has-success .form-control-feedback {
+    margin-top: 5px;
+}
+
+.has-error .form-control-feedback {
+    margin-top: 5px;
+}
 
 /*Map CSS Here*/
 #map {
