@@ -24,3 +24,19 @@ public class Customer
     public string customerToken { get; set; }
     public string imgUrl { get; set; }
 }
+
+public class TempCustomer
+{
+    public bool success { get; set; }
+    public string name { get; set; }
+    public string dob { get; set; }
+    public string address { get; set; }
+    public string phone { get; set; }
+    public string iceName { get; set; }
+    public string icePhone { get; set; }
+    public string joined { get; set; }
+    public string email { get; set; }
+    public string imgUrl { get; set; }
+    public string guardianName { get; set; }
+    public string guardianNum { get; set; }
+}
