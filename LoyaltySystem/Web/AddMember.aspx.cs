@@ -2,21 +2,24 @@
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Principal;
+using System.Threading;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+
 public partial class Web_Customer : System.Web.UI.Page
 {
 
     private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
-    //  private string port = WebConfigurationManager.AppSettings["API_PORT"];
-    // private System.Web.HttpCookie authCookie;
+    // private string port = WebConfigurationManager.AppSettings["API_PORT"];
 
     //SSL Cookie with Auth Token etc
     private object _auth_Token = "";
@@ -26,16 +29,15 @@ public partial class Web_Customer : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack) {
-            try
-            {
-                GetUsrSettings();
-            }
-            catch (Exception)
-            {
-                Response.Redirect("LoginPage.aspx", true);
-            };
+        try
+        {
+            GetUsrSettings();
         }
+        catch (Exception)
+        {
+            Response.Redirect("LoginPage.aspx", true);
+        };
+
     }
 
     private void GetUsrSettings()
@@ -86,28 +88,30 @@ public partial class Web_Customer : System.Web.UI.Page
 
     }
 
-    /*Method Creates a new Customer Obj from the input form
-     */
+    //---------------- Create/Return Customer Object ----------------
     private Customer createCustomer()
     {
         Customer customer = new Customer();
         customer.name = TbName.Text.ToString();
         customer.address = TbAddress.Text.ToString();
         customer.dob = Convert.ToDateTime(TbDob.Text);
-        customer.gender = TbGender.Text.ToString();
-        customer.contactNumber = Convert.ToInt32(TbContactNum.Text);
-        customer.emergencyNumber = Convert.ToInt32(TbEmergencyNum.Text);
-        customer.emergencyName = TbEmergencyName.Text;
+        customer.contactNumber = TbContactNum.Text;
+        customer.icePhone = TbEmergencyNum.Text;
+        customer.iceName = TbEmergencyName.Text;
         customer.email = TbEmail.Text.ToString();
         customer.date = DateTime.Now;//Todays Date
 
         customer.guardianName = TbGuardianName.Text.ToString();
-        customer.guardianNumber = TbGuardianNumber.Text.ToString();
+        customer.guardianNum = TbGuardianNumber.Text.ToString();
         return customer;
     }
 
-    private void newCustomerRequest(Customer customer)
+
+    //---------------- Post to API Route addPerson  ----------------
+    private void newCustomerRequest(CloudinaryApi.results imgDetails)
     {
+        Customer customer = createCustomer();
+
         var client = new RestClient(port);
         string password = Membership.GeneratePassword(6, 3);
 
@@ -117,41 +121,40 @@ public partial class Web_Customer : System.Web.UI.Page
         request.AddParameter("password", "¬¬¬" + password);//random password
         request.AddParameter("email", customer.email);
         request.AddParameter("phone", customer.contactNumber);
-        request.AddParameter("gender", customer.gender);
         request.AddParameter("joined", customer.date.ToString("MMMM dd, yyyy"));
-        request.AddParameter("address", customer.address);
-        request.AddParameter("dob", customer.dob.ToString("MMMM dd, yyyy"));
-        request.AddParameter("icename", customer.emergencyName);
-        request.AddParameter("icephone", customer.emergencyNumber);
+        request.AddParameter("address", customer.address);      
+        request.AddParameter("icename", customer.iceName);
+        request.AddParameter("icephone", customer.icePhone);
+        request.AddParameter("imgUrl", imgDetails.secure_url);
+
+        //http://stackoverflow.com/questions/5955883/datetimes-representation-in-milliseconds
+        //Needed to get milliseconds for database
+        string simpleDate = customer.dob.ToString("dd/MM/yyyy");
+        DateTime dt = DateTime.ParseExact(simpleDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+        var mil = dt.ToUniversalTime().Subtract(
+      new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+      ).TotalMilliseconds;
+
+        request.AddParameter("dob", mil);
 
 
         //ONLY IF UNDER 18
-        if (customer.guardianName != "" && customer.guardianNumber != "")
+        if (customer.guardianName != "" && customer.guardianNum != "")
         {
             request.AddParameter("guardianName", customer.guardianName);
-            request.AddParameter("guardianNum", customer.guardianNumber);
+            request.AddParameter("guardianNum", customer.guardianNum);
         }
 
         IRestResponse response = client.Execute(request);
         var content = response.Content;
 
-
         //FIX RESPONSE JSON
-        // dynamic jsonObject = JsonConvert.DeserializeObject<BuisinessRoot>(response.Content);
-        // var bizObj = jsonObject as BuisinessRoot;
+        //dynamic jsonObject = JsonConvert.DeserializeObject<BuisinessRoot>(response.Content);
+        //var bizObj = jsonObject as BuisinessRoot;
 
         //If the Message is not Empty
         if (content != "")
-        {
-            //Successful Login
             Server.Transfer("Default.aspx", true);
-            //newRelationshipRequest(customer, bizObj);
-        }
-        else
-        {
-
-        }
-
     }
 
     /*
@@ -174,7 +177,62 @@ public partial class Web_Customer : System.Web.UI.Page
 
     protected void BtnSubmit_Click(object sender, EventArgs e)
     {
-        Customer cus = createCustomer();//CREATE A NEW CUSTOMER
-        newCustomerRequest(cus);//ADD THE NEW CUSTOMER TO THE DATABASE
+        CloudinaryApi.results cloudImg = StoreImgOnCloudinary();
+
+        newCustomerRequest(cloudImg);//ADD THE NEW CUSTOMER TO THE DATABASE
+    }
+
+
+    // --------------------------- Upload image To The Database On Cloudinary --------------------------- 
+    private CloudinaryApi.results StoreImgOnCloudinary()
+    {
+        string key = WebConfigurationManager.AppSettings["CLOUDINARY_API_KEY"];
+        string secret = WebConfigurationManager.AppSettings["CLOUDINARY_API_SECRET"];
+        string name = WebConfigurationManager.AppSettings["CLOUDINARY_API_NAME"];
+
+        dynamic jsonObject = new CloudinaryApi.results();
+
+        CloudinaryDotNet.Account account = new CloudinaryDotNet.Account(name, key, secret);
+        CloudinaryDotNet.Cloudinary cloudinary = new CloudinaryDotNet.Cloudinary(account);
+
+
+        HttpPostedFile file = Request.Files["ctl00$ContentPlaceHolder1$ImagePath"];
+
+        //Check To See If File has contents
+        //------------------- error check file type ? ------------------------------
+        if (file != null && file.ContentLength > 0)
+        {
+            string fname = Path.GetFileName(file.FileName);
+            file.SaveAs(Server.MapPath(Path.Combine("~/App_Data/Images", fname)));
+
+            #region
+            // input = new byte[file.ContentLength];
+            //System.IO.Stream MyStream;
+            //// Initialize the stream.
+            //MyStream = file.InputStream;
+
+            //// Read the file into the byte array.
+            //MyStream.Read(input, 0, file.ContentLength);
+
+            //pathImg = "data:image/"
+            //                + Path.GetExtension(file.FileName).Replace(".", "")
+            //                + ";base64,"
+            //                + Convert.ToBase64String(input) + "\" />";
+            #endregion
+
+            CloudinaryDotNet.Actions.ImageUploadParams uploadParams = new CloudinaryDotNet.Actions.ImageUploadParams()
+            {
+                File = new CloudinaryDotNet.Actions.FileDescription(Server.MapPath("/App_Data/Images/" + file.FileName))
+            };
+
+            //Upload Image
+            CloudinaryDotNet.Actions.ImageUploadResult uploadResult = cloudinary.Upload(uploadParams);
+
+            jsonObject = JsonConvert.DeserializeObject<CloudinaryApi.results>(uploadResult.JsonObj.ToString());
+
+            //Remove the Image from storage again
+            File.Delete(Server.MapPath(Path.Combine("~/App_Data/Images", fname)));
+        }
+        return (jsonObject as CloudinaryApi.results);
     }
 }
