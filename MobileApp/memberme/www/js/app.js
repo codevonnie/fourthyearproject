@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.routes', 'ja.qr'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.routes', 'ja.qr', 'ngCordova'])
 
 .run(function ($rootScope, $state) {
   $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {

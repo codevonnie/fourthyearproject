@@ -91,30 +91,75 @@ $scope.login = function(user) {
 })//SettingsCtrl
 
 
+//Controller for user if they are having an issue while on the business premises
+.controller('SosCtrl', function($scope, AuthService, $http, $state, $ionicLoading, $cordovaGeolocation, $ionicPopup) {
 
-.controller('SosCtrl', function($scope, AuthService, $state, $ionicLoading) {
-  
-    google.maps.event.addDomListener(window, 'load', function() {
-        var myLatlng = new google.maps.LatLng(37.3000, -120.4833);
- 
-        var mapOptions = {
-            center: myLatlng,
-            zoom: 16,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
- 
-        var map = new google.maps.Map(document.getElementById("map"), mapOptions);
- 
-        navigator.geolocation.getCurrentPosition(function(pos) {
-            map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-            var myLocation = new google.maps.Marker({
-                position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
-                map: map,
-                title: "My Location"
-            });
-        });
- 
-        $scope.map = map;
+  //empty object to take sos details for sending to business
+  $scope.sos={};
+
+  //submit function for sos message
+  $scope.submit=function(){
+    //get user profile details from local storage
+    var sosDetails = window.localStorage.getItem('profile');
+    sosDetails = JSON.parse(sosDetails); //parse object
+    $scope.sos.email = sosDetails.email; //save person email to sos object
+    var sosDetails = window.localStorage.getItem('latLng'); //get user lat and long (set below)
+    sosDetails = JSON.parse(sosDetails); //parse object
+    //save user lat and long coordinates to sos object
+    $scope.sos.lat = sosDetails.lat; 
+    $scope.sos.lng = sosDetails.lng;
+    console.log($scope.sos);
+
+    //popup if message is sent successfully
+    // var alertPopup = $ionicPopup.alert({
+    //       title: 'Could not get location',
+    //       template: "Check your location services"
+    //       });
+
+
+  }
+  //Google maps options
+  var options = {timeout: 10000, enableHighAccuracy: true};
+
+  //use phone GPS to get user location coordinates
+  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+    
+    var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    //save latitude and longitude to local storage
+    window.localStorage.setItem('latLng', JSON.stringify(latLng));
+    //map options - centre map using lat long coords, zoom into location, use ROADMAP
+    var mapOptions = {
+      center: latLng,
+      zoom: 15,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    //map shown on sos view
+    $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+    //Wait until the map is loaded to set marker on map
+    google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+
+      var marker = new google.maps.Marker({
+          map: $scope.map,
+          animation: google.maps.Animation.DROP,
+          position: latLng
+      });      
+      //message displayed if user clicks on marker on map
+      var infoWindow = new google.maps.InfoWindow({
+          content: "You are here"
+      });
+      //listen for user clicking on marker - open info window
+      google.maps.event.addListener(marker, 'click', function () {
+          infoWindow.open($scope.map, marker);
+      });
+
     });
+
+  }, function(error){
+    var alertPopup = $ionicPopup.alert({
+          title: 'Could not get location',
+          template: "Check your location services"
+          });
+  });  
 });//end SosCtrl
  
