@@ -1,5 +1,5 @@
 {
-  "name": "restapicust",
+  "name": "membermemessageserver",
   "version": "1.0.0",
   "description": "REST API",
   "main": "app.js",
@@ -11,8 +11,7 @@
     "url": "git+https://github.com/codevonnie/fourthyearproject.git"
   },
   "keywords": [
-    "nodejs",
-    "neo4j"
+    "nodejs"
   ],
   "author": "Scott Coyne",
   "license": "MIT",
