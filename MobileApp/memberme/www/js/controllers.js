@@ -1,17 +1,44 @@
 angular.module('starter.controllers', [])
  
 .controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state) {
-  //user object to take inputted email and password from login view.  Type automatically set to person
-  $scope.user = {
-    email: '',
-    password: '',
-    type: 'person'
-  };
- 
+  
+  //Add in windows loading while checking if user is logged in!
+
+
+
+  $scope.user={};
+  var logInDetails = window.localStorage.getItem('signIn');
+  
+  if(logInDetails==undefined){
+    //user object to take inputted email and password from login view.  Type automatically set to person
+    $scope.user = {
+      email: '',
+      password: '',
+      type: 'person'
+    };
+  }
+
+  else{
+    logInDetails = JSON.parse(logInDetails);
+    console.log(logInDetails);
+     var user = {
+      email: logInDetails.email,
+      password: logInDetails.password,
+      type: 'person'
+    };
+    AuthService.getInfo(user);
+       $state.go('tab.profile');
+     
+  }
+  
+  
+  
+
 $scope.login = function(user) {
     //if login is successful, go to profile view
     var onSuccess = function () {
        $state.go('tab.profile');
+       
 
     };
     //if login is not successful, alert user with popup and allow them to reenter deails

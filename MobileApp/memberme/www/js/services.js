@@ -43,8 +43,9 @@ angular.module('starter.services', [])
     isAuthenticated = false;
     $http.defaults.headers.common.Authorization = undefined;
     window.localStorage.removeItem(LOCAL_TOKEN_KEY);
+    window.localStorage.removeItem('signIn');
   }
-   
+  
  //use POST call options
   var login = function(){
     return $q(function(resolve, reject) {
@@ -73,6 +74,7 @@ angular.module('starter.services', [])
            if (result.data.success) {
              resolve(result.data.msg);
              //if call successful, stringify JSON object and save to local storage
+             window.localStorage.setItem('signIn', JSON.stringify(user));
              window.localStorage.setItem('profile', JSON.stringify(result.data));
            } else {
              reject(result.data.success);

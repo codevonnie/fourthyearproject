@@ -23,7 +23,7 @@ $dark:                            #444 !default;
 }
 
 .list {
-  margin-top:0%;
+  margin-top:10%;
 }
 
 .scroll {
@@ -42,7 +42,9 @@ $dark:                            #444 !default;
   border-color: #387ef5;
 }
 
-
+.content-stable{
+  background-color: #CFD8DC;
+}
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;

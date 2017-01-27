@@ -22,7 +22,7 @@ $dark:                            #444 !default;
   border-color: #C0C0C0; }
 
 .list {
-  margin-top: 0%; }
+  margin-top: 10%; }
 
 .scroll {
   height: 100%; }
@@ -36,6 +36,9 @@ $dark:                            #444 !default;
   border-width: 5px;
   border-style: ridge;
   border-color: #387ef5; }
+
+.content-stable {
+  background-color: #CFD8DC; }
 
 /*!
   Ionicons, v2.0.1
