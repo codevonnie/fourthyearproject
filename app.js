@@ -1,7 +1,8 @@
 var express = require('express')
   , app = express()
   , sse = require('./sse')
-  , bodyParser = require('body-parser');
+  , bodyParser = require('body-parser')
+  , cors = require('cors');
 
 // middleware to use for all requests
 app.all('*', function (req, res, next) {
@@ -19,7 +20,8 @@ var connections = [];
 var messageObj = { status: "", message: "" }
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(sse)
+app.use(sse);
+app.use(cors());
 
 app.post('/sendMessage', function (req, res) {
 
