@@ -6,7 +6,7 @@ var express = require('express')
 // middleware to use for all requests
 app.all('*', function (req, res, next) {
   // do logging
-  //res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
   res.header("Access-Control-Allow-Headers", "Content-Type, Accept");
 
