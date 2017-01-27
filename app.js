@@ -2,7 +2,8 @@ var express = require('express')
   , app = express()
   , sse = require('./sse')
   , bodyParser = require('body-parser')
-  , cors = require('cors');
+  , cors = require('cors')
+  , port = process.env.PORT || 3000;        // set the port if testing locally;
 
 
 // Get our request parameters
@@ -54,7 +55,6 @@ router.get('/stream', function (req, res) {
 
 app.use('/', router);
 
-app.listen(3000, function () {
-  console.log('Listening on port 3000...')
-})
+app.listen(port);
+console.log('Fancy Magic happens on port ' + port);
 
