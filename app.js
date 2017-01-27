@@ -5,8 +5,10 @@ var express = require('express')
   , cors = require('cors');
 
 
-app.use(cors());
+// Get our request parameters
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cors());
 app.use(sse);
 
 
@@ -50,7 +52,7 @@ router.get('/stream', function (req, res) {
   console.log("Wiped Message?", messageObj);
 })
 
-app.use('/api', router);
+app.use('/', router);
 
 app.listen(3000, function () {
   console.log('Listening on port 3000...')
