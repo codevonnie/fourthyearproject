@@ -2,7 +2,7 @@
   "name": "restapicust",
   "version": "1.0.0",
   "description": "REST API",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
     "test": "test"
   },
@@ -14,27 +14,18 @@
     "nodejs",
     "neo4j"
   ],
-  "author": "Yvonne Grealy",
+  "author": "Scott Coyne",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/codevonnie/fourthyearproject/issues"
   },
   "homepage": "https://github.com/codevonnie/fourthyearproject#readme",
   "dependencies": {
-    "@ionic/cloud-angular": "^0.7.0",
-    "auth0-api-jwt-rsa-validation": "0.0.1",
     "body-parser": "~1.15.2",
     "cors": "^2.8.1",
     "express": "^4.14.0",
-    "express-jwt": "^5.1.0",
-    "jsonwebtoken": "^7.1.9",
-    "jwt-simple": "^0.5.0",
-    "mongoose": "~4.2.4",
-    "morgan": "^1.7.0",
-    "neo4j-driver": "^1.1.0-M02",
     "nodemon": "^1.11.0",
-    "passport": "^0.3.2",
-    "passport-jwt": "^2.2.0"
+    "sse":"*"
   },
   "engines": {
     "node": "~4.6.1"
