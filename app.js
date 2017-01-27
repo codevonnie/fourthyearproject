@@ -10,11 +10,11 @@ app.all('*', function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
   res.header("Access-Control-Allow-Headers", "Content-Type, Accept");
-  res.setHeader("Access-Control-Allow-Origin", "*");
   console.log('\nSomeOne Connected');
   next(); // make sure we go to the next routes and don't stop here
 });
 
+var router = express.Router();
 
 var connections = [];
 var messageObj = { status: "", message: "" }
@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(sse);
 app.use(cors());
 
-app.post('/sendMessage', function (req, res) {
+router.post('/sendMessage', function (req, res) {
 
   messageObj.message = req.body.personMessage;
   messageObj.status = req.body.status;
@@ -37,7 +37,7 @@ app.post('/sendMessage', function (req, res) {
   res.sendStatus(200)
 })
 
-app.get('/stream', function (req, res) {
+router.get('/stream', function (req, res) {
    console.log("\nIn Stream", messageObj);
     res.sseSetup()
     res.sseSend(messageObj)
@@ -45,6 +45,8 @@ app.get('/stream', function (req, res) {
     messageObj = { status: "", message: "" }
     console.log("Wiped Message?", messageObj);
 })
+
+app.use('/', router);
 
 app.listen(3000, function () {
   console.log('Listening on port 3000...')
