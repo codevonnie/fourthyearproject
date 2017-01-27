@@ -4,13 +4,20 @@ var express = require('express')
   , bodyParser = require('body-parser')
   , cors = require('cors');
 
+
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(sse);
+
+
 // middleware to use for all requests
 app.all('*', function (req, res, next) {
   // do logging
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Accept");
   console.log('\nSomeOne Connected');
+
   next(); // make sure we go to the next routes and don't stop here
 });
 
@@ -19,9 +26,6 @@ var router = express.Router();
 var connections = [];
 var messageObj = { status: "", message: "" }
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(sse);
-app.use(cors());
 
 router.post('/sendMessage', function (req, res) {
 
@@ -38,15 +42,15 @@ router.post('/sendMessage', function (req, res) {
 })
 
 router.get('/stream', function (req, res) {
-   console.log("\nIn Stream", messageObj);
-    res.sseSetup()
-    res.sseSend(messageObj)
-    connections.push(res)
-    messageObj = { status: "", message: "" }
-    console.log("Wiped Message?", messageObj);
+  console.log("\nIn Stream", messageObj);
+  res.sseSetup()
+  res.sseSend(messageObj)
+  connections.push(res)
+  messageObj = { status: "", message: "" }
+  console.log("Wiped Message?", messageObj);
 })
 
-app.use('/', router);
+app.use('/api', router);
 
 app.listen(3000, function () {
   console.log('Listening on port 3000...')
