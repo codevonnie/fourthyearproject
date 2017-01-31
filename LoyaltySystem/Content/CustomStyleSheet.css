@@ -114,6 +114,41 @@
     margin-top: 5px;
 }
 
+fa-envelope-o {
+    background-color: red;
+}
+
+.navbar-brand {
+    padding: 10px 30px;
+    line-height: inherit;
+}
+
+.MessageBox {
+    font-size: x-large;
+    color: red;
+}
+
+.contain-i-e-s, .icon-empty-star, .text-i-e-s {
+    height: 100px;
+    width: 100px;
+}
+
+.contain-i-e-s {
+    position: relative;
+}
+
+.text-i-e-s {
+    text-align: center;
+    position: absolute;
+}
+
+
+.TxtAreaSize {
+    width: 100%;
+}
+
+
+
 /*Map CSS Here*/
 #map {
     height: 500px;

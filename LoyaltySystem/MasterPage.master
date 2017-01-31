@@ -25,9 +25,101 @@
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"> </script>
 
 
+<%-- If a message comes in, save it to a list straight away. then wipe the message obj on the server side --%>
+
+<script>
+
+    var messagesList = new Array();
+    if (!!window.EventSource) {
+        //http://localhost:3000/sendMessage
+        //https://membermemessageserver.herokuapp.com/stream
+        var source = new EventSource('https://membermemessageserver.herokuapp.com/stream')
+
+        //Listens to see if it there is a message w8ing for him
+        source.addEventListener('message', function (e) {
+
+            document.getElementById("messageBoxCount").value = "";//Reset the Value of the TextBox TO "", So not to repeat 
+
+            messageObj = JSON.parse(e.data)//Parse the data
+            var msgObj = {};
+            msgObj.status = messageObj.status;
+            msgObj.message = messageObj.message;
+
+            messagesList.push(msgObj);
+
+            //messagesList.push(messageObj);//Push Message Object To Array          
+            /*messagesList.forEach(function (entry) {
+                if (entry.status === "" || entry.message === "")
+                    messagesList.splice(entry, 1);
+            });
+            messagesList.forEach(function (entry) {
+                document.getElementById("hdnResultValue").value = +"¬*¬" + entry.status + "¬**¬" + entry.message;
+            });*/
+
+            document.getElementById("messageBoxCount").innerText = messagesList.length.toString();
+            //document.getElementById("HiddenBtn").click();
+
+             <%--alert(document.getElementById('<%=((Label)Master.FindControl("HiddenBtn")).ClientID %>').innerText);--%>
+
+
+
+
+            //var id = document.getElementById("HiddenBtn").id;
+            //alert(id);
+            //$('#'+id).click();
+        }, false)
+
+        //Shows Connection To Server - CONNECTED
+        source.addEventListener('open', function (e) {
+            $("#state").text("Connected")
+        }, false)
+
+        //Shows Connection To Server - DISCONNECTED
+        source.addEventListener('error', function (e) {
+            if (e.target.readyState == EventSource.CLOSED) {
+                $("#state").text("Disconnected")
+            }
+            else if (e.target.readyState == EventSource.CONNECTING) {
+                $("#state").text("Connecting...")
+            }
+        }, false)
+    } else {
+        console.log("Your browser doesn't support SSE")
+        alert("Your browser doesn't support SSE");
+    }
+
+    function ShowCurrentTime() {
+        alert(JSON.stringify(messagesList));
+
+
+        $.ajax({
+            type: "POST",
+            url: "TestClientPage.aspx/CityObjectArray",
+            data: "{city:" + JSON.stringify(messagesList) + "}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccess,
+            failure: function (response) {
+                alert(response.d);
+            }
+        });
+    }
+    function OnSuccess(response) {
+        alert("Success");
+    }
+
+</script>
+
+<script type="text/javascript">
+
+</script>
 
 <body>
     <form id="form1" runat="server">
+
+
+        <asp:HiddenField ID="hdnResultValue" Value="0" runat="server" />
+
         <div class="Container">
 
             <!-- ======== HEADER MENU  ======== -->
@@ -66,8 +158,15 @@
                             <a class="navbar-brand padRight65" href="Default.aspx">Member Me</a>
                         </div>
 
-                        <div>
-                            <a class="navbar-brand" id="logInBtn" runat="server" href="~/Web/LoginPage.aspx">LogIn</a>
+                        <div class="col-sm-5">
+                            <div class="navbar-brand" id="logInBtn" runat="server" href="~/Web/LoginPage.aspx">LogIn</div>
+
+                            <input id="HiddenBtn" type="button" value="Show Current Time" onclick="ShowCurrentTime()" />
+
+                            <a class="navbar-brand padRight65" href="TestClientPage.aspx">MESSAGE</a>
+
+
+                            <a class="navbar-brand fa fa-envelope-o fa-2x" runat="server" aria-hidden="true" data-target="#myModal" onserverclick="ClickEvent_ShowMessage"><span class="MessageBox" id="messageBoxCount"></span></a>
                         </div>
                     </div>
                 </div>
@@ -76,6 +175,32 @@
             <br />
             <br />
             <br />
+
+            <!-- Modal -->
+            <div class="modal fade MarginTop60" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+                <!-- Content -->
+                <div class="modal-dialog">
+                    <div class="modal-content ">
+
+                        <div class="modal-header text-center padRight65 ModalHeadColor RoundTop">
+                            <asp:Label ID="LblName" runat="server" Text="Persons Name" CssClass="h1"></asp:Label>
+                        </div>
+
+                        <!--Modal Body-->
+                        <div class="modal-body text-center">
+                            <br />
+                            <asp:TextBox ID="TaMessageBox" TextMode="multiline" CssClass="TxtAreaSize" runat="server" />
+                        </div>
+
+                        <!--Modal Footer-->
+                        <div class="modal-footer RoundBottom">
+                            FOOTER
+                        </div>
+
+                    </div>
+                </div>
+            </div>
 
             <!-- ======== CONTENT AREA ======== -->
             <div class="col-sm-12 text-left textFontFamilyBody">

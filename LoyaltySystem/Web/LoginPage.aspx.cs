@@ -20,6 +20,8 @@ public partial class LoginPage : System.Web.UI.Page
 
     }
 
+
+
     //stores the successfull logged in user
     public class BizCred
     {
@@ -64,7 +66,7 @@ public partial class LoginPage : System.Web.UI.Page
 
 
             //CHANGE THE TEXT OF THE LOGIN BTN CALLS METHODS ON THE MASTERPAGE
-            (Master as MasterPage).logStatus(bizObj.success);
+            //(Master as MasterPage).logStatus(bizObj.success);
 
 
 

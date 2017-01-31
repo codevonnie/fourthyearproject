@@ -11,15 +11,4 @@ public partial class Web_TestServicePage : System.Web.UI.Page
     {
 
     }
-
-    [System.Web.Services.WebMethod]
-    public static City GetCity(City city)
-    {
-        return city;
-    }
-
-
-
-
-
 }

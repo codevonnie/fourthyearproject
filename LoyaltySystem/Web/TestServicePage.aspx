@@ -16,31 +16,38 @@
 
     <br />
     <div id="state"></div>
-    <div id="message"></div>
-    <textarea id="messageList"></textarea>
+    <textarea id="messageList" ></textarea>
 
 
     <%-- If a message comes in, save it to a list straight away. then wipe the message obj on the server side --%>
 
     <script>
         if (!!window.EventSource) {
-            var source = new EventSource('http://localhost:3000/stream')
+            //http://localhost:3000/sendMessage
+            //https://membermemessageserver.herokuapp.com/stream
+            var source = new EventSource('https://membermemessageserver.herokuapp.com/stream')
             var MessageArray = [];
 
+            //Listens to see if it there is a message w8ing for him
             source.addEventListener('message', function (e) {
-                document.getElementById("messageList").value = "";
-                messageObj = JSON.parse(e.data)
-                    MessageArray.push(messageObj);
 
-                    MessageArray.forEach(function (entry) {
-                        document.getElementById("messageList").value += "\n" + entry.status + "\n" + entry.message;
-                    });
+                document.getElementById("messageList").value = "";//Reset the Value of the TextBox TO "", So not to repeat 
+
+                messageObj = JSON.parse(e.data)//Parse the data
+                MessageArray.push(messageObj);//Push Message Object To Array
+
+                //Loop over all hte messages in the Array and print them out to the user
+                MessageArray.forEach(function (entry) {
+                    document.getElementById("messageList").value += "\n" + entry.status + "\n" + entry.message;
+                });
             }, false)
 
+            //Shows Connection To Server - CONNECTED
             source.addEventListener('open', function (e) {
                 $("#state").text("Connected")
             }, false)
 
+            //Shows Connection To Server - DISCONNECTED
             source.addEventListener('error', function (e) {
                 if (e.target.readyState == EventSource.CLOSED) {
                     $("#state").text("Disconnected")
@@ -51,6 +58,7 @@
             }, false)
         } else {
             console.log("Your browser doesn't support SSE")
+            alert("Your browser doesn't support SSE");
         }
     </script>
 
