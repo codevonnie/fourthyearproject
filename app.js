@@ -57,9 +57,6 @@ router.post('/sendMessage', function (req, res) {
   }
 
   res.sendStatus(200)
-}).catch(function (error) {
-  console.log(error);
-  res.sendStatus(400)//Bad Request
 })
 
 // ------------------------ GET Stream Route ---------------------------------
