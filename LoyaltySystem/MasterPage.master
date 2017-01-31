@@ -55,7 +55,7 @@
 
             //Remove All Empty Messages from the List
             messagesList.forEach(function (entry) {
-                if (entry.business === "" && entry.email === "")
+                if (entry.business === "" || entry.email === "")
                     messagesList.splice(entry, 1);
             });
 
@@ -85,10 +85,12 @@
 
     //Ajax Function That Posts the Array[Objects] to the Relevent Page
     function SendListToPage() {
-        alert(JSON.stringify(messagesList));
+        //TESTING TO CHECK SENT LIST
+        //alert(JSON.stringify(messagesList));
+
         $.ajax({
             type: "POST",
-            url: "TestClientPage.aspx/MessagesToArray",
+            url: "Map.aspx/MessagesToArray",
             data: "{data:" + JSON.stringify(messagesList) + "}",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -99,7 +101,7 @@
         });
     }
     function OnSuccess(response) {
-        alert("Success");//Alert the person that all messages were sent accross
+        //alert("Success");//Alert the person that all messages were sent accross
     }
 </script>
 
@@ -150,7 +152,7 @@
 
                         <div class="col-sm-5">
                             <div class="navbar-brand" id="logInBtn" runat="server" href="~/Web/LoginPage.aspx">LogIn</div>
-                            <a class="navbar-brand fa fa-envelope-o fa-2x" href="Web/TestClientPage.aspx" runat="server" onclick="SendListToPage()" aria-hidden="true"><span class="MessageBox" id="messageBoxCount"></span></a>
+                            <a class="navbar-brand fa fa-envelope-o fa-2x" href="Web/Map.aspx" runat="server" onclick="SendListToPage()" aria-hidden="true"><span class="MessageBox" id="messageBoxCount"></span></a>
                         </div>
                     </div>
                 </div>

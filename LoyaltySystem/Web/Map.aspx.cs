@@ -6,28 +6,52 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 
-public partial class UserMap : System.Web.UI.Page
+public partial class Map : System.Web.UI.Page
 {
+    private static List<SosMessage> sosList = new List<SosMessage>();
+
     protected void Page_Load(object sender, EventArgs e)
     {
         var scriptManager = ScriptManager.GetCurrent(Page);
-
+        int countMessages = 0;
         if (scriptManager == null) return;
 
         scriptManager.Scripts.Add(new ScriptReference { Path = "~/Scripts/CustGoogleJs.js" });
+        foreach (var mess in sosList)
+        {
+            string messageNumKey = "MessagePin";
 
-        double latitude = -9.0151516; //need to pass this to JS var
-        double longitude = 53.276164; //need to pass this to JS var
-        string userMessage = "Help iv Broken My Toe!!";
-        string message = "'<h3>Location Info</h3>" +
-            "<br/>Lon: " + longitude +
-            "<br/>Lat: " + latitude  +
-            "<br/><br/>Message: " + userMessage+"'";
+            double latitude  = Convert.ToDouble(mess.latitude.ToString());
+            double longitude = Convert.ToDouble (mess.longitude.ToString());
+            string message = mess.message;
+            string name = mess.name;
+            string status = mess.status;
+            string business = mess.business;
+            string email = mess.email;
 
-        //Calls A JS function located in the scriptManager (registered above programatically)
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "locatePerson", "newLocation(" + longitude + ","+ latitude+");", true);
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "newPin", "newPin(" + longitude + "," + latitude + ","+ message+");", true);
+            messageNumKey = messageNumKey + countMessages++;
 
+            string PinMessage = "'<h3>"+name+"</h3>" +
+                "<br/>Email: " + email +
+                "<br/>Status: " + status +
+                "<br/>Lon: " + longitude +
+                "<br/>Lat: " + latitude +
+                "<br/><br/>Message: " + message + "'";
+
+            //Calls A JS function located in the scriptManager (registered above programatically)
+            if(countMessages<2)
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "locatePerson", "newLocation(" + latitude + "," + longitude + ");", true);
+
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), messageNumKey, "newPin(" + latitude + "," + longitude + "," + PinMessage + ");", true);
+        }
+    }
+
+    //HTTP Post - To the current page with the array of Json Object messages from the masterpage ajax click event
+    [System.Web.Services.WebMethod]
+    public static void MessagesToArray(List<SosMessage> data)
+    {
+        sosList = data;
     }
 
 }

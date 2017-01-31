@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="/MasterPage.master" AutoEventWireup="true" CodeFile="Map.aspx.cs" Inherits="UserMap" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="/MasterPage.master" AutoEventWireup="true" CodeFile="Map.aspx.cs" Inherits="Map" %>
 
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
