@@ -32,7 +32,7 @@ var messageObj = { status: "", message: "" }
 
 router.post('/sendMessage', function (req, res) {
 
-  messageObj.message = req.body.personMessage;
+  messageObj.message = req.body.message;
   messageObj.status = req.body.status;
 
   console.log("\nIn Send Message: Results -", messageObj);
