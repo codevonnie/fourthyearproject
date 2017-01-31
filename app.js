@@ -27,15 +27,15 @@ app.all('*', function (req, res, next) {
 var router = express.Router();
 
 var connections = [];
-var messageObj = { status: "", message: "", lat: "", long: "", email: "", buisiness: "" }
+var messageObj = { status: "", message: "", latitude: "", longitude: "", email: "", buisiness: "" }
 
 // ------------------------ POST SendMessage Route ---------------------------------
 /*Send an SOS Post message to the Route and respond with Status Code 200 (ok)
 * 
 *BODY KEYS:
 * - email
-* - lat
-* - long
+* - latitude
+* - longitude
 * - message
 * - buisiness
 * - status
@@ -46,8 +46,8 @@ router.post('/sendMessage', function (req, res) {
   messageObj.status = req.body.status;
   messageObj.buisiness = req.body.buisiness;
   messageObj.email = req.body.email;
-  messageObj.lat = req.body.lat;
-  messageObj.long = req.body.long;
+  messageObj.latitude = req.body.latitude;
+  messageObj.longitude = req.body.longitude;
 
   console.log("\nIn Send Message: Results -", messageObj);
 
@@ -70,7 +70,7 @@ router.get('/stream', function (req, res) {
   res.sseSend(messageObj)//Send the Object "Message""
   connections.push(res)//Push the New Connection To the Array 
 
-  messageObj = { status: "", message: "", lat: "", long: "", email: "", buisiness: "" }
+  messageObj = { status: "", message: "", latitude: "", longitude: "", email: "", buisiness: "" }
   console.log("Wiped Message?", messageObj);
 })
 
