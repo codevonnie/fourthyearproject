@@ -27,34 +27,55 @@ app.all('*', function (req, res, next) {
 var router = express.Router();
 
 var connections = [];
-var messageObj = { status: "", message: "" }
+var messageObj = { status: "", message: "", lat: "", long: "", email: "", buisiness: "" }
 
-
+// ------------------------ POST SendMessage Route ---------------------------------
+/*Send an SOS Post message to the Route and respond with Status Code 200 (ok)
+* 
+*BODY KEYS:
+* - email
+* - lat
+* - long
+* - message
+* - buisiness
+* - status
+*/
 router.post('/sendMessage', function (req, res) {
 
   messageObj.message = req.body.message;
   messageObj.status = req.body.status;
+  messageObj.buisiness = req.body.buisiness;
+  messageObj.email = req.body.email;
+  messageObj.lat = req.body.lat;
+  messageObj.long = req.body.long;
 
   console.log("\nIn Send Message: Results -", messageObj);
 
-  //For each connection send the results
+  //For each Connection(connected Buisiness) Send the Message Object
   for (var i = 0; i < connections.length; i++) {
     connections[i].sseSend(messageObj)
   }
+
   res.sendStatus(200)
+}).catch(function (error) {
+  console.log(error);
+  res.sendStatus(400)//Bad Request
 })
 
+// ------------------------ GET Stream Route ---------------------------------
+//Keeps Track Of All Current Connections and sends them the message
 router.get('/stream', function (req, res) {
   console.log("\nIn Stream", messageObj);
-  res.sseSetup()
-  res.sseSend(messageObj)
-  connections.push(res)
-  messageObj = { status: "", message: "" }
+  res.sseSetup()//Setup of Stream
+  res.sseSend(messageObj)//Send the Object "Message""
+  connections.push(res)//Push the New Connection To the Array 
+
+  messageObj = { status: "", message: "", lat: "", long: "", email: "", buisiness: "" }
   console.log("Wiped Message?", messageObj);
 })
 
 app.use('/', router);
 
 app.listen(port);
-console.log('Fancy Magic happens on port ' + port);
+console.log('Fancy Magic Messaging Happening At Port:' + port);
 
