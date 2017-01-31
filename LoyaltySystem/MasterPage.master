@@ -41,44 +41,39 @@
             document.getElementById("messageBoxCount").value = "";//Reset the Value of the TextBox TO "", So not to repeat 
 
             messageObj = JSON.parse(e.data)//Parse the data
-            var msgObj = {};
+
+            var msgObj = {};//Create a New Object Each Time A message Comes In
             msgObj.status = messageObj.status;
             msgObj.message = messageObj.message;
+            msgObj.email = messageObj.email;
+            msgObj.longitude = messageObj.longitude;
+            msgObj.latitude = messageObj.latitude;
+            msgObj.business = messageObj.business;
+            msgObj.name = messageObj.name;
 
-            messagesList.push(msgObj);
+            messagesList.push(msgObj);//Push The Obj to an Array List
 
-            //messagesList.push(messageObj);//Push Message Object To Array          
-            /*messagesList.forEach(function (entry) {
-                if (entry.status === "" || entry.message === "")
+            //Remove All Empty Messages from the List
+            messagesList.forEach(function (entry) {
+                if (entry.business === "" && entry.email === "")
                     messagesList.splice(entry, 1);
             });
-            messagesList.forEach(function (entry) {
-                document.getElementById("hdnResultValue").value = +"¬*¬" + entry.status + "¬**¬" + entry.message;
-            });*/
 
+            //Update the Header with the Total Amount of messages that are in the Array
             document.getElementById("messageBoxCount").innerText = messagesList.length.toString();
-            //document.getElementById("HiddenBtn").click();
-
-             <%--alert(document.getElementById('<%=((Label)Master.FindControl("HiddenBtn")).ClientID %>').innerText);--%>
-
-
-
-
-            //var id = document.getElementById("HiddenBtn").id;
-            //alert(id);
-            //$('#'+id).click();
         }, false)
 
-        //Shows Connection To Server - CONNECTED
+        //Shows Connection To Server - Connected
         source.addEventListener('open', function (e) {
             $("#state").text("Connected")
         }, false)
 
-        //Shows Connection To Server - DISCONNECTED
+        //Shows Connection To Server - Disconnected
         source.addEventListener('error', function (e) {
             if (e.target.readyState == EventSource.CLOSED) {
                 $("#state").text("Disconnected")
             }
+                //Shows Connection To Server - Connecting...
             else if (e.target.readyState == EventSource.CONNECTING) {
                 $("#state").text("Connecting...")
             }
@@ -88,14 +83,13 @@
         alert("Your browser doesn't support SSE");
     }
 
-    function ShowCurrentTime() {
+    //Ajax Function That Posts the Array[Objects] to the Relevent Page
+    function SendListToPage() {
         alert(JSON.stringify(messagesList));
-
-
         $.ajax({
             type: "POST",
-            url: "TestClientPage.aspx/CityObjectArray",
-            data: "{city:" + JSON.stringify(messagesList) + "}",
+            url: "TestClientPage.aspx/MessagesToArray",
+            data: "{data:" + JSON.stringify(messagesList) + "}",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: OnSuccess,
@@ -105,14 +99,10 @@
         });
     }
     function OnSuccess(response) {
-        alert("Success");
+        alert("Success");//Alert the person that all messages were sent accross
     }
-
 </script>
 
-<script type="text/javascript">
-
-</script>
 
 <body>
     <form id="form1" runat="server">
@@ -160,13 +150,7 @@
 
                         <div class="col-sm-5">
                             <div class="navbar-brand" id="logInBtn" runat="server" href="~/Web/LoginPage.aspx">LogIn</div>
-
-                            <input id="HiddenBtn" type="button" value="Show Current Time" onclick="ShowCurrentTime()" />
-
-                            <a class="navbar-brand padRight65" href="TestClientPage.aspx">MESSAGE</a>
-
-
-                            <a class="navbar-brand fa fa-envelope-o fa-2x" runat="server" aria-hidden="true" data-target="#myModal" onserverclick="ClickEvent_ShowMessage"><span class="MessageBox" id="messageBoxCount"></span></a>
+                            <a class="navbar-brand fa fa-envelope-o fa-2x" href="Web/TestClientPage.aspx" runat="server" onclick="SendListToPage()" aria-hidden="true"><span class="MessageBox" id="messageBoxCount"></span></a>
                         </div>
                     </div>
                 </div>
@@ -175,32 +159,6 @@
             <br />
             <br />
             <br />
-
-            <!-- Modal -->
-            <div class="modal fade MarginTop60" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-
-                <!-- Content -->
-                <div class="modal-dialog">
-                    <div class="modal-content ">
-
-                        <div class="modal-header text-center padRight65 ModalHeadColor RoundTop">
-                            <asp:Label ID="LblName" runat="server" Text="Persons Name" CssClass="h1"></asp:Label>
-                        </div>
-
-                        <!--Modal Body-->
-                        <div class="modal-body text-center">
-                            <br />
-                            <asp:TextBox ID="TaMessageBox" TextMode="multiline" CssClass="TxtAreaSize" runat="server" />
-                        </div>
-
-                        <!--Modal Footer-->
-                        <div class="modal-footer RoundBottom">
-                            FOOTER
-                        </div>
-
-                    </div>
-                </div>
-            </div>
 
             <!-- ======== CONTENT AREA ======== -->
             <div class="col-sm-12 text-left textFontFamilyBody">

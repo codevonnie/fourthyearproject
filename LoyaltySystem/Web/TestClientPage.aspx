@@ -12,7 +12,7 @@
                     <div class="modal-content ">
 
                         <div class="modal-header text-center padRight65 ModalHeadColor RoundTop">
-                            <asp:Label ID="LblName" runat="server" Text="Persons Name" CssClass="h1"></asp:Label>
+                            <asp:Label ID="LblName" runat="server"  CssClass="h1"></asp:Label>
                         </div>
 
                         <!--Modal Body-->

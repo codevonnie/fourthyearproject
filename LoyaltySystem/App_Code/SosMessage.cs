@@ -14,33 +14,19 @@ public class SosMessage
 {
     public string status { get; set; }
     public string message { get; set; }
-}
+    public string email { get; set; }
+    public string longitude { get; set; }
+    public string latitude { get; set; }
+    public string business { get; set; }
+    public string name { get; set; }
 
-public class City
-{
-    private string name;
-    public string Name
-    {
-        get
-        {
-            return name;
-        }
-        set
-        {
-            name = value;
-        }
-    }
-
-    private int population;
-    public int Population
-    {
-        get
-        {
-            return population;
-        }
-        set
-        {
-            population = value;
-        }
-    }
+    /*BODY KEYS:
+* - email
+* - latitude
+* - longitude
+* - message
+* - business
+* - status
+* - name
+*/
 }

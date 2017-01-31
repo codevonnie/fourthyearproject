@@ -9,45 +9,27 @@ using System.Web.UI.WebControls;
 
 public partial class Web_TestClientPage : System.Web.UI.Page
 {
-    static List<SosMessage> sos = new List<SosMessage>();
+    private static List<SosMessage> sosList = new List<SosMessage>();
+
     protected void Page_Load(object sender, EventArgs e)
     {
-        foreach (var mess in sos)
+        foreach (var mess in sosList)
         {
-            TaMessageBox.Text += "\nMessage: "+mess.message.ToString();
-            TaMessageBox.Text += "\nStatus: "+mess.status.ToString()+"\n";
+            TaMessageBox.Text += "\n Message: " + mess.message.ToString();
+            TaMessageBox.Text += "\n Status: " + mess.status.ToString();
+            TaMessageBox.Text += "\n Email: " + mess.email.ToString();
+            TaMessageBox.Text += "\n Lonitude: " + mess.longitude.ToString();
+            TaMessageBox.Text += "\n Latitude: " + mess.latitude.ToString();
+            TaMessageBox.Text += "\n Business: " + mess.business.ToString();
+            TaMessageBox.Text += "\n Name: " + mess.name.ToString() + "\n";
         }
     }
 
 
-    /*Posts To the current page the Object Json messages from masterpage click event
-*/
-    //[System.Web.Services.WebMethod]
-    //public static void GetCurrentTime(Array [] name)
-    //{
-    //    //sos.message = name;     
-    //}
-
+    //HTTP Post - To the current page with the array of Json Object messages from the masterpage ajax click event
     [System.Web.Services.WebMethod]
-    public static SosMessage GetCity(SosMessage city)
+    public static void MessagesToArray(List<SosMessage> data)
     {
-        return city;
-    }
-
-    [System.Web.Services.WebMethod]
-    public static void CityObjectArray(List<SosMessage> city)
-    {
-        sos = city;
-        
-        /*
-         * email
-         * lat
-         * long
-         * message
-         * buisiness
-         * status
-         * 
-         */ 
-
+        sosList = data;
     }
 }
