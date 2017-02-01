@@ -19,21 +19,31 @@ function newLocation(newLat, newLng) {
 
 function newPin(newLat, newLng, message) {
     var uluru = { lat: newLat, lng: newLng };
+    var iconBase = 'https://maps.gstatic.com/mapfiles/ms2/micons/';
 
     var marker = new google.maps.Marker({
         position: uluru,
-        map: map
+        map: map,
+        icon: iconBase + 'red-dot.png'
     });
 
     //Creates a Click Event on the Marker and displays a message to the Window
     var infowindow = new google.maps.InfoWindow({
         content: message
     });
+
+    //CLICK EVENT
     google.maps.event.addListener(marker, 'click', function () {
+        //Changes the Color of the Icon once Clicked to show message as Viewed
+        marker.setIcon(iconBase + "green-dot.png");
+
         // Calling the open method of the infoWindow 
         infowindow.open(map, marker);
     });
+
 }
+
+
 
 /*Functions below get the users Current Location, and alerts them if it cant get it maby just display message instead of Alert? ********
 */

@@ -48,12 +48,16 @@ public partial class Map : System.Web.UI.Page
 
             messageNumKey = messageNumKey + countMessages++;
 
-            string PinMessage = "'<h3>" + name + "</h3>" +
-                "<br/>Email: " + email +
-                "<br/>Status: " + status +
-                "<br/>Lon: " + longitude +
-                "<br/>Lat: " + latitude +
-                "<br/><br/>Message: " + message + "'";
+
+            string PinMessage = "'"+
+                "<div class=\"text-center\">" +
+                "<h3>" + name + "</h3>" +
+                "<p><br/>Email: " + email + "</p>" +
+                "<p><br/>Status: " + status + "</p>" +
+                "<p><br/>Message: " + message + "</p>" +
+                "<button class=\"btn btn-danger btn-block\" onclick=\"myFunction()\".>Delete Pin And Message</button>"+
+                "</div >"+
+                "'";
 
             //Only sets the Location of the first Message(centers map on that location) 2 because ++ on inner loop
             if (countMessages < 2)
