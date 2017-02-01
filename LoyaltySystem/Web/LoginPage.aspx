@@ -89,43 +89,5 @@
             </div>
         </div>
     </div>
-
-
-
-    <!-- <div id="contactForm">
-        <div class="form-group">
-            <label class="col-md-3 control-label">Full name</label>
-            <div class="col-md-6">
-                <input type="text" class="form-control" name="fullName" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-3 control-label">Email</label>
-            <div class="col-md-6">
-                <input type="text" class="form-control" name="email" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-3 control-label">Title</label>
-            <div class="col-md-6">
-                <input type="text" class="form-control" name="title" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-3 control-label">Content</label>
-            <div class="col-md-6">
-                <textarea class="form-control" name="content" rows="5"></textarea>
-            </div>
-        </div>
-        <!-- #messages is where the messages are placed inside 
-
-        <div class="form-group">
-            <div class="col-md-9 col-md-offset-3">
-                <button type="submit" class="btn btn-default">Validate</button>
-            </div>
-        </div>
-    </div>
-    -->
-
 </asp:Content>
 

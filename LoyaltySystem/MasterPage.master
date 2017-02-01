@@ -28,12 +28,11 @@
 <%-- If a message comes in, save it to a list straight away. then wipe the message obj on the server side --%>
 
 <script>
-
     var messagesList = new Array();
     if (!!window.EventSource) {
-        //http://localhost:3000/sendMessage
-        //https://membermemessageserver.herokuapp.com/stream
-        var source = new EventSource('https://membermemessageserver.herokuapp.com/stream')
+        // http://localhost:3000/stream
+        // https://membermemessageserver.herokuapp.com/stream
+        var source = new EventSource('http://localhost:3000/stream')
 
         //Listens to see if it there is a message w8ing for him
         source.addEventListener('message', function (e) {
@@ -59,23 +58,32 @@
                     messagesList.splice(entry, 1);
             });
 
-            //Update the Header with the Total Amount of messages that are in the Array
-            document.getElementById("messageBoxCount").innerText = messagesList.length.toString();
+            /* Update the Header box with the Total Amount of messages that are in the Array
+            * Only if the number of messages are greater than the amount alreay Present
+            */
+            if (document.getElementById("messageBoxCount").innerText < messagesList.length.toString())
+                document.getElementById("messageBoxCount").innerText = messagesList.length.toString();
+
+            if (document.getElementById("messageBoxCount").innerText > messagesList.length.toString() && messagesList != 0) {
+                var num = Number(document.getElementById("messageBoxCount").innerText);
+                num++;
+                document.getElementById("messageBoxCount").innerText = num.toString();
+            }
         }, false)
 
-        //Shows Connection To Server - Connected
+        //Changes the Message Box Envelope colour - Green Is Connected
         source.addEventListener('open', function (e) {
-            $("#state").text("Connected")
+            document.getElementById("EnvelopeBox").className += " SSEConnected";
         }, false)
 
-        //Shows Connection To Server - Disconnected
+        //Changes the Message Box Envelope colour - FireBrick(Red) Is Disconnected
         source.addEventListener('error', function (e) {
             if (e.target.readyState == EventSource.CLOSED) {
-                $("#state").text("Disconnected")
+                document.getElementById("EnvelopeBox").className += " SSEDisconnected";
             }
-                //Shows Connection To Server - Connecting...
+                //Changes the Message Box Envelope colour -Orange Is Connecting...
             else if (e.target.readyState == EventSource.CONNECTING) {
-                $("#state").text("Connecting...")
+                document.getElementById("EnvelopeBox").className += " SSEConnecting";
             }
         }, false)
     } else {
@@ -99,6 +107,7 @@
                 alert(response.d);
             }
         });
+        messagesList = [];
     }
     function OnSuccess(response) {
         //alert("Success");//Alert the person that all messages were sent accross
@@ -112,7 +121,7 @@
 
         <asp:HiddenField ID="hdnResultValue" Value="0" runat="server" />
 
-        <div class="Container">
+        <div class="Container MaxHeightHeader">
 
             <!-- ======== HEADER MENU  ======== -->
             <div class="navbar navbar-inverse navbar-fixed-top">
@@ -152,7 +161,8 @@
 
                         <div class="col-sm-5">
                             <div class="navbar-brand" id="logInBtn" runat="server" href="~/Web/LoginPage.aspx">LogIn</div>
-                            <a class="navbar-brand fa fa-envelope-o fa-2x" href="Web/Map.aspx" runat="server" onclick="SendListToPage()" aria-hidden="true"><span class="MessageBox" id="messageBoxCount"></span></a>
+                            <a class="MessageEnvelope fa fa-envelope-o fa-2x" id="EnvelopeBox" href="Web/Map.aspx" runat="server" onclick="SendListToPage()" aria-hidden="true"><span runat="server" class="MessageBox" id="messageBoxCount"></span></a>
+                            <asp:HiddenField ID="HiddenField1" runat="server" />
                         </div>
                     </div>
                 </div>

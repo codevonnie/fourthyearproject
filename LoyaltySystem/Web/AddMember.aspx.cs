@@ -118,7 +118,7 @@ public partial class Web_Customer : System.Web.UI.Page
         var request = new RestRequest("api/addPerson", Method.POST);
         request.AddHeader("Authorization", _auth_Type + " " + _auth_Token);
         request.AddParameter("name", customer.name);
-        request.AddParameter("password", "¬¬¬" + password);//random password
+        request.AddParameter("password", "*x*" + password);//random password
         request.AddParameter("email", customer.email);
         request.AddParameter("phone", customer.contactNumber);
         request.AddParameter("joined", customer.date.ToString("MMMM dd, yyyy"));
