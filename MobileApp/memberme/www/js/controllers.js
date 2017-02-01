@@ -3,9 +3,7 @@ angular.module('starter.controllers', [])
 .controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal) {
   
   //Add in windows loading while checking if user is logged in!
-
-
-
+  
   $scope.user={};
   var logInDetails = window.localStorage.getItem('signIn');
   
@@ -44,18 +42,15 @@ angular.module('starter.controllers', [])
 $scope.login = function(user) {
     //if login is successful, go to profile view
     var onSuccess = function () {
-
-
-       //if no password is entered, stop page from being closed
-
-          //check entered passwords are the same
-
+    
       $scope.check={};
       
       if(user.password.startsWith("*x*")){
 
             $scope.modal.show();
-
+      }
+      else{
+        $state.go('tab.profile');
       }
 
        $scope.closeModal = function() {
@@ -105,7 +100,6 @@ $scope.login = function(user) {
     AuthService.login().then(function() {
       //call AuthService method getInfo to get user profile details
       AuthService.getInfo(user).then(onSuccess, onError);
-        
         });
     }
   })//end LoginCtrl
@@ -189,7 +183,9 @@ $scope.login = function(user) {
        //get user profile details from local storage
       var sosDetails = window.localStorage.getItem('profile');
       sosDetails = JSON.parse(sosDetails); //parse object
+      console.log(sosDetails);
       $scope.sos.email = sosDetails.email; //save person email to sos object
+      $scope.sos.businessName = sosDetails.businessName;
       var sosDetails = window.localStorage.getItem('latLng'); //get user lat and long (set below)
       sosDetails = JSON.parse(sosDetails); //parse object
       //save user lat and long coordinates to sos object
