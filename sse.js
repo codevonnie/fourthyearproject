@@ -11,6 +11,5 @@ module.exports = function (req, res, next) {
     res.write("data: " + JSON.stringify(data) + "\n\n");
     console.log("Message Sent");
   }
-
   next()
 }
