@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
  
-.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state) {
+.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal) {
   
   //Add in windows loading while checking if user is logged in!
 
@@ -20,7 +20,6 @@ angular.module('starter.controllers', [])
 
   else{
     logInDetails = JSON.parse(logInDetails);
-    console.log(logInDetails);
      var user = {
       email: logInDetails.email,
       password: logInDetails.password,
@@ -30,6 +29,14 @@ angular.module('starter.controllers', [])
        $state.go('tab.profile');
      
   }
+
+  $ionicModal.fromTemplateUrl('templates/passwordInput.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+          }).then(function(modal) {
+            $scope.modal = modal;
+          });
+          
   
   
   
@@ -37,15 +44,60 @@ angular.module('starter.controllers', [])
 $scope.login = function(user) {
     //if login is successful, go to profile view
     var onSuccess = function () {
-       $state.go('tab.profile');
-       
+
+
+       //if no password is entered, stop page from being closed
+
+          //check entered passwords are the same
+
+      $scope.check={};
+      
+      if(user.password.startsWith("*x*")){
+
+            $scope.modal.show();
+
+      }
+
+       $scope.closeModal = function() {
+            console.log("close");
+            $scope.modal.hide();
+      };
+
+      $scope.changePass = function() {
+        console.log($scope.check.pass);
+        console.log($scope.check.repass);
+        if ($scope.check.pass != $scope.check.repass) {
+          $scope.message="Passwords have to match";
+          $scope.IsMatch=true;
+          return false;
+        }
+        else if(($scope.check.pass == undefined)||($scope.check.pass == "")) {
+          $scope.message="Please fill in all fields";
+          $scope.IsMatch=true;
+          return false;
+        }
+        else{
+          $scope.user.password=$scope.check.pass;
+          AuthService.setPassword(user).then(function(response){
+              $scope.modal.hide();
+              $state.go('tab.profile');
+
+          },
+          function(data){
+            console.log("error------");
+          });
+          
+        }
+      $scope.IsMatch=false;
+    }
+
 
     };
     //if login is not successful, alert user with popup and allow them to reenter deails
     var onError = function () {
       var alertPopup = $ionicPopup.alert({
           title: 'Login failed!',
-          template: "Please try again"
+          template: "Check details and try again"
           });
     };
 
@@ -126,16 +178,31 @@ $scope.login = function(user) {
 
   //submit function for sos message
   $scope.submit=function(){
-    //get user profile details from local storage
-    var sosDetails = window.localStorage.getItem('profile');
-    sosDetails = JSON.parse(sosDetails); //parse object
-    $scope.sos.email = sosDetails.email; //save person email to sos object
-    var sosDetails = window.localStorage.getItem('latLng'); //get user lat and long (set below)
-    sosDetails = JSON.parse(sosDetails); //parse object
-    //save user lat and long coordinates to sos object
-    $scope.sos.lat = sosDetails.lat; 
-    $scope.sos.lng = sosDetails.lng;
-    console.log($scope.sos);
+    
+    var confirmPopup = $ionicPopup.confirm({
+     title: 'Send SOS Message',
+     template: 'Are you sure you want to send this message?'
+   });
+
+   confirmPopup.then(function(res) {
+     if(res) {
+       //get user profile details from local storage
+      var sosDetails = window.localStorage.getItem('profile');
+      sosDetails = JSON.parse(sosDetails); //parse object
+      $scope.sos.email = sosDetails.email; //save person email to sos object
+      var sosDetails = window.localStorage.getItem('latLng'); //get user lat and long (set below)
+      sosDetails = JSON.parse(sosDetails); //parse object
+      //save user lat and long coordinates to sos object
+      $scope.sos.lat = sosDetails.lat; 
+      $scope.sos.lng = sosDetails.lng;
+      console.log($scope.sos);
+     } else {
+       var alertPopup = $ionicPopup.alert({
+          title: 'Message not sent',
+          template: "Message not sent"
+          });
+     }
+   });
 
     //popup if message is sent successfully
     // var alertPopup = $ionicPopup.alert({

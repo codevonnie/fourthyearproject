@@ -6,7 +6,22 @@
     
     <div id="map" data-tap-disabled="true">
     </div>
-      
+
+
+    <div class="card">
+      <ion-list>
+
+        <ion-item>
+        <h2>Please choose your emergency type</h2>
+        <select ng-model="sos.status" ng-change="selectChoice(formData.q1.selection)">
+          <option>Medical Emergency</option>
+          <option>Other</option>
+        </select>
+        </ion-item>
+      </ion-list>
+    </div>
+    
+
       <div class="card message">
           <div class="item item-input">
             <input type="text" placeholder="Message (Optional)" ng-model="sos.message">

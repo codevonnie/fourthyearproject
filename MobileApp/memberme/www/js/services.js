@@ -97,6 +97,44 @@ angular.module('starter.services', [])
          });
        });
      };
+
+     //sends updated password details to server updatePassword method
+    //  var setPassword = function(user) {
+    //    var res;
+    //    return $q(function(resolve, reject) {
+    //      $http.put(API_ENDPOINT.url + '/newPassword', user).then(function(result) {
+    //        if (result.data.success) {
+    //          resolve(result.data.msg);
+    //        } else {
+    //          reject(result.data.success);
+    //        }
+           
+    //      }).catch(function(err){
+    //        console.log("server down")
+    //      });
+    //    });
+    //  };
+
+
+
+    var setPassword = function(user) {
+
+       return $q(function(resolve, reject) {
+         $http.put(API_ENDPOINT.url + '/newPassword', user).then(function(result) {
+           if (result.data.success) {
+             console.log(result);
+             resolve(result.data.msg);
+           } else {
+             console.log(result);
+             reject(result.data.success);
+           }
+           
+          }).catch(function(err){
+            console.log(err);
+           console.log("server down")
+          });
+       });
+     };
  
   loadUserCredentials();
  
@@ -106,6 +144,7 @@ angular.module('starter.services', [])
     logout: logout,
     getInfo: getInfo,
     updateProfile: updateProfile,
+    setPassword: setPassword,
     isAuthenticated: function() {return isAuthenticated;},
   };
 })

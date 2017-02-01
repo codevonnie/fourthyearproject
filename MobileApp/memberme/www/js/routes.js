@@ -49,6 +49,12 @@ angular.module('starter.routes', ['ionic'])
     url: '/login',
     templateUrl: 'templates/login.html',
     controller: 'LoginCtrl'
+    })
+
+    .state('newPass', {
+    url: '/newPass',
+    templateUrl: 'templates/passwordInput.html',
+    controller: 'LoginCtrl'
     });
 
   // if none of the above states are matched, use this as the fallback
