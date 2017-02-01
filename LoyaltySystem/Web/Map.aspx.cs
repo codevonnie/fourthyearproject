@@ -15,6 +15,7 @@ public partial class Map : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         countMessages = 0;
+
         var scriptManager = ScriptManager.GetCurrent(Page);
         if (scriptManager == null) return;
 
@@ -50,11 +51,11 @@ public partial class Map : System.Web.UI.Page
 
 
             string PinMessage = "'"+
-                "<div class=\"text-center\">" +
-                "<h3>" + name + "</h3>" +
-                "<p><br/>Email: " + email + "</p>" +
-                "<p><br/>Status: " + status + "</p>" +
-                "<p><br/>Message: " + message + "</p>" +
+                "<div class=\"MessageBoxMaxWidth text-capitalize\">" +
+                "<h3 class=\"text-center\">" + name + "</h3>" +
+                "<p><br/><b>Email</b>: " + email + "</p>" +
+                "<p><br/><b>Status</b>: " + status + "</p>" +
+                "<p><br/><b>Message</b>: " + message + "</p>" +
                 "<button class=\"btn btn-danger btn-block\" onclick=\"myFunction()\".>Delete Pin And Message</button>"+
                 "</div >"+
                 "'";

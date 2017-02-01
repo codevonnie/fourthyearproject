@@ -52,6 +52,11 @@
     margin-right: auto;
 }
 
+.MessageBoxMaxWidth{
+    max-width: 250px;
+}
+
+
 .maxWidthContainer {
     width: 200px;
 }

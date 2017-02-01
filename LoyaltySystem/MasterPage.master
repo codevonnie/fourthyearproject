@@ -32,7 +32,7 @@
     if (!!window.EventSource) {
         // http://localhost:3000/stream
         // https://membermemessageserver.herokuapp.com/stream
-        var source = new EventSource('http://localhost:3000/stream')
+        var source = new EventSource('https://membermemessageserver.herokuapp.com/stream')
 
         //Listens to see if it there is a message w8ing for him
         source.addEventListener('message', function (e) {
@@ -57,18 +57,27 @@
                 if (entry.business === "" || entry.email === "")
                     messagesList.splice(entry, 1);
             });
+            
 
             /* Update the Header box with the Total Amount of messages that are in the Array
             * Only if the number of messages are greater than the amount alreay Present
             */
-            if (document.getElementById("messageBoxCount").innerText < messagesList.length.toString())
+            if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList != 0){
                 document.getElementById("messageBoxCount").innerText = messagesList.length.toString();
+                localStorage['messageCount'] = messagesList.length.toString();
+                }
 
-            if (document.getElementById("messageBoxCount").innerText > messagesList.length.toString() && messagesList != 0) {
+            if ((document.getElementById("messageBoxCount").innerText > messagesList.length.toString()) && messagesList != 0) {
                 var num = Number(document.getElementById("messageBoxCount").innerText);
                 num++;
+                localStorage['messageCount'] = num.toString();
                 document.getElementById("messageBoxCount").innerText = num.toString();
             }
+
+            if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList.length === 0){
+                document.getElementById("messageBoxCount").innerText = localStorage['messageCount'];
+            }
+
         }, false)
 
         //Changes the Message Box Envelope colour - Green Is Connected
@@ -93,9 +102,6 @@
 
     //Ajax Function That Posts the Array[Objects] to the Relevent Page
     function SendListToPage() {
-        //TESTING TO CHECK SENT LIST
-        //alert(JSON.stringify(messagesList));
-
         $.ajax({
             type: "POST",
             url: "Map.aspx/MessagesToArray",
@@ -132,11 +138,11 @@
                         <div class="col-sm-3">
                             <ul class="nav nav-tabs ">
                                 <li class="nav-item">
-                                    <a class="nav-link active whiteColor" href="Map.aspx">Map</a>
+                                    <a class="nav-link active whiteColor" href="Map.aspx" onclick="SendListToPage()">Map</a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link active whiteColor" href="Arivals.aspx">Arrivals</a>
+                                    <a class="nav-link active whiteColor" href="Arivals.aspx" onclick="SendListToPage()">Arrivals</a>
                                 </li>
 
                                 <li class="nav-item dropdown">
@@ -145,24 +151,23 @@
                                        <!-- <span class="caret"></span>-->
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="AddMember.aspx">Add</a></li>
-                                        <li><a class="dropdown-item" href="DeleteMember.aspx">Delete</a></li>
+                                        <li><a class="dropdown-item" href="AddMember.aspx" onclick="SendListToPage()">Add</a></li>
+                                        <li><a class="dropdown-item" href="DeleteMember.aspx" onclick="SendListToPage()">Delete</a></li>
                                     </ul>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link active whiteColor" href="Default.aspx">DashBoard</a>
+                                    <a class="nav-link active whiteColor" href="Default.aspx" onclick="SendListToPage()">DashBoard</a>
                                 </li>
                             </ul>
                         </div>
                         <div class="col-sm-4">
-                            <a class="navbar-brand padRight65" href="Default.aspx">Member Me</a>
+                            <a class="navbar-brand padRight65" href="Default.aspx" onclick="SendListToPage()">Member Me</a>
                         </div>
 
                         <div class="col-sm-5">
-                            <div class="navbar-brand" id="logInBtn" runat="server" href="~/Web/LoginPage.aspx">LogIn</div>
+                            <a class="navbar-brand" id="logInBtn" runat="server" href="~/Web/LoginPage.aspx" aria-hidden="true" onclick="SendListToPage()">LogIn</a>
                             <a class="MessageEnvelope fa fa-envelope-o fa-2x" id="EnvelopeBox" href="Web/Map.aspx" runat="server" onclick="SendListToPage()" aria-hidden="true"><span runat="server" class="MessageBox" id="messageBoxCount"></span></a>
-                            <asp:HiddenField ID="HiddenField1" runat="server" />
                         </div>
                     </div>
                 </div>
