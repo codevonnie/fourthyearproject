@@ -4,11 +4,9 @@ var app = express();
 var bodyParser = require('body-parser');
 var neo4j = require('neo4j-driver').v1;
 var port = process.env.PORT || 8100;        // set the port if testing locally
-var morgan = require('morgan');
 var config = require('./config/database');
 var cors = require('cors');
 var passport = require('passport');
-var mongoose = require('mongoose');
 var jwt = require('express-jwt');
 var rsaValidation = require('auth0-api-jwt-rsa-validation');
 var cloudinary = require('cloudinary');
@@ -21,8 +19,9 @@ var driver = neo4j.driver("bolt://hobby-gemhpbboojekgbkeihhpigol.dbs.graphenedb.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
-app.use(morgan('dev'));
 
+// ------> http://stackoverflow.com/questions/39239051/rs256-vs-hs256-whats-the-difference <---------
+//Stack overflow on why RS256 is better for encryption, good for Write Up
 var jwtCheck = jwt({
   secret: rsaValidation(),
   audience: 'https://restapicust.herokuapp.com/api/',
@@ -38,30 +37,21 @@ app.use(function (err, req, res, next) {
   }
 });
 
-//----------------- Cloudinary Configuration  NOT WORKING-----------------
-cloudinary.config({
-  cloud_name: 'hlqysoka2',
-  api_key: '836473758946851',
-  api_secret: 'HvbKatij3YP8zxk_1I7DOY5m8mA'
-});
-
 var router = express.Router();
 
-// middleware to use for all requests
+// ----------------- Middleware to use for all Requests ----------------------------------------------------- 
 app.all('*', function (req, res, next) {
-  // do logging
+  // Do logging
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
   res.header("Access-Control-Allow-Headers", "Content-Type, Accept");
 
-
   console.log('Something is happening.');
-  next(); // make sure we go to the next routes and don't stop here
+  next(); // Make sure we go to the next routes and don't stop here
 });
 
 
-
-// ----------------- Authentication Route For Persons/Buisness Via DataBase ----------------- 
+// ----------------- Authentication Route For Persons/Buisness Via DataBase -------------------------------- 
 // POST http://localhost:8080/api/authenticate)
 router.post('/authenticate', function (req, res) {
 
@@ -81,9 +71,11 @@ router.post('/authenticate', function (req, res) {
   session
     .run(queryString)
     .then(function (result) {
+      console.log(result.records);
       // If Person/Biz is found and UsrName/password is Correct
-      if (result.records[0] == null)
+      if (result.records[0] == null){
         res.json({ success: false });
+         console.log('Failed To Get Authenticated');}
       else {
         var credList = [];//create a new list
 
@@ -108,7 +100,7 @@ router.post('/authenticate', function (req, res) {
               guardianName: record._fields[0].properties.guardianName,
               guardianNum: record._fields[0].properties.guardianNum,
             });
-
+            console.log('Found You! Permission Granted');
             /*JSON RESPONSE =
               "success": true,
               "name": "Paul Potts4564",
@@ -126,8 +118,7 @@ router.post('/authenticate', function (req, res) {
 
           }
           else {
-            //Add The biz Details to the [list]
-            //console.log(record._fields[0].properties.name);
+            console.log('Found You! Permission Granted');
             res.json({ success: true, name: record._fields[0].properties.name })
           }
         });
@@ -143,7 +134,7 @@ router.post('/authenticate', function (req, res) {
 });
 
 
-//-----------------------------------    ADD A NEW Business   -------------------------------- 
+//----------------------------------- ADD A NEW Business   -------------------------------------------------
 router.post('/addCompany', function (req, res) {
   var session = driver.session();
 
@@ -176,7 +167,8 @@ router.post('/addCompany', function (req, res) {
     });
 });
 
-//-----------------------------------    Add a New Person To The DataBase   -------------------------------- 
+
+//----------------------------------- ADD a New Person To The DataBase   ----------------------------------- 
 router.post('/addPerson', function (req, res) {
   var session = driver.session();
 
@@ -204,10 +196,8 @@ router.post('/addPerson', function (req, res) {
 })//addPerson
 
 
-//-----------------------------------    DELETE A Business BY EMAIL  ---------------------------------------
-
+//----------------------------------- DELETE A Business BY EMAIL  ------------------------------------------
 //-------------> Should probably add an extra authorisation step for deletion to avoid mistakes! <----------
-
 router.delete('/deleteCompany', function (req, res) {
   var session = driver.session();
   var email = req.body.email;         //Set the Business email (comes from the request)
@@ -232,19 +222,17 @@ router.delete('/deleteCompany', function (req, res) {
 });
 
 
-
-
-
-//-----------------------------------    POST Find Persons - Arivals WebApp -------------------*FIX*--------
-// Working if you leave guardianName/num as null or dont add them in request 
-// May need to Fix Timeout if person isnt found
+//----------------------------------- POST Find Persons - Arivals WebApp ------------------- *FIX* --------
+/* Working if you leave guardianName/num as null or dont add them in request 
+  May need to Fix Timeout if person isnt found*/
 router.post('/findPerson', function (req, res) {
   console.log("in findPerson ");
   var session = driver.session();
 
   var person = newPersonObj(req);
+
   session
-    .run("MATCH (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:" + person.joined + ", dob:" + person.dob + ", email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) RETURN a")
+    .run("MATCH (a:Person {email:'" + person.email + "' }) RETURN a")
 
     .then(function (result) {
       result.records.forEach(function (record) {//Iterate over results
@@ -282,10 +270,11 @@ router.post('/findPerson', function (req, res) {
     })
 })
 
-//-----------------------------------    Add a Relationship Between Person + Company -------------------------------- 
+
+//----------------------------------- ADD a Relationship Between Person + Company -------------------------
 router.post('/addRelationship', function (req, res) {
   var session = driver.session();
-  session.run("MATCH (a:Person {email: '" + req.body.email + "'}), (b:Business {name: '" + req.body.bName + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
+  session.run("MATCH (a:Person {email: '" + req.body.email + "'}), (b:Business {name: '" + req.body.name + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Entry has been made
@@ -304,7 +293,7 @@ router.post('/addRelationship', function (req, res) {
 })//addRelationship
 
 
-//-----------------------------------    DELETE A Person -------------------------------- 
+//----------------------------------- DELETE A Person -----------------------------------------------------
 router.delete('/deletePerson', function (req, res) {
 
   var session = driver.session();
@@ -331,7 +320,7 @@ router.delete('/deletePerson', function (req, res) {
 })//deletePerson
 
 
-//----------------------------------- UPDATE A Person -------------------------------- 
+//----------------------------------- UPDATE A Person -----------------------------------------------------
 router.put('/updatePerson', function (req, res) {
 
   var session = driver.session();
@@ -357,7 +346,7 @@ router.put('/updatePerson', function (req, res) {
 })//updateperson
 
 
-//-----------------------------------    Create A New Person Object From Http Request  -------------------------------- 
+//----------------------------------- Create A New Person Object From Http Request  -----------------------
 function newPersonObj(req) {
   var person = new Person();
   person.name = req.body.name;
@@ -385,11 +374,10 @@ function newPersonObj(req) {
 }
 
 
-
-/*-----------------------------------    GET ALL Business   ----------------------------------- 
+/*----------------------------------- GET ALL Business   --------------------------------------------------
 * GET Request returns all the Buisness Nodes and sends them all as a JSON response to the client
 */
-//---------------------------> IS THIS A NECESSARY METHOD? Testing Only <-----------------
+//---------------------------> IS THIS A NECESSARY METHOD? Testing Only <----------------------------------
 
 router.get('/businessMembers', function (req, res) {
 
@@ -412,43 +400,12 @@ router.get('/businessMembers', function (req, res) {
 });
 
 
-
-
-
-
-
-
-
-//-----------------------------------    Upload Images To Cloudinary *NOT WORKING*    -------------------------------- 
-/*router.post('/uploadPic', function (req, res) {
-  console.log("IN uploadPic")
-  var fileStream = req.body.fileStream;
-  var barCode = req.body.barCode;
-  console.log("Got array")
-console.log(fileStream)
-  
- 
- 
-cloudinary.v2.uploader.upload(fileStream, 
-    function(error, result) {
-      console.log(result); 
-      res.send(result);
-    })
-    .catch(function (error) {
-      console.log(error);
-      res.send(error);
-    })
-})*/
-
-
-
-
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
+//---------------------------------- REGISTER OUR ROUTES --------------------------------------------------
+// All of our routes will be prefixed with /api
 app.use('/api', router);
 
-// Server listens on local port or on Heroku port
-//=============================================================================
 
+// Server listens on either Local OR Heroku port
+//=============================================================================
 app.listen(port);
 console.log('Magic happens on port ' + port);

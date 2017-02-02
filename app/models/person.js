@@ -1,5 +1,8 @@
+
+//Mongoose used for validation on Input to Object
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+
 
 var PersonSchema = new Schema({
     name: String,
@@ -28,19 +31,5 @@ var PersonSchema = new Schema({
     }
 });
 
-
-
 module.exports = mongoose.model('Person', PersonSchema);
 
-
-/*
-    Schema types
-    String
-    Number
-    Date
-    Buffer
-    Boolean
-    Mixed
-    ObjectId
-    Array
-*/

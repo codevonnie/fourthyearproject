@@ -14,7 +14,7 @@
     "nodejs",
     "neo4j"
   ],
-  "author": "Yvonne Grealy",
+  "author": "Yvonne Grealy, Scott Coyne",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/codevonnie/fourthyearproject/issues"
@@ -30,7 +30,6 @@
     "jsonwebtoken": "^7.1.9",
     "jwt-simple": "^0.5.0",
     "mongoose": "~4.2.4",
-    "morgan": "^1.7.0",
     "neo4j-driver": "^1.1.0-M02",
     "nodemon": "^1.11.0",
     "passport": "^0.3.2",
