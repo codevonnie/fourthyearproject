@@ -3,16 +3,15 @@
     <h1 class="title">SOS</h1>
   </ion-header-bar>
   <ion-content class="padding">
-
+    <ion-refresher pulling-text="Pull to refresh..." on-refresh="reload()">
+  </ion-refresher>
     <div id="map" data-tap-disabled="true" ng-show="toggle">
     </div>
 
-    <div ng-hide="toggle">
-      <button class="button button-full button-balanced" ng-click="reload()">
-       Retry
-      </button>
-    </div>
-
+    <div class="card" ng-hide="toggle">
+        <h3>Ensure internet and GPS are enabled and pull to refresh</h3>
+      </div>
+    
     <div class="card">
       <ion-list>
 

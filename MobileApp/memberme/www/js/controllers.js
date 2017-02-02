@@ -86,6 +86,8 @@ $scope.login = function(user) {
         if ($scope.check.pass != $scope.check.repass) {
           $scope.message="Passwords have to match";
           $scope.IsMatch=true;
+          $scope.check.pass="";
+          $scope.check.repass="";
           return false;
         }
         else if(($scope.check.pass == undefined)||($scope.check.pass == "")) {
@@ -96,6 +98,8 @@ $scope.login = function(user) {
         else if(($scope.check.pass.startsWith("*x*"))) {
           $scope.message="Not a valid password, try another";
           $scope.IsMatch=true;
+          $scope.check.pass="";
+          $scope.check.repass="";
           return false;
         }
         else{
@@ -291,6 +295,15 @@ $scope.login = function(user) {
   if(ConnectivityMonitor.isOnline()){
 
     $scope.toggle=true;
+
+    $scope.loading = $ionicLoading.show({
+          content: '<i class="icon ion-loading-c"></i>',
+          animation: 'fade-in',
+          showBackdrop: false,
+          maxWidth: 50,
+          showDelay: 0
+        })
+
     //Google maps options
     var options = {timeout: 10000, enableHighAccuracy: true};
 
@@ -327,8 +340,9 @@ $scope.login = function(user) {
         });
 
       });
-
+      $ionicLoading.hide();
   }, function(error){
+    $ionicLoading.hide();
     var alertPopup = $ionicPopup.alert({
           title: 'Could not get location',
           template: "Check your location services"
