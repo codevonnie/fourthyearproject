@@ -8,6 +8,11 @@ npm-debug.log
 *.dev
 .DS_Store
 
+# App Build Folders
+platforms
+plugins
+resources
+
 # Docker
 Dockerfile
 docker-compose.yml

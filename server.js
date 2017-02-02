@@ -64,14 +64,18 @@ router.post('/authenticate', function (req, res) {
 
   // check whether authentication request is from mobile app or web app - make appropriate database call
   if (req.body.type === "person")
-    queryString = "Match (a:Person) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a LIMIT 1";
+    queryString = "Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a, b LIMIT 1";
   else if (req.body.type === "business")
     queryString = "Match (a:Business) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a LIMIT 1";
 
   session
     .run(queryString)
     .then(function (result) {
+<<<<<<< HEAD
       console.log(result.records);
+=======
+      console.log(result)
+>>>>>>> 96b7d78505b975c6559ae1a26cbee994f195f72f
       // If Person/Biz is found and UsrName/password is Correct
       if (result.records[0] == null){
         res.json({ success: false });
@@ -99,6 +103,7 @@ router.post('/authenticate', function (req, res) {
               imgUrl: record._fields[0].properties.imgUrl,
               guardianName: record._fields[0].properties.guardianName,
               guardianNum: record._fields[0].properties.guardianNum,
+              businessName: record._fields[1].properties.name
             });
             console.log('Found You! Permission Granted');
             /*JSON RESPONSE =
@@ -114,6 +119,7 @@ router.post('/authenticate', function (req, res) {
               "imgUrl": "https://res.cloudinary.com/hlqysoka2/image/upload/v1484837295/itxmpiumdiu56q7sbebn.jpg",
               "guardianName": "timtim",
               "guardianNum": "1800696969"
+              "businessName": "Biking Heaven"
             */
 
           }
@@ -344,6 +350,32 @@ router.put('/updatePerson', function (req, res) {
       res.json({ success: false, message: err });
     })
 })//updateperson
+
+//----------------------------------- SET NEW PASSWORD (FOR FIRST LOG IN) -------------------------------- 
+router.put('/newPassword', function (req, res) {
+
+  var session = driver.session();
+  var person = newPersonObj(req);
+  console.log(person.email);
+  console.log(person.password);
+  session
+    .run("Match (a:Person) WHERE a.email='" + person.email + "' SET a.password='" + person.password + "' return COUNT(*)")
+    .then(function (result) {
+
+      // IF count(*) Returns > 0, Updating has been made successfully
+      if (result.records.length > 0)
+        res.json({ success: true, message: 'User Password Updated' });
+      else
+        res.json({ success: false, message: 'Problem Updating User Check Name/Email' });
+
+      session.close();
+      //driver.close();
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.json({ success: false, message: err });
+    })
+})//newPassword
 
 
 //----------------------------------- Create A New Person Object From Http Request  -----------------------
