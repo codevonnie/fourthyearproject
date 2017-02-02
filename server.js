@@ -71,11 +71,6 @@ router.post('/authenticate', function (req, res) {
   session
     .run(queryString)
     .then(function (result) {
-<<<<<<< HEAD
-      console.log(result.records);
-=======
-      console.log(result)
->>>>>>> 96b7d78505b975c6559ae1a26cbee994f195f72f
       // If Person/Biz is found and UsrName/password is Correct
       if (result.records[0] == null){
         res.json({ success: false });
