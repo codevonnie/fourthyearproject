@@ -8,8 +8,9 @@
     <script>
         <!--Important To Ensure Messages Count Gets Displayed Accross All Pages-->
         localStorage['messageCount'] = document.getElementById("messageBoxCount").innerText;
-    </script>
 
+   
+    </script> 
        <!--Allows access to Master Page Methods *IMPORTANT*-->
       <%@ MasterType VirtualPath="~/MasterPage.Master" %>
 

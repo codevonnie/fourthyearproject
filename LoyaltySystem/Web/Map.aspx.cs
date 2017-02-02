@@ -9,6 +9,13 @@ using System.Web.UI.WebControls;
 
 public partial class Map : System.Web.UI.Page
 {
+
+    public class DeletePinByGeo
+    {
+        public double lat { get; set; }
+        public double lng { get; set; }
+    }
+
     private static List<SosMessage> sosList = new List<SosMessage>();
     private static int countMessages = 0;
 
@@ -50,15 +57,18 @@ public partial class Map : System.Web.UI.Page
             messageNumKey = messageNumKey + countMessages++;
 
 
-            string PinMessage = "'"+
+            string PinMessage = "'" +
                 "<div class=\"MessageBoxMaxWidth text-capitalize\">" +
                 "<h3 class=\"text-center\">" + name + "</h3>" +
                 "<p><br/><b>Email</b>: " + email + "</p>" +
                 "<p><br/><b>Status</b>: " + status + "</p>" +
                 "<p><br/><b>Message</b>: " + message + "</p>" +
-                "<button class=\"btn btn-danger btn-block\" onclick=\"myFunction()\".>Delete Pin And Message</button>"+
-                "</div >"+
+                "<button class=\"btn btn-danger btn-block\" type=\"button\" onclick=\"RemoveMessage()\">Delete Pin And Message</button>" +
+                "</div >" +
                 "'";
+
+            //<button class="btn btn-danger btn-block" type="button" runat="server" onserverclick="myFunction">Delete Pin And Message</button>
+            //<asp:button runat="server" text="Button" />
 
             //Only sets the Location of the first Message(centers map on that location) 2 because ++ on inner loop
             if (countMessages < 2)
@@ -66,6 +76,25 @@ public partial class Map : System.Web.UI.Page
 
             ScriptManager.RegisterStartupScript(this, this.GetType(), messageNumKey, "newPin(" + latitude + "," + longitude + "," + PinMessage + ");", true);
         }
+    }
+
+    [System.Web.Services.WebMethod]
+    public static void DeleteMessage(DeletePinByGeo data)
+    {
+        List<SosMessage> tempList = new List<SosMessage>();
+        tempList.AddRange(sosList);
+
+        string lng = Math.Round(data.lng, 6).ToString().Trim();
+        string lat = Math.Round(data.lat, 6).ToString().Trim();
+
+        foreach (var pin in sosList)
+        {
+            if (pin.latitude.Trim() == lat && pin.longitude.Trim() == lng)
+            {
+                tempList.Remove(pin);
+            }
+        }
+        sosList = tempList;
     }
 
 
@@ -84,5 +113,4 @@ public partial class Map : System.Web.UI.Page
 
         sosList = uniqueList.ToList();
     }
-
 }

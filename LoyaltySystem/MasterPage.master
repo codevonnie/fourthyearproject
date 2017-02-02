@@ -28,7 +28,9 @@
 <%-- If a message comes in, save it to a list straight away. then wipe the message obj on the server side --%>
 
 <script>
+    //Holds All the messages that get sent to the user
     var messagesList = new Array();
+
     if (!!window.EventSource) {
         // http://localhost:3000/stream
         // https://membermemessageserver.herokuapp.com/stream
@@ -78,6 +80,9 @@
                 document.getElementById("messageBoxCount").innerText = localStorage['messageCount'];
             }
 
+            if (document.getElementById("messageBoxCount").innerText === "undefined")
+                document.getElementById("messageBoxCount").innerText = 0;
+
         }, false)
 
         //Changes the Message Box Envelope colour - Green Is Connected
@@ -108,24 +113,18 @@
             data: "{data:" + JSON.stringify(messagesList) + "}",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            success: OnSuccess,
             failure: function (response) {
                 alert(response.d);
             }
         });
+        //Clear the Array of Messages
         messagesList = [];
-    }
-    function OnSuccess(response) {
-        //alert("Success");//Alert the person that all messages were sent accross
     }
 </script>
 
 
 <body>
     <form id="form1" runat="server">
-
-
-        <asp:HiddenField ID="hdnResultValue" Value="0" runat="server" />
 
         <div class="Container MaxHeightHeader">
 
