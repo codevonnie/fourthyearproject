@@ -15,7 +15,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 
-public partial class Web_Customer : System.Web.UI.Page
+public partial class AddMember : System.Web.UI.Page
 {
 
     private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
@@ -46,7 +46,7 @@ public partial class Web_Customer : System.Web.UI.Page
         //Cache might be cleared so need to get another token
         _auth_Token = Decrypt.Base64Decode(Cache.Get("AuthToken").ToString());
         _auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
-        _biz_Name = Cache.Get("BizName");
+        _biz_Name = Decrypt.Base64Decode(Cache.Get("BizName").ToString());
 
         //-------------------------------- DECRYPTION COOKIES --------------------------------
         #region
@@ -122,7 +122,7 @@ public partial class Web_Customer : System.Web.UI.Page
         request.AddParameter("email", customer.email);
         request.AddParameter("phone", customer.contactNumber);
         request.AddParameter("joined", customer.date.ToString("MMMM dd, yyyy"));
-        request.AddParameter("address", customer.address);      
+        request.AddParameter("address", customer.address);
         request.AddParameter("icename", customer.iceName);
         request.AddParameter("icephone", customer.icePhone);
         request.AddParameter("imgUrl", imgDetails.secure_url);
@@ -148,25 +148,24 @@ public partial class Web_Customer : System.Web.UI.Page
         IRestResponse response = client.Execute(request);
         var content = response.Content;
 
-        //FIX RESPONSE JSON
-        //dynamic jsonObject = JsonConvert.DeserializeObject<BuisinessRoot>(response.Content);
-        //var bizObj = jsonObject as BuisinessRoot;
-
-        //If the Message is not Empty
+        //If the Message is not Empty, Ask User to add Another Person or not? ***************** FIX *********
         if (content != "")
+        {
+            newRelationshipRequest(customer);
             Server.Transfer("Default.aspx", true);
+        }
     }
 
     /*
      * Method Creates a new Relationship between the Biz and the newly added person
      */
-    private void newRelationshipRequest(Customer customer, BuisinessRoot biz)
+    private void newRelationshipRequest(Customer customer)
     {
         var client = new RestClient(port);
 
         var request = new RestRequest("api/addRelationship", Method.POST);
         request.AddHeader("Authorization", _auth_Type + " " + _auth_Token);
-        request.AddParameter("name", customer.name);
+        request.AddParameter("email", customer.email);
         request.AddParameter("name", _biz_Name);//lOGGED IN BIZ NAME
 
         IRestResponse response = client.Execute(request);

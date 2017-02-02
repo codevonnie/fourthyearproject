@@ -13,7 +13,7 @@ public class Authorization
 {
     private static string clientId = WebConfigurationManager.AppSettings["AUTH0_CID"];
     private static string clientSecret = WebConfigurationManager.AppSettings["AUTH0_CS"];
-    private static string apiEndPort = WebConfigurationManager.AppSettings["API_END_PORT"];
+    private static string apiEndPort = WebConfigurationManager.AppSettings["API_PORT"];
     private static string auth0EndPort = WebConfigurationManager.AppSettings["AUTH0_PORT"];
 
     public static Token GetAuth()

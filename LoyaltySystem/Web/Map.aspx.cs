@@ -19,7 +19,29 @@ public partial class Map : System.Web.UI.Page
     private static List<SosMessage> sosList = new List<SosMessage>();
     private static int countMessages = 0;
 
+    private object _auth_Token = "";
+    private object _auth_Type = "";
+    private object _biz_Name = "";
+
     protected void Page_Load(object sender, EventArgs e)
+    {
+        //Check If Logged in
+        GetUsrSettings();
+
+        init();
+    }
+
+
+    private void GetUsrSettings()
+    {
+        //-------------------------------- CACHE AUTH--------------------------------
+        //Cache might be cleared so need to get another token
+        _auth_Token = Decrypt.Base64Decode(Cache.Get("AuthToken").ToString());
+        _auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
+        _biz_Name = Decrypt.Base64Decode(Cache.Get("BizName").ToString());
+    }
+
+    private void init()
     {
         countMessages = 0;
 
@@ -36,9 +58,10 @@ public partial class Map : System.Web.UI.Page
 
     }
 
+
     private void MapMessagesAsPins()
     {
-
+        //Update the MessageCount with the newest Amount of messages
         Master.messageBoxNumber = sosList.Count().ToString();
 
         //For each message in the sosList, get the values and add a pin to the map at the Geolocation passed in
@@ -56,7 +79,6 @@ public partial class Map : System.Web.UI.Page
 
             messageNumKey = messageNumKey + countMessages++;
 
-
             string PinMessage = "'" +
                 "<div class=\"MessageBoxMaxWidth text-capitalize\">" +
                 "<h3 class=\"text-center\">" + name + "</h3>" +
@@ -66,9 +88,6 @@ public partial class Map : System.Web.UI.Page
                 "<button class=\"btn btn-danger btn-block\" type=\"button\" onclick=\"RemoveMessage()\">Delete Pin And Message</button>" +
                 "</div >" +
                 "'";
-
-            //<button class="btn btn-danger btn-block" type="button" runat="server" onserverclick="myFunction">Delete Pin And Message</button>
-            //<asp:button runat="server" text="Button" />
 
             //Only sets the Location of the first Message(centers map on that location) 2 because ++ on inner loop
             if (countMessages < 2)
