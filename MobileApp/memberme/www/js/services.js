@@ -14,12 +14,6 @@ angular.module('starter.services', [])
   headers: { 'Content-Type': 'application/json' },
   data: '{"client_id":"fXqMFIGFPGXAPLNm6ltd0NsGV6fWpvDM","client_secret":"HHnBRmKTpK99fx4RYIVnxiJFQourT1RkbWnrs0jIUP1vdYrgWZ1104Tew7cb5-wp","audience":"https://restapicust.herokuapp.com/api/","grant_type":"client_credentials"}' };
 
-  //POST method for sending SOS message to server
-  var messageServer = { method: 'POST',
-  url: 'https://membermemessageserver.herokuapp.com/sendMessage',
-  headers: { 'Content-Type': 'text/event-stream' }
-};
-
   //retrieve saved token from local storage and send to useCredentials function
   function loadUserCredentials() {
     var token = window.localStorage.getItem(LOCAL_TOKEN_KEY);
