@@ -89,10 +89,8 @@ angular.module('starter.services', [])
          $http.put(API_ENDPOINT.url + '/updatePerson', user).then(function(result) {
            if (result.data.success) {
              resolve(result.data.msg);
-
            } else {
              reject(result.data.success);
-
            }
          });
        });

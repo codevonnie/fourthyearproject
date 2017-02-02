@@ -2,13 +2,11 @@ angular.module('starter.controllers', [])
  
 .controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, ConnectivityMonitor) {
   
-  //Add in windows loading while checking if user is logged in!
-  
-  $scope.user={};
-  var logInDetails = window.localStorage.getItem('signIn');
-  
-  if(logInDetails==undefined){
+  $scope.user={}; //user object for displaying profile details
 
+  var logInDetails = window.localStorage.getItem('signIn'); //check localStorage for stored sign in details
+  
+  if(logInDetails==undefined){ //if no stored details exist set user to take in email and password from user
 
     //user object to take inputted email and password from login view.  Type automatically set to person
     $scope.user = {
@@ -16,123 +14,132 @@ angular.module('starter.controllers', [])
       password: '',
       type: 'person'
     };
-
+    //if the user is not connected to internet they can not sign in - popup alert
     if(!ConnectivityMonitor.isOnline()){
       var alertPopup = $ionicPopup.alert({
           title: 'No internet connection',
           template: "You need an internet connection to login"
           });
     }
-  }
-
+  }//end if
+  //if sign in details exist in local storage
   else{
-    logInDetails = JSON.parse(logInDetails);
+    logInDetails = JSON.parse(logInDetails); //parse stored details and set into user objects
      var user = {
       email: logInDetails.email,
       password: logInDetails.password,
       type: 'person'
     };
+    //call getInfo method and pass user object - then go to profile page
     AuthService.getInfo(user);
        $state.go('tab.profile');
      
-  }
+  }//end else
 
+  //modal called for user to set new password if it's the first time login
   $ionicModal.fromTemplateUrl('templates/passwordInput.html', {
             scope: $scope,
             animation: 'slide-in-up'
-          }).then(function(modal) {
+  }).then(function(modal) {
             $scope.modal = modal;
           });
-          
-  
-  
-  
 
-$scope.login = function(user) {
-
-  if(!ConnectivityMonitor.isOnline()){
-      var alertPopup = $ionicPopup.alert({
-          title: 'No internet connection',
-          template: "You need an internet connection to login"
-          });
-    }
-    //if login is successful, go to profile view
-    var onSuccess = function () {
+  //login method called when user presses login button - passes entered user details  
+  $scope.login = function(user) {
     
-      $scope.check={};
-      
-      if(user.password.startsWith("*x*")){
-
-            $scope.modal.show();
-      }
-      else{
-        $state.go('tab.profile');
-      }
-
-       $scope.closeModal = function() {
-            console.log("close");
-            $scope.modal.hide();
-      };
-
-      $scope.changePass = function() {
-        
-        if(!ConnectivityMonitor.isOnline()){
+    //if user is not connected to the internet - popup alert shows
+    if(!ConnectivityMonitor.isOnline()){
         var alertPopup = $ionicPopup.alert({
             title: 'No internet connection',
-            template: "You need an internet connection to continue"
-          });
-    }
+            template: "You need an internet connection to login"
+            });
+      }
+      //if login is successful
+      var onSuccess = function () {
+      
+        $scope.check={};
+        
+        //if user password starts with *x* - it's the first time login so open set password modal
+        if(user.password.startsWith("*x*")){
 
-        if ($scope.check.pass != $scope.check.repass) {
-          $scope.message="Passwords have to match";
-          $scope.IsMatch=true;
-          $scope.check.pass="";
-          $scope.check.repass="";
-          return false;
+              $scope.modal.show();
         }
-        else if(($scope.check.pass == undefined)||($scope.check.pass == "")) {
-          $scope.message="Please fill in all fields";
-          $scope.IsMatch=true;
-          return false;
-        }
-        else if(($scope.check.pass.startsWith("*x*"))) {
-          $scope.message="Not a valid password, try another";
-          $scope.IsMatch=true;
-          $scope.check.pass="";
-          $scope.check.repass="";
-          return false;
-        }
+        //else send user to profile tab
         else{
-          $scope.user.password=$scope.check.pass;
-          AuthService.setPassword(user).then(function(response){
-              $scope.modal.hide();
-              $state.go('tab.profile');
-
-          },
-          function(data){
-            console.log("error------");
-          });
-          
+          $state.go('tab.profile');
         }
-      $scope.IsMatch=false;
-    }
+
+        //called if user cancels changing their password - closes modal
+        $scope.closeModal = function() {
+              $scope.modal.hide();
+        };
+
+        //called when user clicks Save button for new password
+        $scope.changePass = function() {
+          //if user is not connected to the internet - popup alert shows
+          if(!ConnectivityMonitor.isOnline()){
+          var alertPopup = $ionicPopup.alert({
+              title: 'No internet connection',
+              template: "You need an internet connection to continue"
+            });
+        }//end if
+
+          //if password and confirmation password don't match
+          if ($scope.check.pass != $scope.check.repass) {
+            $scope.message="Passwords have to match"; //alert user
+            $scope.IsMatch=true; //show message
+            //reset password fields to blank
+            $scope.check.pass="";
+            $scope.check.repass="";
+            return false;
+          }
+          //if password is left blank
+          else if(($scope.check.pass == undefined)||($scope.check.pass == "")) {
+            $scope.message="Please fill in all fields";//alert user
+            $scope.IsMatch=true; //show message
+            return false;
+          }
+          //if password starts with reserved symbols *x*
+          else if(($scope.check.pass.startsWith("*x*"))) {
+            $scope.message="Not a valid password, try another"; //alert user
+            $scope.IsMatch=true; //show message
+            //reset password fields to blank
+            $scope.check.pass="";
+            $scope.check.repass="";
+            return false;
+          }
+          else{
+            $scope.user.password=$scope.check.pass; //set user password to inputted password
+            //send new user object to setPassword service
+            AuthService.setPassword(user).then(function(response){
+                $scope.modal.hide(); //hide modal
+                $state.go('tab.profile'); //go to profile view
+
+            },
+            function(data){
+              console.log("error------");
+            });
+            
+          }
+        $scope.IsMatch=false; //get rid of alert message
+      }
 
 
-    };
-    //if login is not successful, alert user with popup and allow them to reenter deails
-    var onError = function () {
-      var alertPopup = $ionicPopup.alert({
-          title: 'Login failed!',
-          template: "Check details and try again"
+      };
+      //if login is not successful, alert user with popup and allow them to reenter deails
+      var onError = function () {
+        var alertPopup = $ionicPopup.alert({
+            title: 'Login failed!',
+            template: "Check details and try again"
+            });
+      };
+
+      //call AuthService method login to get token
+      AuthService.login().then(function() {
+        //call AuthService method getInfo to get user profile details
+        AuthService.getInfo(user).then(onSuccess, onError);
           });
-    };
-
-    //call AuthService method login to get token
-    AuthService.login().then(function() {
-      //call AuthService method getInfo to get user profile details
-      AuthService.getInfo(user).then(onSuccess, onError);
-        });
-    }
+      }
   })//end LoginCtrl
 
  //Profile view controller
@@ -181,13 +188,31 @@ $scope.login = function(user) {
     }
     else{
       $scope.toggle=!$scope.toggle; //hide input box
-      AuthService.updateProfile($scope.profile); //call AuthService method updateProfile and pass $scope.profile object
-      profileData=$scope.profile; //save updated $scope obj to profileData obj
-      window.localStorage.setItem('profile', JSON.stringify(profileData)); //set updated profile details to local storage
-      $scope.qrcode=JSON.stringify(profileData); //set qr text to updated profile details
-    }
+      AuthService.updateProfile($scope.profile).then(onSuccess, onError); //call AuthService method updateProfile and pass $scope.profile object
+      //if call to updateProfile is successful - alert user
+      var onSuccess = function () {
+          var alertPopup = $ionicPopup.alert({
+              title: 'Profile updated' ,
+              template: "Profile updated"
+              });
+
+            profileData=$scope.profile; //save updated $scope obj to profileData obj
+            window.localStorage.setItem('profile', JSON.stringify(profileData)); //set updated profile details to local storage
+            $scope.qrcode=JSON.stringify(profileData); //set qr text to updated profile details
+          }//onSuccess
+        //if call to sendMessage is unsuccessful - alert user
+        var onError = function () {
+          var alertPopup = $ionicPopup.alert({
+              title: 'Update failed',
+              template: "Update failed - please try again"
+              });
+        };//onError
       
-    }
+      
+      
+      }//end else
+      
+    }//end submit
 
   //calls AuthService method getInfo to authorize user on db and retrieve profile details
   $scope.getInfo = function() {
@@ -215,15 +240,16 @@ $scope.login = function(user) {
   //empty object to take sos details for sending to business
   $scope.sos={};
 
-    //submit function for sos message
+    //submit function called from sos page when Send SOS button is clicked
   $scope.submit=function(){
-    
+    //show confirmation popup to ensure message is not sent in error
     var confirmPopup = $ionicPopup.confirm({
      title: 'Send SOS Message',
      template: 'Are you sure you want to send this message?'
    });
-
+   //call confirmation popup
    confirmPopup.then(function(res) {
+     //if user selects ok
      if(res) {
        //get user profile details from local storage
       var sosDetails = window.localStorage.getItem('profile');
@@ -237,25 +263,26 @@ $scope.login = function(user) {
       $scope.sos.latitude = sosDetails.lat; 
       $scope.sos.longitude = sosDetails.lng;
       sosDetails=$scope.sos;
-      
-      AuthService.sendMessage($scope.sos).then(onSuccess, onError);
+      //calls service sendMessage and passes sosDetails object
+      AuthService.sendMessage(sosDetails).then(onSuccess, onError);
 
     }
       else {
+      //if user selects to cancel sending SOS
        var alertPopup = $ionicPopup.alert({
           title: 'Message not sent' ,
           template: "Message not sent"
           });
      }
    });
-
+   //if call to sendMessage is successful - alert user
    var onSuccess = function () {
       var alertPopup = $ionicPopup.alert({
           title: 'Message sent' ,
           template: "Message sent"
           });
       }
-
+    //if call to sendMessage is unsuccessful - alert user
     var onError = function () {
       var alertPopup = $ionicPopup.alert({
           title: 'Message sending failed!',
@@ -265,37 +292,36 @@ $scope.login = function(user) {
 
 
   }
-
+  //if user is not connected to the internet - popup alert shows
   if(!ConnectivityMonitor.isOnline()){
         var alertPopup = $ionicPopup.alert({
             title: 'No internet connection',
             template: "You need an internet connection to send SOS"
             });
-      $scope.toggle=false;
+      $scope.toggle=false; //hide map div on sos page
 
   }
-
+  //function to reload page if user connects to internet or gps after initially not having them turned on
   $scope.reload = function(){
     $state.reload();
 
+        //if user is not connected to the internet - popup alert shows
+        if(!ConnectivityMonitor.isOnline()){
+            var alertPopup = $ionicPopup.alert({
+                title: 'No internet connection',
+                template: "You need an internet connection to send SOS"
+                });
+          $scope.toggle=false; //hide map div
 
-    if(!ConnectivityMonitor.isOnline()){
-        var alertPopup = $ionicPopup.alert({
-            title: 'No internet connection',
-            template: "You need an internet connection to send SOS"
-            });
-      $scope.toggle=false;
+      }
+  }//end reload
 
-  }
-
-
-
-  }
-
+  //if device is connected to the internet
   if(ConnectivityMonitor.isOnline()){
 
-    $scope.toggle=true;
+    $scope.toggle=true; //show map div on SOS page
 
+    //show loading spinner while call to Google maps api takes place
     $scope.loading = $ionicLoading.show({
           content: '<i class="icon ion-loading-c"></i>',
           animation: 'fade-in',
@@ -340,16 +366,19 @@ $scope.login = function(user) {
         });
 
       });
+      $ionicLoading.hide(); //when api call finishes hide loading spinner
+
+    }, function(error){
+      //if map can't be retrieved, hide loading spinner
       $ionicLoading.hide();
-  }, function(error){
-    $ionicLoading.hide();
-    var alertPopup = $ionicPopup.alert({
-          title: 'Could not get location',
-          template: "Check your location services"
-          });
-      $scope.toggle=false;
-  });  
-  }
+      //alert user to check gps settings
+      var alertPopup = $ionicPopup.alert({
+            title: 'Could not get location',
+            template: "Check your location services"
+            });
+        $scope.toggle=false; //hide map div
+    });  
+  }//end
   
 });//end SosCtrl
  
