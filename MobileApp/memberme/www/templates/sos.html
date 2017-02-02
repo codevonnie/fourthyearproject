@@ -3,17 +3,22 @@
     <h1 class="title">SOS</h1>
   </ion-header-bar>
   <ion-content class="padding">
-    
-    <div id="map" data-tap-disabled="true">
+
+    <div id="map" data-tap-disabled="true" ng-show="toggle">
     </div>
 
+    <div ng-hide="toggle">
+      <button class="button button-full button-balanced" ng-click="reload()">
+       Retry
+      </button>
+    </div>
 
     <div class="card">
       <ion-list>
 
         <ion-item>
         <h2>Please choose your emergency type</h2>
-        <select ng-model="sos.status" ng-change="selectChoice(formData.q1.selection)">
+        <select ng-model="sos.status">
           <option>Medical Emergency</option>
           <option>Other</option>
         </select>

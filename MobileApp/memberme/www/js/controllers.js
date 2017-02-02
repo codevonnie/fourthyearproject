@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
  
-.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal) {
+.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, ConnectivityMonitor) {
   
   //Add in windows loading while checking if user is logged in!
   
@@ -8,12 +8,21 @@ angular.module('starter.controllers', [])
   var logInDetails = window.localStorage.getItem('signIn');
   
   if(logInDetails==undefined){
+
+
     //user object to take inputted email and password from login view.  Type automatically set to person
     $scope.user = {
       email: '',
       password: '',
       type: 'person'
     };
+
+    if(!ConnectivityMonitor.isOnline()){
+      var alertPopup = $ionicPopup.alert({
+          title: 'No internet connection',
+          template: "You need an internet connection to login"
+          });
+    }
   }
 
   else{
@@ -40,6 +49,13 @@ angular.module('starter.controllers', [])
   
 
 $scope.login = function(user) {
+
+  if(!ConnectivityMonitor.isOnline()){
+      var alertPopup = $ionicPopup.alert({
+          title: 'No internet connection',
+          template: "You need an internet connection to login"
+          });
+    }
     //if login is successful, go to profile view
     var onSuccess = function () {
     
@@ -59,8 +75,14 @@ $scope.login = function(user) {
       };
 
       $scope.changePass = function() {
-        console.log($scope.check.pass);
-        console.log($scope.check.repass);
+        
+        if(!ConnectivityMonitor.isOnline()){
+        var alertPopup = $ionicPopup.alert({
+            title: 'No internet connection',
+            template: "You need an internet connection to continue"
+          });
+    }
+
         if ($scope.check.pass != $scope.check.repass) {
           $scope.message="Passwords have to match";
           $scope.IsMatch=true;
@@ -68,6 +90,11 @@ $scope.login = function(user) {
         }
         else if(($scope.check.pass == undefined)||($scope.check.pass == "")) {
           $scope.message="Please fill in all fields";
+          $scope.IsMatch=true;
+          return false;
+        }
+        else if(($scope.check.pass.startsWith("*x*"))) {
+          $scope.message="Not a valid password, try another";
           $scope.IsMatch=true;
           return false;
         }
@@ -105,7 +132,7 @@ $scope.login = function(user) {
   })//end LoginCtrl
 
  //Profile view controller
-.controller('ProfileCtrl', function($scope, AuthService, API_ENDPOINT, $http, $state, $ionicListDelegate) {
+.controller('ProfileCtrl', function($scope, AuthService, API_ENDPOINT, $http, $state, $ionicListDelegate, ConnectivityMonitor, $ionicPopup) {
   
     $scope.profile={}; //empty profile object
     $scope.origProfile={};
@@ -137,11 +164,25 @@ $scope.login = function(user) {
     }
     //submit function for profile edits
     $scope.submit = function() {
+      if(!ConnectivityMonitor.isOnline()){
+        var alertPopup = $ionicPopup.alert({
+            title: 'No internet connection',
+            template: "You need an internet connection to update details"
+            });
+
+      $scope.toggle=!$scope.toggle; //hide input box
+      profileData=window.localStorage.getItem('profile');
+      profileData=JSON.parse(profileData); //parse JSON object
+      $scope.profile=profileData; //save JSON object to $scope variable
+    }
+    else{
       $scope.toggle=!$scope.toggle; //hide input box
       AuthService.updateProfile($scope.profile); //call AuthService method updateProfile and pass $scope.profile object
       profileData=$scope.profile; //save updated $scope obj to profileData obj
       window.localStorage.setItem('profile', JSON.stringify(profileData)); //set updated profile details to local storage
       $scope.qrcode=JSON.stringify(profileData); //set qr text to updated profile details
+    }
+      
     }
 
   //calls AuthService method getInfo to authorize user on db and retrieve profile details
@@ -165,12 +206,12 @@ $scope.login = function(user) {
 
 
 //Controller for user if they are having an issue while on the business premises
-.controller('SosCtrl', function($scope, AuthService, $http, $state, $ionicLoading, $cordovaGeolocation, $ionicPopup) {
-
+.controller('SosCtrl', function($scope, AuthService, $http, $state, $ionicLoading, $cordovaGeolocation, $ionicPopup, ConnectivityMonitor) {
+  
   //empty object to take sos details for sending to business
   $scope.sos={};
 
-  //submit function for sos message
+    //submit function for sos message
   $scope.submit=function(){
     
     var confirmPopup = $ionicPopup.confirm({
@@ -183,73 +224,118 @@ $scope.login = function(user) {
        //get user profile details from local storage
       var sosDetails = window.localStorage.getItem('profile');
       sosDetails = JSON.parse(sosDetails); //parse object
-      console.log(sosDetails);
       $scope.sos.email = sosDetails.email; //save person email to sos object
-      $scope.sos.businessName = sosDetails.businessName;
+      $scope.sos.business = sosDetails.businessName;
+      $scope.sos.name = sosDetails.name;
       var sosDetails = window.localStorage.getItem('latLng'); //get user lat and long (set below)
       sosDetails = JSON.parse(sosDetails); //parse object
       //save user lat and long coordinates to sos object
-      $scope.sos.lat = sosDetails.lat; 
-      $scope.sos.lng = sosDetails.lng;
-      console.log($scope.sos);
-     } else {
+      $scope.sos.latitude = sosDetails.lat; 
+      $scope.sos.longitude = sosDetails.lng;
+      sosDetails=$scope.sos;
+      
+      AuthService.sendMessage($scope.sos).then(onSuccess, onError);
+
+    }
+      else {
        var alertPopup = $ionicPopup.alert({
-          title: 'Message not sent',
+          title: 'Message not sent' ,
           template: "Message not sent"
           });
      }
    });
 
-    //popup if message is sent successfully
-    // var alertPopup = $ionicPopup.alert({
-    //       title: 'Could not get location',
-    //       template: "Check your location services"
-    //       });
+   var onSuccess = function () {
+      var alertPopup = $ionicPopup.alert({
+          title: 'Message sent' ,
+          template: "Message sent"
+          });
+      }
+
+    var onError = function () {
+      var alertPopup = $ionicPopup.alert({
+          title: 'Message sending failed!',
+          template: "Try calling " + $scope.sos.businessName
+          });
+    };
 
 
   }
-  //Google maps options
-  var options = {timeout: 10000, enableHighAccuracy: true};
 
-  //use phone GPS to get user location coordinates
-  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
-    
-    var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    //save latitude and longitude to local storage
-    window.localStorage.setItem('latLng', JSON.stringify(latLng));
-    //map options - centre map using lat long coords, zoom into location, use ROADMAP
-    var mapOptions = {
-      center: latLng,
-      zoom: 15,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    //map shown on sos view
-    $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+  if(!ConnectivityMonitor.isOnline()){
+        var alertPopup = $ionicPopup.alert({
+            title: 'No internet connection',
+            template: "You need an internet connection to send SOS"
+            });
+      $scope.toggle=false;
 
-    //Wait until the map is loaded to set marker on map
-    google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+  }
 
-      var marker = new google.maps.Marker({
-          map: $scope.map,
-          animation: google.maps.Animation.DROP,
-          position: latLng
-      });      
-      //message displayed if user clicks on marker on map
-      var infoWindow = new google.maps.InfoWindow({
-          content: "You are here"
+  $scope.reload = function(){
+    $state.reload();
+
+
+    if(!ConnectivityMonitor.isOnline()){
+        var alertPopup = $ionicPopup.alert({
+            title: 'No internet connection',
+            template: "You need an internet connection to send SOS"
+            });
+      $scope.toggle=false;
+
+  }
+
+
+
+  }
+
+  if(ConnectivityMonitor.isOnline()){
+
+    $scope.toggle=true;
+    //Google maps options
+    var options = {timeout: 10000, enableHighAccuracy: true};
+
+    //use phone GPS to get user location coordinates
+    $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+      
+      var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      //save latitude and longitude to local storage
+      window.localStorage.setItem('latLng', JSON.stringify(latLng));
+      //map options - centre map using lat long coords, zoom into location, use ROADMAP
+      var mapOptions = {
+        center: latLng,
+        zoom: 15,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      //map shown on sos view
+      $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+      //Wait until the map is loaded to set marker on map
+      google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+
+        var marker = new google.maps.Marker({
+            map: $scope.map,
+            animation: google.maps.Animation.DROP,
+            position: latLng
+        });      
+        //message displayed if user clicks on marker on map
+        var infoWindow = new google.maps.InfoWindow({
+            content: "You are here"
+        });
+        //listen for user clicking on marker - open info window
+        google.maps.event.addListener(marker, 'click', function () {
+            infoWindow.open($scope.map, marker);
+        });
+
       });
-      //listen for user clicking on marker - open info window
-      google.maps.event.addListener(marker, 'click', function () {
-          infoWindow.open($scope.map, marker);
-      });
-
-    });
 
   }, function(error){
     var alertPopup = $ionicPopup.alert({
           title: 'Could not get location',
           template: "Check your location services"
           });
+      $scope.toggle=false;
   });  
+  }
+  
 });//end SosCtrl
  
