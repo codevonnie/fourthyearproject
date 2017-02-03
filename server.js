@@ -314,7 +314,7 @@ router.put('/updatePerson', function (req, res) {
   var session = driver.session();
 
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.phone='" + req.body.phone.trim() + "', a.iceName='" + req.body.iceName.trim() + "', a.icePhone='" + req.body.icePhone.trim() + "', a.joined='" + req.body.joined + "', a.dob=" + req.body.dob + ", a.imgUrl='" + req.body.imgUrl + "', a.email='" + person.email + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.phone='" + req.body.phone.trim() + "', a.iceName='" + req.body.iceName.trim() + "', a.icePhone='" + req.body.icePhone.trim() + "', a.joined='" + req.body.joined + "', a.dob=" + req.body.dob + ", a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.email + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
@@ -336,7 +336,6 @@ router.put('/updatePerson', function (req, res) {
 router.put('/newPassword', function (req, res) {
 
   var session = driver.session();
-  //var person = newPersonObj(req);
  
   session
     .run("Match (a:Person) WHERE a.email='" + req.body.email.trim() + "' SET a.password='" + req.body.password.trim() + "' return COUNT(*)")
