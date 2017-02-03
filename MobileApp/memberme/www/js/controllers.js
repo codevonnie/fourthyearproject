@@ -188,25 +188,12 @@ angular.module('starter.controllers', [])
     }
     else{
       $scope.toggle=!$scope.toggle; //hide input box
-      AuthService.updateProfile($scope.profile).then(onSuccess, onError); //call AuthService method updateProfile and pass $scope.profile object
-      //if call to updateProfile is successful - alert user
-      var onSuccess = function () {
-          var alertPopup = $ionicPopup.alert({
-              title: 'Profile updated' ,
-              template: "Profile updated"
-              });
-
+      AuthService.updateProfile($scope.profile); //call AuthService method updateProfile and pass $scope.profile object
+      
             profileData=$scope.profile; //save updated $scope obj to profileData obj
             window.localStorage.setItem('profile', JSON.stringify(profileData)); //set updated profile details to local storage
             $scope.qrcode=JSON.stringify(profileData); //set qr text to updated profile details
-          }//onSuccess
-        //if call to sendMessage is unsuccessful - alert user
-        var onError = function () {
-          var alertPopup = $ionicPopup.alert({
-              title: 'Update failed',
-              template: "Update failed - please try again"
-              });
-        };//onError
+        
       
       
       
