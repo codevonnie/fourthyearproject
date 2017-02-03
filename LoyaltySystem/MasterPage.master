@@ -28,103 +28,111 @@
 <%-- If a message comes in, save it to a list straight away. then wipe the message obj on the server side --%>
 
 <script>
+
+    var check = "<%= MyProperty %>";
     //Holds All the messages that get sent to the user
-    var messagesList = new Array();
+    if (check === "true") {
+        var messagesList = new Array();
 
-    if (!!window.EventSource) {
-        // http://localhost:3000/stream
-        // https://membermemessageserver.herokuapp.com/stream
-        var source = new EventSource('https://membermemessageserver.herokuapp.com/stream')
+        if (!!window.EventSource) {
+            // http://localhost:3000/stream
+            // https://membermemessageserver.herokuapp.com/stream
+            var source = new EventSource('https://membermemessageserver.herokuapp.com/stream')
 
-        //Listens to see if it there is a message w8ing for him
-        source.addEventListener('message', function (e) {
+            //Listens to see if it there is a message w8ing for him
+            source.addEventListener('message', function (e) {
 
-            document.getElementById("messageBoxCount").value = "";//Reset the Value of the TextBox TO "", So not to repeat 
+                document.getElementById("messageBoxCount").value = "";//Reset the Value of the TextBox TO "", So not to repeat 
 
-            messageObj = JSON.parse(e.data)//Parse the data
+                messageObj = JSON.parse(e.data)//Parse the data
 
-            var msgObj = {};//Create a New Object Each Time A message Comes In
-            msgObj.status = messageObj.status;
-            msgObj.message = messageObj.message;
-            msgObj.email = messageObj.email;
-            msgObj.longitude = messageObj.longitude;
-            msgObj.latitude = messageObj.latitude;
-            msgObj.business = messageObj.business;
-            msgObj.name = messageObj.name;
+                var msgObj = {};//Create a New Object Each Time A message Comes In
+                msgObj.status = messageObj.status;
+                msgObj.message = messageObj.message;
+                msgObj.email = messageObj.email;
+                msgObj.longitude = messageObj.longitude;
+                msgObj.latitude = messageObj.latitude;
+                msgObj.business = messageObj.business;
+                msgObj.name = messageObj.name;
 
-            messagesList.push(msgObj);//Push The Obj to an Array List
+                messagesList.push(msgObj);//Push The Obj to an Array List
 
-            //Remove All Empty Messages from the List
-            messagesList.forEach(function (entry) {
-                if (entry.business === "" || entry.email === "")
-                    messagesList.splice(entry, 1);
-            });
-            
+                //Remove All Empty Messages from the List
+                messagesList.forEach(function (entry) {
+                    if (entry.business === "" || entry.email === "")
+                        messagesList.splice(entry, 1);
+                });
 
-            /* Update the Header box with the Total Amount of messages that are in the Array
-            * Only if the number of messages are greater than the amount alreay Present
-            */
-            if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList != 0){
-                document.getElementById("messageBoxCount").innerText = messagesList.length.toString();
-                localStorage['messageCount'] = messagesList.length.toString();
+
+                /* Update the Header box with the Total Amount of messages that are in the Array
+                * Only if the number of messages are greater than the amount alreay Present
+                */
+                if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList != 0) {
+                    document.getElementById("messageBoxCount").innerText = messagesList.length.toString();
+                    localStorage['messageCount'] = messagesList.length.toString();
                 }
 
-            if ((document.getElementById("messageBoxCount").innerText > messagesList.length.toString()) && messagesList != 0) {
-                var num = Number(document.getElementById("messageBoxCount").innerText);
-                num++;
-                localStorage['messageCount'] = num.toString();
-                document.getElementById("messageBoxCount").innerText = num.toString();
-            }
+                if ((document.getElementById("messageBoxCount").innerText > messagesList.length.toString()) && messagesList != 0) {
+                    var num = Number(document.getElementById("messageBoxCount").innerText);
+                    num++;
+                    localStorage['messageCount'] = num.toString();
+                    document.getElementById("messageBoxCount").innerText = num.toString();
+                }
 
-            if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList.length === 0){
-                document.getElementById("messageBoxCount").innerText = localStorage['messageCount'];
-            }
+                if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList.length === 0) {
+                    document.getElementById("messageBoxCount").innerText = localStorage['messageCount'];
+                }
 
-            if (document.getElementById("messageBoxCount").innerText === "undefined")
-                document.getElementById("messageBoxCount").innerText = 0;
+                if (document.getElementById("messageBoxCount").innerText === "undefined")
+                    document.getElementById("messageBoxCount").innerText = 0;
 
-        }, false)
+            }, false)
 
-        //Changes the Message Box Envelope colour - Green Is Connected
-        source.addEventListener('open', function (e) {
-            document.getElementById("EnvelopeBox").className += " SSEConnected";
-        }, false)
+            //Changes the Message Box Envelope colour - Green Is Connected
+            source.addEventListener('open', function (e) {
+                document.getElementById("EnvelopeBox").className += " SSEConnected";
+            }, false)
 
-        //Changes the Message Box Envelope colour - FireBrick(Red) Is Disconnected
-        source.addEventListener('error', function (e) {
-            if (e.target.readyState == EventSource.CLOSED) {
-                document.getElementById("EnvelopeBox").className += " SSEDisconnected";
-            }
-                //Changes the Message Box Envelope colour -Orange Is Connecting...
-            else if (e.target.readyState == EventSource.CONNECTING) {
-                document.getElementById("EnvelopeBox").className += " SSEConnecting";
-            }
-        }, false)
-    } else {
-        console.log("Your browser doesn't support SSE")
-        alert("Your browser doesn't support SSE");
+            //Changes the Message Box Envelope colour - FireBrick(Red) Is Disconnected
+            source.addEventListener('error', function (e) {
+                if (e.target.readyState == EventSource.CLOSED) {
+                    document.getElementById("EnvelopeBox").className += " SSEDisconnected";
+                }
+                    //Changes the Message Box Envelope colour -Orange Is Connecting...
+                else if (e.target.readyState == EventSource.CONNECTING) {
+                    document.getElementById("EnvelopeBox").className += " SSEConnecting";
+                }
+            }, false)
+        } else {
+            console.log("Your browser doesn't support SSE")
+            alert("Your browser doesn't support SSE");
+        }
+
+        //Ajax Function That Posts the Array[Objects] to the Relevent Page
+        function SendListToPage() {
+            $.ajax({
+                type: "POST",
+                url: "Map.aspx/MessagesToArray",
+                data: "{data:" + JSON.stringify(messagesList) + "}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+            //Clear the Array of Messages
+            messagesList = [];
+        }
     }
 
-    //Ajax Function That Posts the Array[Objects] to the Relevent Page
-    function SendListToPage() {
-        $.ajax({
-            type: "POST",
-            url: "Map.aspx/MessagesToArray",
-            data: "{data:" + JSON.stringify(messagesList) + "}",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            failure: function (response) {
-                alert(response.d);
-            }
-        });
-        //Clear the Array of Messages
-        messagesList = [];
-    }
 </script>
 
 
 <body>
     <form id="form1" runat="server">
+
+        <!-- Used To Add Js File to Page Via Programatically-->
+        <asp:ScriptManager runat="server" ID="ScriptManager1"></asp:ScriptManager>
 
         <div class="Container MaxHeightHeader">
 
@@ -166,6 +174,7 @@
 
                         <div class="col-sm-5">
                             <a class="navbar-brand" id="logInBtn" runat="server" href="~/Web/LoginPage.aspx" aria-hidden="true" onclick="SendListToPage()">LogIn</a>
+                            <asp:Button ID="LogOut" runat="server" Text="LogOut" OnClick="LogOut_Click" />
                             <a class="MessageEnvelope fa fa-envelope-o fa-2x" id="EnvelopeBox" href="Web/Map.aspx" runat="server" onclick="SendListToPage()" aria-hidden="true"><span runat="server" class="MessageBox" id="messageBoxCount"></span></a>
                         </div>
                     </div>

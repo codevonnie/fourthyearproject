@@ -22,10 +22,7 @@ public partial class AddMember : System.Web.UI.Page
     // private string port = WebConfigurationManager.AppSettings["API_PORT"];
 
     //SSL Cookie with Auth Token etc
-    private object _auth_Token = "";
-    private object _auth_Type = "";
-    private object _biz_Name = "";
-
+    private UserSettings settings = new UserSettings();
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -40,14 +37,15 @@ public partial class AddMember : System.Web.UI.Page
 
     }
 
+
     private void GetUsrSettings()
     {
         //-------------------------------- CACHE AUTH--------------------------------
         //Cache might be cleared so need to get another token
-        _auth_Token = Decrypt.Base64Decode(Cache.Get("AuthToken").ToString());
-        _auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
-        _biz_Name = Decrypt.Base64Decode(Cache.Get("BizName").ToString());
-
+        settings._auth_Token = Decrypt.Base64Decode(Cache.Get("AuthToken").ToString());
+        settings._auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
+        settings._biz_Name = Decrypt.Base64Decode(Cache.Get("BizName").ToString());
+        settings._loggedIn = Decrypt.Base64Decode(Cache.Get("Auth_LoggedIn").ToString());
         //-------------------------------- DECRYPTION COOKIES --------------------------------
         #region
         //System.Web.HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
@@ -85,7 +83,6 @@ public partial class AddMember : System.Web.UI.Page
         //    Response.Redirect("LoginPage.aspx", true);
         //}
         #endregion
-
     }
 
     //---------------- Create/Return Customer Object ----------------
@@ -107,7 +104,8 @@ public partial class AddMember : System.Web.UI.Page
     }
 
 
-    //---------------- Post to API Route addPerson  ----------------
+    //---------------- Post to API Route addPerson  ---------------- ***************** FIX *********
+    //NEEDS VALIDATION ON INPUTS
     private void newCustomerRequest(CloudinaryApi.results imgDetails)
     {
         Customer customer = createCustomer();
@@ -116,15 +114,15 @@ public partial class AddMember : System.Web.UI.Page
         string password = Membership.GeneratePassword(6, 3);
 
         var request = new RestRequest("api/addPerson", Method.POST);
-        request.AddHeader("Authorization", _auth_Type + " " + _auth_Token);
+        request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
         request.AddParameter("name", customer.name);
         request.AddParameter("password", "*x*" + password);//random password
         request.AddParameter("email", customer.email);
         request.AddParameter("phone", customer.contactNumber);
         request.AddParameter("joined", customer.date.ToString("MMMM dd, yyyy"));
         request.AddParameter("address", customer.address);
-        request.AddParameter("icename", customer.iceName);
-        request.AddParameter("icephone", customer.icePhone);
+        request.AddParameter("iceName", customer.iceName);
+        request.AddParameter("icePhone", customer.icePhone);
         request.AddParameter("imgUrl", imgDetails.secure_url);
 
         //http://stackoverflow.com/questions/5955883/datetimes-representation-in-milliseconds
@@ -137,7 +135,6 @@ public partial class AddMember : System.Web.UI.Page
 
         request.AddParameter("dob", mil);
 
-
         //ONLY IF UNDER 18
         if (customer.guardianName != "" && customer.guardianNum != "")
         {
@@ -148,7 +145,7 @@ public partial class AddMember : System.Web.UI.Page
         IRestResponse response = client.Execute(request);
         var content = response.Content;
 
-        //If the Message is not Empty, Ask User to add Another Person or not? ***************** FIX *********
+        //If the Message is not Empty, Ask User to add Another Person or not? ***************** FIX ********* not catching SUSSESS / FALSE
         if (content != "")
         {
             newRelationshipRequest(customer);
@@ -156,22 +153,21 @@ public partial class AddMember : System.Web.UI.Page
         }
     }
 
-    /*
-     * Method Creates a new Relationship between the Biz and the newly added person
+
+    /* Method Creates a new Relationship between the Biz and the newly added person
      */
     private void newRelationshipRequest(Customer customer)
     {
         var client = new RestClient(port);
 
         var request = new RestRequest("api/addRelationship", Method.POST);
-        request.AddHeader("Authorization", _auth_Type + " " + _auth_Token);
+        request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
         request.AddParameter("email", customer.email);
-        request.AddParameter("name", _biz_Name);//lOGGED IN BIZ NAME
+        request.AddParameter("name", settings._biz_Name);//lOGGED IN BIZ NAME
 
         IRestResponse response = client.Execute(request);
         var content = response.Content; // raw content as string
     }
-
 
 
     protected void BtnSubmit_Click(object sender, EventArgs e)

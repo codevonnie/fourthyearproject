@@ -15,6 +15,7 @@ public partial class LoginPage : System.Web.UI.Page
 {
     private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
     //  private string port = WebConfigurationManager.AppSettings["API_PORT"];
+    private string successAuth = "KeepMeLoggedIn";
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -44,7 +45,7 @@ public partial class LoginPage : System.Web.UI.Page
 
         //Deserialize the result into the class provided
         dynamic jsonObject = JsonConvert.DeserializeObject<BizCred>(response.Content);
-        var bizObj = jsonObject as BizCred; 
+        var bizObj = jsonObject as BizCred;
 
         //If Success
         if (bizObj.success == true)
@@ -64,6 +65,8 @@ public partial class LoginPage : System.Web.UI.Page
 
             // ------------------------ TEMP CACHE KEYS ETC ------------------------ 
             Cache["BizName"] = Encrypt.Base64Encode(bizObj.name);
+
+            Cache["Auth_LoggedIn"] = Encrypt.Base64Encode(successAuth);
 
             // ------------------------ TEMP CACHE KEYS ETC Encrypted ------------------------ 
             Cache["AuthToken"] = Encrypt.Base64Encode(auth.access_token);

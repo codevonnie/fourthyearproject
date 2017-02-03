@@ -18,17 +18,20 @@ public partial class Map : System.Web.UI.Page
 
     private static List<SosMessage> sosList = new List<SosMessage>();
     private static int countMessages = 0;
-
-    private object _auth_Token = "";
-    private object _auth_Type = "";
-    private object _biz_Name = "";
+    private UserSettings settings = new UserSettings();
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        //Check If Logged in
-        GetUsrSettings();
-
-        init();
+        try
+        {
+            //Check If Logged in
+            GetUsrSettings();
+            init();
+        }
+        catch (Exception)
+        {
+            Response.Redirect("LoginPage.aspx", true);
+        };
     }
 
 
@@ -36,9 +39,7 @@ public partial class Map : System.Web.UI.Page
     {
         //-------------------------------- CACHE AUTH--------------------------------
         //Cache might be cleared so need to get another token
-        _auth_Token = Decrypt.Base64Decode(Cache.Get("AuthToken").ToString());
-        _auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
-        _biz_Name = Decrypt.Base64Decode(Cache.Get("BizName").ToString());
+        settings._loggedIn = Decrypt.Base64Decode(Cache.Get("Auth_LoggedIn").ToString());
     }
 
     private void init()

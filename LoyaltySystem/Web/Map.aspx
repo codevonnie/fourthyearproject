@@ -17,8 +17,7 @@
     <!-- Js attaches to the Div id map-->
     <div id="map"></div>
 
-    <!-- Used To Add Js File to Page Via Programatically-->
-    <asp:ScriptManager runat="server" ID="ScriptManager1"></asp:ScriptManager>
+
 
     <%--Called From Web Config File--%>
     <script id="googleApi" src="<%=ConfigurationManager.AppSettings["GOOGLE_API"] %>&callback=initMap"> </script>

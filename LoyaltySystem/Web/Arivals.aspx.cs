@@ -12,9 +12,13 @@ using System.Web.UI.WebControls;
 public partial class Web_SignInPage : System.Web.UI.Page
 {
 
+
     private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
-    private string _auth_Token = "";
-    private string _auth_Type = "";
+
+
+    //SSL Cookie with Auth Token etc
+    private UserSettings settings = new UserSettings();
+
 
     public class ResponseMessage
     {
@@ -27,7 +31,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
     {
 
         Page.SetFocus(TbQRCode);//Refocus on InputBox
-       
+
         divDisplay.Visible = false;
         DivSuccess.Visible = false;
         DivFailed.Visible = false;
@@ -43,39 +47,34 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
     }
 
+
     private void GetUsrSettings()
     {
         //-------------------------------- CACHE AUTH Decrypted --------------------------------
         //Cache might be cleared so need to get another token
-        _auth_Token = Decrypt.Base64Decode(Cache.Get("AuthToken").ToString());
-        _auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
+        settings._auth_Token = Decrypt.Base64Decode(Cache.Get("AuthToken").ToString());
+        settings._auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
     }
 
 
-    //-------------------------------- Btn Check Member Click Event --------------------*FIX*------------
+    //-------------------------------- Btn Check Member Click Event --------------- *FIX* ---------------------
     protected void BtnCheckMember_Click(object sender, EventArgs e)
     {
         //Check that something was entered into the text box first 
         var custObj = ParseQRCode();
         FindPerson(custObj);
-
-        //WORKING 100%
-       // ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
     }
 
-    //-------------------------------- Update Person Info Click Event ----------------*FIX*----
+
+    //-------------------------------- Update Person Info Click Event ------------- *FIX* ---------------------
     protected void UpdatePersonInfo_Click(object sender, EventArgs e)
     {
         UpdatePerson(); //check to see if text entered 
-
-        TbUpdate.Text = "";
-
-        //******* NOT NEEDED TESTING ONLY *******
-        //divDisplay.Visible = true;
-        //ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
+        TbUpdate.Text = "";//Reset The Text
     }
 
-    //-------------------------------- Update Choice Click Event --------------------*FIX*----
+
+    //-------------------------------- Update Choice Click Event ------------------ *FIX* ---------------------
     /* Method Gets the users choice from the DropDown box when a person has Arrived, located in the "Bootstrap Modal"
      * Displays a "Update textbox" that updates its placeholder based on the Choice made.
      */
@@ -91,6 +90,8 @@ public partial class Web_SignInPage : System.Web.UI.Page
         divDisplay.Visible = true;
     }
 
+
+    //-------------------------------- Button Check Person In -------------------------------------------------
     protected void BtnCheckPersonIn_Click(object sender, EventArgs e)
     {
         //SEND POST REQUEST AND UPDATE PERSON'S VIST COUNTER / LAST DATE VISITED
@@ -98,7 +99,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
     }
 
 
-    //-------------------------------- Parse QR Code --------------------*FIX*-----------------
+    //-------------------------------- Parse QR Code ------------------------------- *FIX* --------------------
     /* Mehtod parses the QR Code input into a TempCustomer,
      */
     private TempCustomer ParseQRCode()
@@ -118,25 +119,16 @@ public partial class Web_SignInPage : System.Web.UI.Page
     }
 
 
-    //-------------------------------- Find Person --------------------*FIX*-------------------
+    //-------------------------------- Find Person --------------------------------- *FIX* --------------------
     //Send request to api and find the person
     private void FindPerson(TempCustomer cust)
     {
         var client = new RestClient(port);
 
         var request = new RestRequest("api/findPerson", Method.POST);
-        request.AddHeader("Authorization", _auth_Type + " " + _auth_Token);
-        request.AddParameter("name", cust.name);
-        request.AddParameter("address", cust.address);
-        request.AddParameter("dob", cust.dob);
-        request.AddParameter("phone", cust.phone);
-        request.AddParameter("iceName", cust.iceName);
-        request.AddParameter("icePhone", cust.icePhone);
-        request.AddParameter("joined", cust.joined);//milliseconds ?
+        request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
         request.AddParameter("email", cust.email);
-        request.AddParameter("imgUrl", cust.imgUrl);
-        request.AddParameter("guardianName", cust.guardianName);
-        request.AddParameter("guardianNum", cust.guardianNum);
+
 
 
         IRestResponse response = client.Execute(request);
@@ -157,6 +149,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
     }
 
 
+    //Switch on the Person Property they want to change
     private TempCustomer UpdateCustObj()
     {
         String choice = Cache.Get("DD_CHOICE").ToString();
@@ -180,7 +173,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
     }
 
 
-    //-------------------------------- UpdatePerson ------------------------ *FIX* ------------
+    //-------------------------------- UpdatePerson -------------------------------- *FIX* --------------------
     //Send request to api and find the person 
     private void UpdatePerson()
     {
@@ -188,7 +181,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
         TempCustomer cust = UpdateCustObj();
 
         var request = new RestRequest("api/updatePerson", Method.PUT);
-        request.AddHeader("Authorization", _auth_Type + " " + _auth_Token);
+        request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
         request.AddParameter("name", cust.name);
         request.AddParameter("address", cust.address);
         request.AddParameter("dob", cust.dob);
@@ -219,7 +212,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
         }
     }
 
-    //-------------------------------- Calculate Age ------------------------------------------
+    //-------------------------------- Calculate Age ------------------------------- *FIX* --------------------
     private string CalculateAge(string dob)
     {
         //Might need validation *******
@@ -231,12 +224,12 @@ public partial class Web_SignInPage : System.Web.UI.Page
     }
 
 
-    //-------------------------------- Display Person ------------------------------*FIX*------------
+    //-------------------------------- Display Person Modal ------------------------ *FIX* --------------------
     private void displayPerson(TempCustomer cust)
     {
         var date = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.joined.ToString()));
         LblName.Text = cust.name;
-        LblJoined.Text = date.ToString("d/MM/yyyy") ;
+        LblJoined.Text = date.ToString("d/MM/yyyy");
         LblAge.Text = CalculateAge(cust.dob.ToString());
 
         if (cust.guardianName.ToString() == "null" || cust.guardianNum.ToString() == "null")
@@ -257,6 +250,4 @@ public partial class Web_SignInPage : System.Web.UI.Page
         //Trigger the JS 
         ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
     }
-
-
 }
