@@ -312,10 +312,9 @@ router.delete('/deletePerson', function (req, res) {
 router.put('/updatePerson', function (req, res) {
 
   var session = driver.session();
-  var person = newPersonObj(req);
 
   session
-    .run("Match (a:Person) WHERE a.email='" + person.email + "' SET a.name='" + person.name + "', a.address='" + person.address + "', a.phone='" + person.phone + "', a.iceName='" + person.iceName + "', a.icePhone='" + person.icePhone + "', a.joined='" + person.joined + "', a.dob=" + person.dob + ", a.imgUrl='" + person.imgUrl + "', a.email='" + person.email + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.phone='" + req.body.phone.trim() + "', a.iceName='" + req.body.iceName.trim() + "', a.icePhone='" + req.body.icePhone.trim() + "', a.joined='" + req.body.joined + "', a.dob=" + req.body.dob + ", a.imgUrl='" + req.body.imgUrl + "', a.email='" + person.email + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
@@ -337,11 +336,10 @@ router.put('/updatePerson', function (req, res) {
 router.put('/newPassword', function (req, res) {
 
   var session = driver.session();
-  var person = newPersonObj(req);
-  console.log(person.email);
-  console.log(person.password);
+  //var person = newPersonObj(req);
+ 
   session
-    .run("Match (a:Person) WHERE a.email='" + person.email + "' SET a.password='" + person.password + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim() + "' SET a.password='" + req.body.password.trim() + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
@@ -365,10 +363,10 @@ function newPersonObj(req) {
   var person = new Person();
   person.name = req.body.name.trim();
   person.address = req.body.address.trim();
-  person.phone = req.body.phone;
+  person.phone = req.body.phone.trim();
 
   person.iceName = req.body.iceName.trim();
-  person.icePhone = req.body.icePhone;
+  person.icePhone = req.body.icePhone.trim();
 
   person.joined = req.body.joined;
   person.dob = req.body.dob;
@@ -381,8 +379,8 @@ function newPersonObj(req) {
 
   //Check to see if the person was under 18 and Added a Guardian
   if (req.body.guardianName != null && req.body.guardianNum != null) {
-    person.guardianName = req.body.guardianName.trim();
-    person.guardianNum = req.body.guardianNum.trim();
+    person.guardianName = req.body.guardianName;
+    person.guardianNum = req.body.guardianNum;
   }
   return person;
 }
