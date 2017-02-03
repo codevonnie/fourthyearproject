@@ -76,9 +76,10 @@ router.post('/authenticate', function (req, res) {
     .run(queryString)
     .then(function (result) {
       // If Person/Biz is found and UsrName/password is Correct
-      if (result.records[0] == null){
+      if (result.records[0] == null) {
         res.json({ success: false });
-         console.log('Failed To Get Authenticated');}
+        console.log('Failed To Get Authenticated');
+      }
       else {
         var credList = [];//create a new list
 
@@ -217,40 +218,19 @@ router.post('/findPerson', function (req, res) {
   console.log("in findPerson ");
   var session = driver.session();
 
-  var person = newPersonObj(req);
-
   session
-    .run("MATCH (a:Person {email:'" + person.email + "' }) RETURN a")
+    .run("MATCH (a:Person {email:'" + res.body.email.trim() + "' }) RETURN a")
 
     .then(function (result) {
-      result.records.forEach(function (record) {//Iterate over results
-        /*var jsonObj;//Create a new person object to add as the response
-        jsonObj = ({
-          success: true,
-          name: record._fields[0].properties.name,
-          age: record._fields[0].properties.age,
-          dob: record._fields[0].properties.dob,
-          address: record._fields[0].properties.address,
-          phone: record._fields[0].properties.phone,
-          iceName: record._fields[0].properties.iceName,
-          icePhone: record._fields[0].properties.icePhone,
-          joined: record._fields[0].properties.joined,
-          email: record._fields[0].properties.email,
-          imgUrl: record._fields[0].properties.imgUrl,
-          guardianName: record._fields[0].properties.guardianName,
-          guardianNum: record._fields[0].properties.guardianNum,
-        });*/
-
-        //Send the Response Back
-        res.json({
-          success: true,
-          message: "Person Found!"
-        });
-        console.log("Success: Found Person");
+      //Send the Response Back
+      res.json({
+        success: true,
+        message: "Person Found!"
       });
+      console.log("Success: Found Person");
+
       session.close();//close the session
       driver.close();////close driver
-
     })
     .catch(function (err) {
       console.log(err);
@@ -336,7 +316,7 @@ router.put('/updatePerson', function (req, res) {
 router.put('/newPassword', function (req, res) {
 
   var session = driver.session();
- 
+
   session
     .run("Match (a:Person) WHERE a.email='" + req.body.email.trim() + "' SET a.password='" + req.body.password.trim() + "' return COUNT(*)")
     .then(function (result) {
