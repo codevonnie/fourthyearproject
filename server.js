@@ -57,16 +57,20 @@ router.post('/authenticate', function (req, res) {
 
   var queryString = "";
   var session = driver.session();
+
+  var pwd = req.body.password.trim();
+  var email = req.body.email.trim();
+
   console.log('I am authenticating');
 
-  // if req.body.password.contains(¬¬¬)
+  // If req.body.password.contains(*x*)
   //respond to user with change password and relocate them to set up new pass page
 
   // check whether authentication request is from mobile app or web app - make appropriate database call
   if (req.body.type === "person")
-    queryString = "Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a, b LIMIT 1";
+    queryString = "Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + email + "' AND a.password='" + pwd + "' Return a, b LIMIT 1";
   else if (req.body.type === "business")
-    queryString = "Match (a:Business) WHERE a.email='" + req.body.email + "' AND a.password='" + req.body.password + "' Return a LIMIT 1";
+    queryString = "Match (a:Business) WHERE a.email='" + email + "' AND a.password='" + pwd + "' Return a LIMIT 1";
 
   session
     .run(queryString)
@@ -101,22 +105,6 @@ router.post('/authenticate', function (req, res) {
               businessName: record._fields[1].properties.name
             });
             console.log('Found You! Permission Granted');
-            /*JSON RESPONSE =
-              "success": true,
-              "name": "Paul Potts4564",
-              "dob": "2315648943215",
-              "address": "123 Fake Street5464",
-              "phone": "353879876543",
-              "iceName": "Bob Potts5464",
-              "icePhone": "353871234567",
-              "joined": "1484921393189",
-              "email": "test@email.com",
-              "imgUrl": "https://res.cloudinary.com/hlqysoka2/image/upload/v1484837295/itxmpiumdiu56q7sbebn.jpg",
-              "guardianName": "timtim",
-              "guardianNum": "1800696969"
-              "businessName": "Biking Heaven"
-            */
-
           }
           else {
             console.log('Found You! Permission Granted');
@@ -139,12 +127,12 @@ router.post('/authenticate', function (req, res) {
 router.post('/addCompany', function (req, res) {
   var session = driver.session();
 
-  var business = new Business();         //create a new instance of the Business model
-  business.name = req.body.name;         //Set the Business name (comes from the request)
-  business.address = req.body.address;   //Set the Business address
-  business.phone = req.body.phone;       //Set the Business Phone Num
-  business.email = req.body.email;       //Set the Business Email
-  business.password = req.body.password; //Set the Business Password
+  var business = new Business();                //create a new instance of the Business model
+  business.name = req.body.name.trim();         //Set the Business name (comes from the request)
+  business.address = req.body.address.trim();   //Set the Business address
+  business.phone = req.body.phone;              //Set the Business Phone Num
+  business.email = req.body.email.trim();       //Set the Business Email
+  business.password = req.body.password.trim(); //Set the Business Password
 
   session
     .run("Create (b:Business {name:'" + business.name + "', address:'" + business.address + "', phone:'" + business.phone + "', email:'" + business.email + "', password:'" + business.password + "'})")
@@ -156,7 +144,7 @@ router.post('/addCompany', function (req, res) {
       driver.close();
     })
     .catch(function (error) {
-      // if error is a business with this email address already exists, return fail response
+      // If error is a business with this email address already exists, return fail response
       var s = error.fields[0].message;
       if (s.includes("already exists")) {
         res.json({ success: false });
@@ -164,7 +152,6 @@ router.post('/addCompany', function (req, res) {
       else {
         res.send(error);
       }
-
     });
 });
 
@@ -201,7 +188,7 @@ router.post('/addPerson', function (req, res) {
 //-------------> Should probably add an extra authorisation step for deletion to avoid mistakes! <----------
 router.delete('/deleteCompany', function (req, res) {
   var session = driver.session();
-  var email = req.body.email;         //Set the Business email (comes from the request)
+  var email = req.body.email.trim();        //Set the Business email (comes from the request)
   //query checks for business, deletes business, all of it's relationships and its members
   session.run("MATCH (b:Business {email:'" + email + "'}) OPTIONAL MATCH (b)-[r]-(p) DETACH DELETE b, r, p return COUNT(*)")
 
@@ -275,7 +262,7 @@ router.post('/findPerson', function (req, res) {
 //----------------------------------- ADD a Relationship Between Person + Company -------------------------
 router.post('/addRelationship', function (req, res) {
   var session = driver.session();
-  session.run("MATCH (a:Person {email: '" + req.body.email + "'}), (b:Business {name: '" + req.body.name + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
+  session.run("MATCH (a:Person {email: '" + req.body.email.trim() + "'}), (b:Business {name: '" + req.body.name.trim() + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Entry has been made
@@ -300,7 +287,7 @@ router.delete('/deletePerson', function (req, res) {
   var session = driver.session();
   // find person by email and also find any relationships it may have - delete node and relationships
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email + "' OPTIONAL MATCH (a)-[r]-() DETACH DELETE a, r return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim() + "' OPTIONAL MATCH (a)-[r]-() DETACH DELETE a, r return COUNT(*)")
     .then(function (result) {
       console.log("Person deleted");
       console.log(result);
@@ -376,17 +363,17 @@ router.put('/newPassword', function (req, res) {
 //----------------------------------- Create A New Person Object From Http Request  -----------------------
 function newPersonObj(req) {
   var person = new Person();
-  person.name = req.body.name;
-  person.address = req.body.address;
+  person.name = req.body.name.trim();
+  person.address = req.body.address.trim();
   person.phone = req.body.phone;
 
-  person.iceName = req.body.iceName;
+  person.iceName = req.body.iceName.trim();
   person.icePhone = req.body.icePhone;
 
   person.joined = req.body.joined;
   person.dob = req.body.dob;
-  person.email = req.body.email;
-  person.password = req.body.password;
+  person.email = req.body.email.trim();
+  person.password = req.body.password.trim();
   person.imgUrl = req.body.imgUrl;
 
   person.guardianName = null;
@@ -394,8 +381,8 @@ function newPersonObj(req) {
 
   //Check to see if the person was under 18 and Added a Guardian
   if (req.body.guardianName != null && req.body.guardianNum != null) {
-    person.guardianName = req.body.guardianName;
-    person.guardianNum = req.body.guardianNum;
+    person.guardianName = req.body.guardianName.trim();
+    person.guardianNum = req.body.guardianNum.trim();
   }
   return person;
 }
@@ -405,7 +392,6 @@ function newPersonObj(req) {
 * GET Request returns all the Buisness Nodes and sends them all as a JSON response to the client
 */
 //---------------------------> IS THIS A NECESSARY METHOD? Testing Only <----------------------------------
-
 router.get('/businessMembers', function (req, res) {
 
   var session = driver.session();//Create a new session
