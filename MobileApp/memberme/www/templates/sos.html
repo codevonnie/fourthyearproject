@@ -2,28 +2,30 @@
   <ion-header-bar align-title="center" class="bar-positive">
     <h1 class="title">SOS</h1>
   </ion-header-bar>
-  <ion-content class="padding">
+  <ion-content class="padding content-red">
     <ion-refresher pulling-text="Pull to refresh..." on-refresh="reload()">
   </ion-refresher>
+  
     <div id="map" data-tap-disabled="true" ng-show="toggle">
     </div>
 
     <div class="card" ng-hide="toggle">
-        <h3>Ensure internet and GPS are enabled and pull to refresh</h3>
+        <h3 class="sos-text">Ensure internet and GPS are enabled and pull to refresh</h3>
       </div>
     
-    <div class="card">
-      <ion-list>
 
-        <ion-item>
-        <h2>Please choose your emergency type</h2>
+      <ion-list>
+        <ion-item class="sos">
+        <h2 class="sos-text">Emergency type</h2>
+        </ion-item>
+        <ion-item class="sos">
         <select ng-model="sos.status">
           <option>Medical Emergency</option>
           <option>Other</option>
         </select>
         </ion-item>
       </ion-list>
-    </div>
+
     
 
       <div class="card message">

@@ -188,18 +188,30 @@ angular.module('starter.controllers', [])
     }
     else{
       $scope.toggle=!$scope.toggle; //hide input box
-      AuthService.updateProfile($scope.profile); //call AuthService method updateProfile and pass $scope.profile object
-      
-            profileData=$scope.profile; //save updated $scope obj to profileData obj
-            window.localStorage.setItem('profile', JSON.stringify(profileData)); //set updated profile details to local storage
-            $scope.qrcode=JSON.stringify(profileData); //set qr text to updated profile details
-        
-      
-      
+      AuthService.updateProfile($scope.profile).then(onSuccess, onError); //call AuthService method updateProfile and pass $scope.profile object
+
       
       }//end else
-      
+
     }//end submit
+
+    var onSuccess = function(){
+        var alertPopup = $ionicPopup.alert({
+            title: 'Success',
+            template: "Details updated."
+            });
+        profileData=$scope.profile; //save updated $scope obj to profileData obj
+        window.localStorage.setItem('profile', JSON.stringify(profileData)); //set updated profile details to local storage
+        $scope.qrcode=JSON.stringify(profileData); //set qr text to updated profile details
+      }
+      
+      var onError = function(){
+        console.log("boo not successful");
+        var alertPopup = $ionicPopup.alert({
+            title: 'Could Not Update',
+            template: "Details not updated. Please try again."
+            });
+      }
 
   //calls AuthService method getInfo to authorize user on db and retrieve profile details
   $scope.getInfo = function() {
@@ -211,13 +223,13 @@ angular.module('starter.controllers', [])
 
 .controller('SettingsCtrl', function($scope, AuthService, $state) {
   
-  //logout function
-  $scope.logout = function() {
-    
-    AuthService.logout(); //call AuthService method logout
-    $state.go('login'); //go to login view
+    //logout function
+    $scope.logout = function() {
+      
+      AuthService.logout(); //call AuthService method logout
+      $state.go('login'); //go to login view
 
-  };
+    };
 })//SettingsCtrl
 
 
@@ -268,6 +280,9 @@ angular.module('starter.controllers', [])
           title: 'Message sent' ,
           template: "Message sent"
           });
+          //reset fields when message is sent
+          $scope.sos.status="";
+          $scope.sos.message="";
       }
     //if call to sendMessage is unsuccessful - alert user
     var onError = function () {

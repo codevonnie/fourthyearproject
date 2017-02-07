@@ -16,12 +16,38 @@ $dark:                            #444 !default;
 */
 
 .list .item {
-  background-color: #F0F8FF;
+  //background-color: #F0F8FF;
   border-width: 1px;
   border-style: ridge;
-  border-color: #C0C0C0;
+  //border-color: #C0C0C0;
 }
 
+.profile-list{
+  color: #0652D4;
+}
+
+.sos-text{
+  text-align: center;
+  font-weight: bolder !important;
+  font-size: 1.5em !important;
+  
+}
+ 
+.sos {
+    text-align: center;
+    border-color: transparent !important;
+    //border-color: darkred !important;
+    border-width: 0.2px;
+    background-color: #F0E6FF !important;
+}
+
+.sos-list{
+  border-color: darkred !important;
+}
+
+.align-qr{
+  padding-left: 10px;
+}
 .list {
   margin-top:10%;
 }
@@ -45,6 +71,17 @@ $dark:                            #444 !default;
 .content-stable{
   background-color: #CFD8DC;
 }
+
+.content-blue{
+  background-color: #8BB3F8;
+}
+
+.content-red{
+  background-color: #95CBF1;
+}
+
+$tabs-icon-size:                  30px !default;
+
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;

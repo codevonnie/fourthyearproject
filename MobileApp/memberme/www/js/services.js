@@ -53,9 +53,9 @@ angular.module('starter.services', [])
         if (result.statusText=="OK") {
           //if successful send token to storeUserCredentials
           storeUserCredentials(result.data.access_token);
-          resolve(result.data.msg);
+          resolve(result.data.message);
         } else {
-          reject(result.data.msg);
+          reject(result.data.success);
           console.log("Something went wrong");
         }
       });
@@ -88,7 +88,7 @@ angular.module('starter.services', [])
        return $q(function(resolve, reject) {
          $http.put(API_ENDPOINT.url + '/updatePerson', user).then(function(result) {
            if (result.data.success) {
-             resolve(result.data.msg);
+             resolve(result.data.message);
            } else {
              reject(result.data.success);
            }
@@ -102,7 +102,7 @@ angular.module('starter.services', [])
          $http.put(API_ENDPOINT.url + '/newPassword', user).then(function(result) {
            if (result.data.success) {
              console.log(result);
-             resolve(result.data.msg);
+             resolve(result.data.message);
            } else {
              console.log(result);
              reject(result.data.success);
@@ -110,7 +110,6 @@ angular.module('starter.services', [])
            
           }).catch(function(err){
             console.log(err);
-           console.log("server down")
           });
        });
      };

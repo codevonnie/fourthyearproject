@@ -16,10 +16,28 @@ $royal:                           #886aea !default;
 $dark:                            #444 !default;
 */
 .list .item {
-  background-color: #F0F8FF;
   border-width: 1px;
-  border-style: ridge;
-  border-color: #C0C0C0; }
+  border-style: ridge; }
+
+.profile-list {
+  color: #0652D4; }
+
+.sos-text {
+  text-align: center;
+  font-weight: bolder !important;
+  font-size: 1.5em !important; }
+
+.sos {
+  text-align: center;
+  border-color: transparent !important;
+  border-width: 0.2px;
+  background-color: #F0E6FF !important; }
+
+.sos-list {
+  border-color: darkred !important; }
+
+.align-qr {
+  padding-left: 10px; }
 
 .list {
   margin-top: 10%; }
@@ -39,6 +57,12 @@ $dark:                            #444 !default;
 
 .content-stable {
   background-color: #CFD8DC; }
+
+.content-blue {
+  background-color: #8BB3F8; }
+
+.content-red {
+  background-color: #95CBF1; }
 
 /*!
   Ionicons, v2.0.1
@@ -5166,8 +5190,8 @@ ion-tabs.tabs-striped.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs
 .tab-item .icon {
   display: block;
   margin: 0 auto;
-  height: 32px;
-  font-size: 32px; }
+  height: 30px;
+  font-size: 30px; }
 
 .tabs-icon-left.tabs .tab-item,
 .tabs-icon-left > .tabs .tab-item,
@@ -5191,7 +5215,7 @@ ion-tabs.tabs-striped.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs
     .tabs-icon-right.tabs .tab-item .tab-title:before,
     .tabs-icon-right > .tabs .tab-item .icon:before,
     .tabs-icon-right > .tabs .tab-item .tab-title:before {
-      font-size: 24px;
+      font-size: 22px;
       line-height: 49px; }
 
 .tabs-icon-left > .tabs .tab-item .icon,

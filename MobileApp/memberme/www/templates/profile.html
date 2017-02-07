@@ -2,13 +2,13 @@
   <ion-header-bar align-title="center" class="bar-positive">
     <h1 class="title">Profile</h1>
   </ion-header-bar>
-  <ion-content class="padding">
+  <ion-content class="padding content-blue">
     <div class="card">
       <div class="item item-text-wrap">
-        <ion-item class="item-thumbnail-left"><img ng-src="{{profile.imgUrl}}"></ion-item>
+        <ion-item class="item-image"><img ng-src="{{profile.imgUrl}}"></ion-item>
         <ion-list show-delete="shouldShowDelete" can-swipe="listCanSwipe">
           <ion-item>
-            <h2>Name</h2>
+            <h2 class="profile-list">Name</h2>
             <h3>{{profile.name}}</h3>
              <ion-option-button class="button-info" ng-click="edit()">
                 Edit
@@ -21,12 +21,12 @@
           </ion-item>
 
           <ion-item>
-            <h2>Date of Birth</h2>
+            <h2 class="profile-list">Date of Birth</h2>
             <h3>{{dob}}</h3>
           </ion-item>
 
           <ion-item>
-            <h2>Emergency Contact</h2>
+            <h2 class="profile-list">Emergency Contact</h2>
             <h3>{{profile.iceName}}</h3>
             <ion-option-button class="button-info" ng-click="edit()">
                 Edit
@@ -39,8 +39,8 @@
           </ion-item>
 
           <ion-item>
-            <h2>Emergency Contact No.</h2>
-            <h3>+{{profile.icePhone}}</h3>
+            <h2 class="profile-list">Emergency Contact No.</h2>
+            <h3>{{profile.icePhone}}</h3>
             <ion-option-button class="button-info" ng-click="edit()">
                 Edit
               </ion-option-button>
@@ -52,17 +52,17 @@
           </ion-item>
 
           <ion-item>
-            <h2>Join Date</h2>
+            <h2 class="profile-list">Join Date</h2>
             <h3>{{joined}}</h3>
           </ion-item>
 
           <ion-item>
-            <h2>Email</h2>
+            <h2 class="profile-list">Email</h2>
             <h3>{{profile.email}}</h3>
           </ion-item>
 
           <ion-item>
-            <h2>Address</h2>
+            <h2 class="profile-list">Address</h2>
             <h3>{{profile.address}}</h3>
             <ion-option-button class="button-info" ng-click="edit()">
                 Edit
@@ -75,8 +75,8 @@
           </ion-item>
 
           <ion-item>
-            <h2>Phone No.</h2>
-            <h3>+{{profile.phone}}</h3>
+            <h2 class="profile-list">Phone No.</h2>
+            <h3>{{profile.phone}}</h3>
             <ion-option-button class="button-info" ng-click="edit()">
                 Edit
               </ion-option-button>
@@ -87,7 +87,7 @@
                     </div>
           </ion-item>
 
-          <ion-item><qr text="qrcode" size="size"></qr> </ion-item>
+          <ion-item><qr text="qrcode" class="align-qr" size=size></qr> </ion-item>
         </ion-list>
 
       </div>
