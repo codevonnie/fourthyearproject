@@ -87,6 +87,21 @@
                     </div>
           </ion-item>
 
+          <ion-item ng-show="membership!=''">
+            <h2 class="profile-list">Membership End Date</h2>
+            <h3>{{membership}}</h3>
+          </ion-item>
+
+          <ion-item ng-show="profile.guardianName!=''">
+            <h2 class="profile-list">Guardian Name</h2>
+            <h3>{{profile.guardianName}}</h3>
+          </ion-item>
+
+          <ion-item ng-show="!profile.guardianNum">
+            <h2 class="profile-list">Guardian Number</h2>
+            <h3>{{profile.guardianNum}}</h3>
+          </ion-item>
+
           <ion-item><qr text="qrcode" class="align-qr" size=size></qr> </ion-item>
         </ion-list>
 

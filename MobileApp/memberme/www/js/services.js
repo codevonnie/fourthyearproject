@@ -20,31 +20,37 @@ angular.module('starter.services', [])
     if (token) { //if token is not null
       useCredentials(token);
     }
-  }
+  }//end loadUserCredentials
+
   //save Auth0 token to local storage
   function storeUserCredentials(token) {
     window.localStorage.setItem(LOCAL_TOKEN_KEY, token);
     useCredentials(token);
 
-  }
+  }//end storeUserCredentials
+
   //set authenticated variables
   function useCredentials(token) {
     isAuthenticated = true;
     authToken = token;
     // Set the token as header for all requests
     $http.defaults.headers.common.Authorization = 'Bearer ' + authToken;
-  }
+  }//end useCredentials
 
+  //check if auth token has expired
   function checkAuthOnRefresh() {
-    console.log("hello");
+    // get stored token from local storage
      var token = window.localStorage.getItem(LOCAL_TOKEN_KEY);
+      //if token is not empty
       if (token) {
+        //use jwtHelper method to determine if token has expired
         if (jwtHelper.isTokenExpired(token)) {
           //console.log("is expired");
+          //if token has expired, call login method to get new token
           login();
         }
       }
-    }
+    }//end checkAuthOnRefresh
   
   //reset auth variables and remove token from local storage
   function destroyUserCredentials() {
@@ -53,7 +59,7 @@ angular.module('starter.services', [])
     $http.defaults.headers.common.Authorization = undefined;
     window.localStorage.removeItem(LOCAL_TOKEN_KEY);
     window.localStorage.removeItem('signIn');
-  }
+  }//end destroyUserCredentials
   
  //use POST call options
   var login = function(){
@@ -71,12 +77,12 @@ angular.module('starter.services', [])
         }
       });
     })
-  }
+  }//end login
   
   //logout func calls destroyUserCredentials function
   var logout = function() {
     destroyUserCredentials();
-  };
+  };//end logout
 
   //method sends token and user email and password to api to be authenticated
   var getInfo = function(user) {
@@ -93,7 +99,8 @@ angular.module('starter.services', [])
            }
          });
        });
-     };
+     };//end getInfo
+
      //sends updated profile details to server updatePerson method
      var updateProfile = function(user) {
        return $q(function(resolve, reject) {
@@ -105,7 +112,7 @@ angular.module('starter.services', [])
            }
          });
        });
-     };
+     };//end updateProfile
 
     var setPassword = function(user) {
 
@@ -123,7 +130,7 @@ angular.module('starter.services', [])
             console.log(err);
           });
        });
-     };
+     };//end setPassword
 
   //use POST call options
   var sendMessage = function(sosMessage){
@@ -138,7 +145,7 @@ angular.module('starter.services', [])
          }
       });
     })
-  }
+  }//sendMessage
  
   loadUserCredentials();
  

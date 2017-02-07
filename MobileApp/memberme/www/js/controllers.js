@@ -24,7 +24,7 @@ angular.module('starter.controllers', [])
   }//end if
   //if sign in details exist in local storage
   else{
-    AuthService.checkAuthOnRefresh();
+    AuthService.checkAuthOnRefresh(); //check if token has expired
     logInDetails = JSON.parse(logInDetails); //parse stored details and set into user objects
      var user = {
       email: logInDetails.email,
@@ -157,12 +157,25 @@ angular.module('starter.controllers', [])
     $scope.qrcode=profileData; //qrcode text is the object 
     profileData=JSON.parse(profileData); //parse JSON object
     $scope.profile=profileData; //save JSON object to $scope variable
-    $scope.origProfile=profileData;
+
+    console.log($scope.profile);
+    //convert date milliseconds to date string
     var joined = new Date(parseInt(profileData.joined)).toDateString();
     var dob = new Date(parseInt(profileData.dob)).toDateString();
-    console.log(joined);
+    var membership = new Date(parseInt(profileData.membership)).toDateString();
+    
     $scope.joined = joined;
     $scope.dob = dob;
+
+    
+    //ADD IN ONCE MEMBERSHIP HAS BEEN PUT ON SERVER
+    // if(!membership){
+    //   $scope.membership = null;
+    // }
+    // else{
+    //   $scope.membership = membership;
+    // }
+    
 
     //edit function - triggered when user hits edit on profile items
     $scope.edit = function() {
@@ -191,6 +204,7 @@ angular.module('starter.controllers', [])
       $scope.profile=profileData; //save JSON object to $scope variable
     }
     else{
+      AuthService.checkAuthOnRefresh(); //check if token has expired
       $scope.toggle=!$scope.toggle; //hide input box
       AuthService.updateProfile($scope.profile).then(onSuccess, onError); //call AuthService method updateProfile and pass $scope.profile object
 
@@ -325,6 +339,7 @@ angular.module('starter.controllers', [])
   //if device is connected to the internet
   if(ConnectivityMonitor.isOnline()){
 
+    AuthService.checkAuthOnRefresh();//check if token has expired
     $scope.toggle=true; //show map div on SOS page
 
     //show loading spinner while call to Google maps api takes place
