@@ -1,7 +1,7 @@
 angular.module('starter.services', [])
  
  //AuthService - controls login, Authorization and logout
-.service('AuthService', function($q, $http, API_ENDPOINT, MESSAGE_SERVER) {
+.service('AuthService', function($q, $http, API_ENDPOINT, MESSAGE_SERVER, jwtHelper) {
   
   //auth token variables
   var LOCAL_TOKEN_KEY = 'yourTokenKey'; 
@@ -31,11 +31,20 @@ angular.module('starter.services', [])
   function useCredentials(token) {
     isAuthenticated = true;
     authToken = token;
-    
- 
     // Set the token as header for all requests
     $http.defaults.headers.common.Authorization = 'Bearer ' + authToken;
   }
+
+  function checkAuthOnRefresh() {
+    console.log("hello");
+     var token = window.localStorage.getItem(LOCAL_TOKEN_KEY);
+      if (token) {
+        if (jwtHelper.isTokenExpired(token)) {
+          //console.log("is expired");
+          login();
+        }
+      }
+    }
   
   //reset auth variables and remove token from local storage
   function destroyUserCredentials() {
@@ -51,8 +60,10 @@ angular.module('starter.services', [])
     return $q(function(resolve, reject) {
       $http(options).then(function(result) {
         if (result.statusText=="OK") {
+          //console.log(result.data.access_token);
           //if successful send token to storeUserCredentials
           storeUserCredentials(result.data.access_token);
+          
           resolve(result.data.message);
         } else {
           reject(result.data.success);
@@ -135,6 +146,7 @@ angular.module('starter.services', [])
     login: login,
     options: options,
     logout: logout,
+    checkAuthOnRefresh: checkAuthOnRefresh,
     getInfo: getInfo,
     updateProfile: updateProfile,
     setPassword: setPassword,

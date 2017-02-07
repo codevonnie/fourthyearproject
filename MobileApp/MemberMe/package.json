@@ -1,6 +1,7 @@
 {
   "name": "memberme",
   "version": "1.1.1",
+  "private": true,
   "description": "memberme: An Ionic project",
   "dependencies": {
     "angular-mocks": "^1.5.8",
@@ -21,7 +22,9 @@
     "cordova-plugin-whitelist",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
-    "ionic-plugin-keyboard"
+    "ionic-plugin-keyboard",
+    "cordova-plugin-geolocation",
+    "cordova-plugin-network-information"
   ],
   "cordovaPlatforms": []
 }

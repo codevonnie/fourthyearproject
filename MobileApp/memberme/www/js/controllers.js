@@ -1,11 +1,11 @@
 angular.module('starter.controllers', [])
  
-.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, ConnectivityMonitor) {
+.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, ConnectivityMonitor, jwtHelper) {
   
   $scope.user={}; //user object for displaying profile details
 
   var logInDetails = window.localStorage.getItem('signIn'); //check localStorage for stored sign in details
-  
+    
   if(logInDetails==undefined){ //if no stored details exist set user to take in email and password from user
 
     //user object to take inputted email and password from login view.  Type automatically set to person
@@ -24,6 +24,7 @@ angular.module('starter.controllers', [])
   }//end if
   //if sign in details exist in local storage
   else{
+    AuthService.checkAuthOnRefresh();
     logInDetails = JSON.parse(logInDetails); //parse stored details and set into user objects
      var user = {
       email: logInDetails.email,
@@ -62,6 +63,8 @@ angular.module('starter.controllers', [])
         //if user password starts with *x* - it's the first time login so open set password modal
         if(user.password.startsWith("*x*")){
 
+              //make sure details are not saved to local storage until password is changed
+              window.localStorage.removeItem("signIn"); 
               $scope.modal.show();
         }
         //else send user to profile tab
@@ -109,6 +112,7 @@ angular.module('starter.controllers', [])
             return false;
           }
           else{
+            $scope.message="";
             $scope.user.password=$scope.check.pass; //set user password to inputted password
             //send new user object to setPassword service
             AuthService.setPassword(user).then(function(response){
