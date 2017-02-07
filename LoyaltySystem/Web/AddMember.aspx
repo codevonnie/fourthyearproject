@@ -193,7 +193,7 @@
                             <span class="input-group-addon ">
                                 <i class="fa fa-phone iconWidth" aria-hidden="true"></i>
                             </span>
-                            <asp:TextBox ID="TbContactNum" runat="server" CssClass="form-control" placeholder="Contact Number" ></asp:TextBox>
+                            <asp:TextBox ID="TbContactNum" runat="server" CssClass="form-control" placeholder="Contact Number"></asp:TextBox>
                         </div>
 
                         <asp:Label ID="LblEmergencyNum" runat="server" Text="Emergency Contact Number" Font-Bold="True"></asp:Label>
@@ -201,7 +201,7 @@
                             <span class="input-group-addon">
                                 <i class="fa fa-phone iconWidth" aria-hidden="true"></i>
                             </span>
-                            <asp:TextBox ID="TbEmergencyNum" runat="server" CssClass="form-control" placeholder="Emergency Contact Number" ></asp:TextBox>
+                            <asp:TextBox ID="TbEmergencyNum" runat="server" CssClass="form-control" placeholder="Emergency Contact Number"></asp:TextBox>
                         </div>
                         <asp:Label ID="LblEmergencyName" runat="server" Text="Emergency Contact Name" Font-Bold="True"></asp:Label>
                         <div class="form-group input-group input-group">
@@ -259,7 +259,7 @@
                             <asp:TextBox ID="TbGuardianNumber" runat="server" CssClass="form-control" placeholder="Guardian Number" TextMode="Phone"></asp:TextBox>
                         </div>
 
-                         <div class="form-group text-center">
+                        <div class="form-group text-center">
                             <div id="messages"></div>
                         </div>
 
@@ -268,6 +268,17 @@
 
                 <div class="modal-footer">
                     <div class="form-group">
+                        <div id="DivSuccess" runat="server">
+                            <div class="alert alert-success text-center" role="alert">
+                                <strong>New Member Created!</strong>
+                            </div>
+                        </div>
+
+                        <div id="DivFailed" runat="server">
+                            <div class="alert alert-danger text-center" role="alert">
+                                <strong>OOPS! Something Went Wrong, Please Try Agin Later.</strong>
+                            </div>
+                        </div>
                         <asp:Button ID="BtnSubmit" class="btn btn-primary btn-block btn-lg" runat="server" Text="Submit" OnClick="BtnSubmit_Click" />
                     </div>
                 </div>

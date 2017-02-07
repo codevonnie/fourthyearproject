@@ -17,6 +17,14 @@
     margin-top: 35px;
 }
 
+.MarginRight30 {
+    margin-right: 30px;
+}
+
+.MarginRight50 {
+    margin-right: 50px;
+}
+
 .MarginTop60 {
     margin-top: 60px;
 }
@@ -52,19 +60,24 @@
     margin-right: auto;
 }
 
-.MessageBoxMaxWidth{
+.MessageBoxMaxWidth {
     max-width: 250px;
 }
 
 
 .maxWidthContainer {
-    width: 200px;
+    width: 260px;
 }
 
 .floatLeft {
     float: left;
 }
 
+.CloseModal {
+    float: right;
+    color: indianred;
+    cursor: pointer;
+}
 
 .boxArea {
     display: block;

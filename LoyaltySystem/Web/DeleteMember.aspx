@@ -23,6 +23,25 @@
 
             <div class="modal-footer">
                 <div class="form-group">
+
+                    <div id="DivFailed" runat="server">
+                        <div class="alert alert-danger text-center" role="alert">
+                            <strong>Person Not Found Or Invalid Input!</strong>
+                        </div>
+                    </div>
+
+                    <div id="DivSuccess" runat="server">
+                        <div class="alert alert-success text-center" role="alert">
+                            <strong>Member Deleted!</strong>
+                        </div>
+                    </div>
+
+                    <div id="DivConnectionErr" runat="server">
+                        <div class="alert alert-danger text-center" role="alert">
+                            <strong>OOPS! Connection Error - Reconnect Or Try Again Later!</strong>
+                        </div>
+                    </div>
+
                     <asp:Button ID="BtnDeleteMember" class="btn btn-primary btn-block btn-lg" runat="server" Text="Delete Member" OnClick="BtnDeleteMember_Click" />
                 </div>
             </div>

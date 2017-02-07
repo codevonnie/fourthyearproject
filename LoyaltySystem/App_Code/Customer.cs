@@ -36,7 +36,10 @@ public class TempCustomer
     public string icePhone { get; set; }
     public string joined { get; set; }
     public string email { get; set; }
+    public string tempEmail { get; set; }
     public string imgUrl { get; set; }
     public string guardianName { get; set; }
     public string guardianNum { get; set; }
+    public string membership { get; set; }
+    public int visited { get; set; }
 }

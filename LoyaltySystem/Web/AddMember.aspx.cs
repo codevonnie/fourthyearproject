@@ -29,6 +29,7 @@ public partial class AddMember : System.Web.UI.Page
         try
         {
             GetUsrSettings();
+            init();
         }
         catch (Exception)
         {
@@ -46,6 +47,7 @@ public partial class AddMember : System.Web.UI.Page
         settings._auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
         settings._biz_Name = Decrypt.Base64Decode(Cache.Get("BizName").ToString());
         settings._loggedIn = Decrypt.Base64Decode(Cache.Get("Auth_LoggedIn").ToString());
+        settings._biz_Email = Decrypt.Base64Decode(Cache.Get("BizEmail").ToString());
         //-------------------------------- DECRYPTION COOKIES --------------------------------
         #region
         //System.Web.HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
@@ -85,6 +87,29 @@ public partial class AddMember : System.Web.UI.Page
         #endregion
     }
 
+
+    private void init()
+    {
+        DivSuccess.Visible = false;
+        DivFailed.Visible = false;
+    }
+
+
+    protected void BtnSubmit_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            CloudinaryApi.results cloudImg = StoreImgOnCloudinary();
+
+            newCustomerRequest(cloudImg);
+        }
+        catch (Exception)
+        {
+            DivFailed.Visible = true;
+        }
+    }
+
+
     //---------------- Create/Return Customer Object ----------------
     private Customer createCustomer()
     {
@@ -109,6 +134,7 @@ public partial class AddMember : System.Web.UI.Page
     private void newCustomerRequest(CloudinaryApi.results imgDetails)
     {
         Customer customer = createCustomer();
+        ConvertToMillSec convert = new ConvertToMillSec();
 
         var client = new RestClient(port);
         string password = Membership.GeneratePassword(6, 3);
@@ -125,13 +151,9 @@ public partial class AddMember : System.Web.UI.Page
         request.AddParameter("icePhone", customer.icePhone);
         request.AddParameter("imgUrl", imgDetails.secure_url);
 
-        //http://stackoverflow.com/questions/5955883/datetimes-representation-in-milliseconds
-        //Needed to get milliseconds for database
-        string simpleDate = customer.dob.ToString("dd/MM/yyyy");
-        DateTime dt = DateTime.ParseExact(simpleDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-        var mil = dt.ToUniversalTime().Subtract(
-      new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-      ).TotalMilliseconds;
+        request.AddParameter("bEmail", settings._biz_Email);
+
+        var mil = convert.DateToMillSec(customer.dob);
 
         request.AddParameter("dob", mil);
 
@@ -143,38 +165,15 @@ public partial class AddMember : System.Web.UI.Page
         }
 
         IRestResponse response = client.Execute(request);
-        var content = response.Content;
 
-        //If the Message is not Empty, Ask User to add Another Person or not? ***************** FIX ********* not catching SUSSESS / FALSE
-        if (content != "")
+        //Deserialize the result into the class provided
+        dynamic jsonObject = JsonConvert.DeserializeObject<ResponseMessage>(response.Content);
+        var resObj = jsonObject as ResponseMessage;
+
+        if (resObj.success == true)
         {
-            newRelationshipRequest(customer);
-            Server.Transfer("Default.aspx", true);
+            DivSuccess.Visible = true;         
         }
-    }
-
-
-    /* Method Creates a new Relationship between the Biz and the newly added person
-     */
-    private void newRelationshipRequest(Customer customer)
-    {
-        var client = new RestClient(port);
-
-        var request = new RestRequest("api/addRelationship", Method.POST);
-        request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
-        request.AddParameter("email", customer.email);
-        request.AddParameter("name", settings._biz_Name);//lOGGED IN BIZ NAME
-
-        IRestResponse response = client.Execute(request);
-        var content = response.Content; // raw content as string
-    }
-
-
-    protected void BtnSubmit_Click(object sender, EventArgs e)
-    {
-        CloudinaryApi.results cloudImg = StoreImgOnCloudinary();
-
-        newCustomerRequest(cloudImg);//ADD THE NEW CUSTOMER TO THE DATABASE
     }
 
 

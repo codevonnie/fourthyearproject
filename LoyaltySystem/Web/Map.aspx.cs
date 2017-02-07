@@ -124,13 +124,18 @@ public partial class Map : System.Web.UI.Page
     [System.Web.Services.WebMethod]
     public static void MessagesToArray(List<SosMessage> data)
     {
-        //Adapted From http://stackoverflow.com/questions/9969612/how-to-combine-two-lists-without-duplication-possible-dup
-        var uniqueList = sosList
-            .Concat(data)
-            .GroupBy(item => item.name)
-            .Select(group => group.First())
-            .ToArray();
 
-        sosList = uniqueList.ToList();
+        //Adapted From http://stackoverflow.com/questions/26469190/calling-an-async-method-from-within-an-web-method-and-getting-a-return
+        using (var client = new System.Net.WebClient())
+        {
+            //Adapted From http://stackoverflow.com/questions/9969612/how-to-combine-two-lists-without-duplication-possible-dup
+            var uniqueList = sosList
+                .Concat(data)
+                .GroupBy(item => item.name)
+                .Select(group => group.First())
+                .ToArray();
+
+            sosList = uniqueList.ToList();
+        }
     }
 }

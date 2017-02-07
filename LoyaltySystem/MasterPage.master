@@ -169,12 +169,12 @@
                             </ul>
                         </div>
                         <div class="col-sm-4">
-                            <a class="navbar-brand padRight65" href="Default.aspx" onclick="SendListToPage()">Member Me</a>
+                            <a class="navbar-brand MarginRight30" href="Default.aspx" onclick="SendListToPage()">Member Me</a>
                         </div>
 
                         <div class="col-sm-5">
-                            <a class="navbar-brand" id="logInBtn" runat="server" href="~/Web/LoginPage.aspx" aria-hidden="true" onclick="SendListToPage()">LogIn</a>
-                            <asp:Button ID="LogOut" runat="server" Text="LogOut" OnClick="LogOut_Click" />
+
+                            <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click"  />                     
                             <a class="MessageEnvelope fa fa-envelope-o fa-2x" id="EnvelopeBox" href="Web/Map.aspx" runat="server" onclick="SendListToPage()" aria-hidden="true"><span runat="server" class="MessageBox" id="messageBoxCount"></span></a>
                         </div>
                     </div>

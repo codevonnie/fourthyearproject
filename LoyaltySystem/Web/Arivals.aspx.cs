@@ -20,22 +20,9 @@ public partial class Web_SignInPage : System.Web.UI.Page
     private UserSettings settings = new UserSettings();
 
 
-    public class ResponseMessage
-    {
-        public bool success { get; set; }
-        public string message { get; set; }
-    }
-
-
     protected void Page_Load(object sender, EventArgs e)
     {
-
-        Page.SetFocus(TbQRCode);//Refocus on InputBox
-
-        divDisplay.Visible = false;
-        DivSuccess.Visible = false;
-        DivFailed.Visible = false;
-
+        init();
         try
         {
             GetUsrSettings();
@@ -47,6 +34,25 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
     }
 
+    //-------------------------------- Init Method For Start Up -----------------------------------------------
+    private void init()
+    {
+        Page.SetFocus(TbQRCode);//Refocus on InputBox
+
+        //Update Control
+        DivDisplay.Visible = false;
+
+        //Err,Success Messages
+        DivSuccess.Visible = false;
+        DivFailed.Visible = false;
+        DivConnectionErr.Visible = false;
+        DivSuccessCheckIn.Visible = false;
+
+        DivFailedEmail.Visible = false;
+
+        DivFailedScan.Visible = false;
+    }
+
 
     private void GetUsrSettings()
     {
@@ -54,131 +60,174 @@ public partial class Web_SignInPage : System.Web.UI.Page
         //Cache might be cleared so need to get another token
         settings._auth_Token = Decrypt.Base64Decode(Cache.Get("AuthToken").ToString());
         settings._auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
+        settings._biz_Email = Decrypt.Base64Decode(Cache.Get("BizEmail").ToString());
     }
 
 
-    //-------------------------------- Btn Check Member Click Event --------------- *FIX* ---------------------
+    //-------------------------------- Btn Check Member Click Event -------------------------------------------
     protected void BtnCheckMember_Click(object sender, EventArgs e)
     {
         //Check that something was entered into the text box first 
-        var custObj = ParseQRCode();
-        FindPerson(custObj);
+        try
+        {
+            var custObj = ParseQRCode();
+            FindPerson(custObj);
+        }
+        catch (Exception)
+        {
+            DivFailedScan.Visible = true;
+        }
     }
 
 
-    //-------------------------------- Update Person Info Click Event ------------- *FIX* ---------------------
-    protected void UpdatePersonInfo_Click(object sender, EventArgs e)
-    {
-        UpdatePerson(); //check to see if text entered 
-        TbUpdate.Text = "";//Reset The Text
-    }
-
-
-    //-------------------------------- Update Choice Click Event ------------------ *FIX* ---------------------
-    /* Method Gets the users choice from the DropDown box when a person has Arrived, located in the "Bootstrap Modal"
-     * Displays a "Update textbox" that updates its placeholder based on the Choice made.
-     */
-    protected void UpdateChoice_Click(object sender, EventArgs e)
-    {
-        Button btnInfo = (Button)sender;
-
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
-        TbUpdate.Focus();
-        TbUpdate.Attributes["placeholder"] = "Enter New " + btnInfo.Text;
-
-        Cache["DD_CHOICE"] = btnInfo.Text.ToString();
-        divDisplay.Visible = true;
-    }
-
-
-    //-------------------------------- Button Check Person In -------------------------------------------------
-    protected void BtnCheckPersonIn_Click(object sender, EventArgs e)
-    {
-        //SEND POST REQUEST AND UPDATE PERSON'S VIST COUNTER / LAST DATE VISITED
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
-    }
-
-
-    //-------------------------------- Parse QR Code ------------------------------- *FIX* --------------------
+    //-------------------------------- Parse QR Code ----------------------------------------------------------
     /* Mehtod parses the QR Code input into a TempCustomer,
      */
     private TempCustomer ParseQRCode()
     {
         var custObj = new TempCustomer();
-        try
-        {
-            dynamic custObject = JsonConvert.DeserializeObject<TempCustomer>(TbQRCode.Text);
-            custObj = custObject as TempCustomer;
-        }
-        catch (Exception)
-        {
-            // Catch unknown formats eg wrong QRcode or person id
-            //DISPLAY MODAL WITH ERROR MESSAGE OR SHOW BELOW WARNING MESSAGE
-        }
+        var custObject = JsonConvert.DeserializeObject<TempCustomer>(TbQRCode.Text);
+        custObj = custObject as TempCustomer;
         return custObj;
     }
 
 
-    //-------------------------------- Find Person --------------------------------- *FIX* --------------------
+    //-------------------------------- Find Person -----------------------------------------------------
     //Send request to api and find the person
     private void FindPerson(TempCustomer cust)
     {
         var client = new RestClient(port);
 
-        var request = new RestRequest("api/findPerson", Method.POST);
-        request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
-        request.AddParameter("email", cust.email);
-
-
-
-        IRestResponse response = client.Execute(request);
-
-        //Deserialize the result into the class provided
-        dynamic jsonObject = JsonConvert.DeserializeObject<ResponseMessage>(response.Content);
-        var resObj = jsonObject as ResponseMessage;
-
-        if (resObj.success == true)
+        try
         {
-            //Person was found Display to the Company
-            displayPerson(cust);
+            var request = new RestRequest("api/findPerson", Method.POST);
+            request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
+            request.AddParameter("email", cust.email);
+            request.AddParameter("bEmail", settings._biz_Email);
 
-            //Cached customer obj with timeout
-            Cache.Insert("CUSTOMER_OBJ", cust, null, System.Web.Caching.Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(5));
+            IRestResponse response = client.Execute(request);
+
+            //Deserialize the result into the class provided
+            var jsonObject = JsonConvert.DeserializeObject<ResponseMessage>(response.Content);
+            ResponseMessage resObj = jsonObject as ResponseMessage;
+
+            if (resObj.success == true)
+            {
+                //Person was found Display to the Company
+                displayPerson(cust);
+
+                //Cached customer obj with timeout
+                Cache.Insert("CUSTOMER_OBJ", cust, null, System.Web.Caching.Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(5));
+            }
+            else
+                DivFailedScan.Visible = true;
+
+
         }
+        catch (Exception)
+        {
+            DivConnectionErr.Visible = true;
+        }
+
         TbQRCode.Text = "";//Reset Text
     }
 
 
-    //Switch on the Person Property they want to change
-    private TempCustomer UpdateCustObj()
+    //-------------------------------- Display Person Modal ---------------------------------------------------
+    private void displayPerson(TempCustomer cust)
     {
-        String choice = Cache.Get("DD_CHOICE").ToString();
-        TempCustomer temp = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
-        switch (choice)
-        {
-            case "Name":
-                temp.name = TbUpdate.Text.ToString();
-                LblName.Text = TbUpdate.Text.ToString();
-                break;
-            case "Guardian Name":
-                temp.guardianName = TbUpdate.Text.ToString();
-                LblGuardName.Text = TbUpdate.Text.ToString();
-                break;
-            case "Guardian Number":
-                temp.guardianNum = TbUpdate.Text.ToString();
-                LblGuardNum.Text = TbUpdate.Text.ToString();
-                break;
-        }
-        return temp;
+        var date = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.joined.ToString()));
+        LblName.Text = cust.name;
+        LblJoined.Text = date.ToString("dd/MM/yyyy");
+        LblAge.Text = CalculateAge(cust.dob.ToString());
+        LblEmail.Text = cust.email;
+
+        //Dont Display Guardian Name/Num if Null
+        if (cust.guardianName.ToString() == "null" || cust.guardianNum.ToString() == "null")
+            HideGuard.Visible = false;
+
+        //Dont Display membership if Null
+        if (cust.membership.ToString() == "null")
+            HideMember.Visible = false;
+
+        LblGuardNum.Text = cust.guardianNum.ToString();
+        LblGuardName.Text = cust.guardianName.ToString();
+
+        LblIceName.Text = cust.iceName;
+        LblIceNum.Text = cust.icePhone;
+        LblMember.Text = cust.membership;
+
+        ImgPerson.ImageUrl = cust.imgUrl;
+
+        //Trigger the JS 
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
     }
 
 
-    //-------------------------------- UpdatePerson -------------------------------- *FIX* --------------------
-    //Send request to api and find the person 
-    private void UpdatePerson()
+    //-------------------------------- Calculate Age ----------------------------------------------------------
+    private string CalculateAge(string dob)
     {
+        //Might need validation *******
+        var date = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(dob));
+
+        //Adapted From http://stackoverflow.com/questions/3054715/c-sharp-calculate-accurate-age
+        DateTime today = DateTime.Today;
+
+        int months = today.Month - date.Month;
+        int years = today.Year - date.Year;
+
+        if (today.Day < date.Day)
+        {
+            months--;
+        }
+
+        if (months < 0)
+        {
+            years--;
+            months += 12;
+        }
+
+        int days = (today - date.AddMonths((years * 12) + months)).Days;
+
+        return string.Format("{0} Year{1}", years, (years == 1) ? "" : "s Old");
+
+    }
+
+
+
+
+    //=================================================================================> Update Methods <==========================================================================
+
+
+    //-------------------------------- Update Person Info, Check In + Update Btns -----------------------------------------------------------
+    protected void UpdatePersonInfo_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            UpdatePerson(sender); //check to see if text entered 
+            TbUpdate.Text = "";//Reset The Text
+        }
+        catch (Exception)
+        {
+            DivFailed.Visible = true;
+        }
+    }
+
+    //-------------------------------- UpdatePerson -----------------------------------------------------------
+    //Send request to api and find the person 
+    private void UpdatePerson(object sender)
+    {
+        Button btn = sender as Button;
+        TempCustomer cust;
+
         var client = new RestClient(port);
-        TempCustomer cust = UpdateCustObj();
+
+        if (btn.ID == "BtnCheckin")
+            cust = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
+        else
+            cust = UpdateCustObj();
+
+        ConvertToMillSec convert = new ConvertToMillSec();
 
         var request = new RestRequest("api/updatePerson", Method.PUT);
         request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
@@ -193,6 +242,21 @@ public partial class Web_SignInPage : System.Web.UI.Page
         request.AddParameter("imgUrl", cust.imgUrl);
         request.AddParameter("guardianName", cust.guardianName);
         request.AddParameter("guardianNum", cust.guardianNum);
+        request.AddParameter("tempEmail", cust.tempEmail);
+
+        if (btn.ID == "BtnCheckin")
+            cust.visited++;
+
+        request.AddParameter("visited", cust.visited);
+
+        if (cust.membership != "null")
+        {
+            DateTime date = Convert.ToDateTime(cust.membership);
+            var mil = convert.DateToMillSec(date);
+        }
+
+        request.AddParameter("membership", cust.membership);
+
 
         IRestResponse response = client.Execute(request);
 
@@ -203,51 +267,85 @@ public partial class Web_SignInPage : System.Web.UI.Page
         if (resObj.success == true)
         {
             //Person UPDATED
-            DivSuccess.Visible = true;
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
+            if (btn.ID == "BtnCheckin")
+                DivSuccessCheckIn.Visible = true;
+            else
+                DivSuccess.Visible = true;
+
+            cust.email = cust.tempEmail;
         }
         else
-        {
-            DivFailed.Visible = true;
-        }
-    }
+            DivFailedEmail.Visible = true;
 
-    //-------------------------------- Calculate Age ------------------------------- *FIX* --------------------
-    private string CalculateAge(string dob)
-    {
-        //Might need validation *******
-        var date = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(dob));
-        // Save today's date.
-        var today = DateTime.Today;
-
-        return (today.Year - date.Year).ToString();
-    }
-
-
-    //-------------------------------- Display Person Modal ------------------------ *FIX* --------------------
-    private void displayPerson(TempCustomer cust)
-    {
-        var date = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.joined.ToString()));
-        LblName.Text = cust.name;
-        LblJoined.Text = date.ToString("d/MM/yyyy");
-        LblAge.Text = CalculateAge(cust.dob.ToString());
-
-        if (cust.guardianName.ToString() == "null" || cust.guardianNum.ToString() == "null")
-        {
-            HideGuard.Visible = false;
-        }
-
-        LblGuardNum.Text = cust.guardianNum.ToString();
-        LblGuardName.Text = cust.guardianName.ToString();
-
-        LblIceName.Text = cust.iceName;
-        LblIceNum.Text = cust.icePhone;
-
-        LblMember.Text = "TEMP VAL";
-
-        ImgPerson.ImageUrl = cust.imgUrl;
-
-        //Trigger the JS 
         ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
     }
+
+    //Switch on the Person Property that they want to change
+    private TempCustomer UpdateCustObj()
+    {
+        String choice = Cache.Get("DD_CHOICE").ToString();
+        TempCustomer temp = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
+
+        temp.tempEmail = temp.email;
+
+        switch (choice)
+        {
+            case "BtnUpName":
+                temp.name = TbUpdate.Text.ToString();
+                LblName.Text = TbUpdate.Text.ToString();
+                break;
+
+            case "BtnUpGuardName":
+                temp.guardianName = TbUpdate.Text.ToString();
+                LblGuardName.Text = TbUpdate.Text.ToString();
+                break;
+
+            case "BtnUpGuardNum":
+                temp.guardianNum = TbUpdate.Text.ToString();
+                LblGuardNum.Text = TbUpdate.Text.ToString();
+                break;
+
+            case "BtnUpEmail":
+                temp.tempEmail = TbUpdate.Text.ToString();
+                LblEmail.Text = TbUpdate.Text.ToString();
+                break;
+
+            case "BthUpMembershipEndDate":
+                DateTime date = Convert.ToDateTime(TbUpdate.Text.ToString());
+                temp.membership = TbUpdate.Text;
+                LblMember.Text = date.ToString("dd/MM/yyyy");
+                break;
+        }
+        return temp;
+    }
+
+
+    //-------------------------------- Update Choice Click Event ---------------------------------------
+    /* Method Gets the users choice from the DropDown box when a person has Arrived, located in the "Bootstrap Modal"
+     * Displays a "Update textbox" that updates its placeholder based on the Choice made.
+     */
+    protected void UpdateChoice_Click(object sender, EventArgs e)
+    {
+        Button btnInfo = sender as Button;
+
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
+
+        TbUpdate.Focus();
+        //If The Choice was "Membership End Date" turn the text mode to DATE
+        if (btnInfo.ID == "BthUpMembershipEndDate")
+            TbUpdate.TextMode = TextBoxMode.Date;
+
+        else if (btnInfo.ID == "BtnUpEmail")
+        {
+            TbUpdate.TextMode = TextBoxMode.Email;
+            TbUpdate.Attributes["placeholder"] = "Enter New " + btnInfo.Text;
+        }
+        else
+            TbUpdate.Attributes["placeholder"] = "Enter New " + btnInfo.Text;
+
+        Cache["DD_CHOICE"] = btnInfo.ID;
+        DivDisplay.Visible = true;
+    }
+
+
 }
