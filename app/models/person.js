@@ -12,6 +12,8 @@ var PersonSchema = new Schema({
     icePhone: String,
     joined: Number,
     dob: Number,
+    visited: Number,
+    membership: Number,
     imgUrl:{
         type:String,
         unique: true,
@@ -23,7 +25,7 @@ var PersonSchema = new Schema({
         required: true
     },
     guardianName:String,
-    guardianNum:Number,
+    guardianNum: String,
     businessName: String,
 
     password: {

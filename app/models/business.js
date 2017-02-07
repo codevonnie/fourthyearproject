@@ -14,7 +14,7 @@ var BusinessSchema = new Schema({
         required: true
     },
     phone: {
-        type: Number,
+        type: String,
         required: true
     },
     email: {
@@ -23,6 +23,10 @@ var BusinessSchema = new Schema({
         required: true
     },
     password: {
+        type: String,
+        required: true
+    },
+    emergencyNum: {
         type: String,
         required: true
     }
