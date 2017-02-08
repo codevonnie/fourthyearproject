@@ -103,6 +103,8 @@ router.post('/authenticate', function (req, res) {
               imgUrl: record._fields[0].properties.imgUrl,
               guardianName: record._fields[0].properties.guardianName,
               guardianNum: record._fields[0].properties.guardianNum,
+              visited: record._fields[0].properties.visited,
+              membership: record._fields[0].properties.membership,
               businessName: record._fields[1].properties.name
             });
             console.log('Found You! Permission Granted');
