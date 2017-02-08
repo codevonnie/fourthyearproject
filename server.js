@@ -251,7 +251,7 @@ router.delete('/deletePerson', function (req, res) {
   console.log(req.body);
 
   session
-    .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email.trim() + "' AND b.email='" + req.body.bEmail.trim() + "' OPTIONAL MATCH (a)-[r]-(b) DETACH DELETE p,r Return a, b LIMIT 1")
+    .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email.trim() + "' AND b.email='" + req.body.bEmail.trim() + "' OPTIONAL MATCH (a)-[r]-(b) DETACH DELETE a,r Return a, b LIMIT 1")
     .then(function (result) {
       // IF count(*) Returns > 0, Entry has been made
       if (result.records[0] != null) 
