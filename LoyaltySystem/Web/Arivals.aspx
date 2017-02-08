@@ -66,6 +66,8 @@
                             <li>
                                 <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardNum" runat="server" Text="Guardian Number" OnClick="UpdateChoice_Click" /></li>
                             <li>
+                                <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnRemoveGuard" runat="server" Text="Remove Guardian" OnClick="UpdatePersonInfo_Click" /></li>
+                            <li>
                                 <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BthUpMembershipEndDate" runat="server" Text="Membership End Date" OnClick="UpdateChoice_Click" /></li>
                         </ul>
                     </div>
@@ -90,7 +92,7 @@
 
                     <div class="container-fluid text-left maxWidthContainer">
 
-                        <div id="HideMember" runat="server">
+                        <div id="MembershipVis" runat="server">
                             <div class="text-muted">
                                 <b>MemberShip Finished: </b>
                                 <span>

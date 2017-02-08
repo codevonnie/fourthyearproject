@@ -96,7 +96,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
                 displayPerson(resObj);
 
                 //Cached customer obj with timeout
-                Cache.Insert("CUSTOMER_OBJ", resObj, null, System.Web.Caching.Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(5));
+                Cache.Insert("CUSTOMER_OBJ", resObj, null, System.Web.Caching.Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(10));
             }
             else
                 DivFailedScan.Visible = true;
@@ -132,7 +132,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
         //Dont Display Membership if Null
         if (cust.membership.ToString() != "0")
-            HideMember.Visible = true;
+            MembershipVis.Visible = true;
 
 
         LblGuardNum.Text = cust.guardianNum.ToString();
@@ -180,6 +180,9 @@ public partial class Web_SignInPage : System.Web.UI.Page
     }
 
 
+
+
+
     //=================================================================================> Update Methods <==========================================================================
 
 
@@ -193,6 +196,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
         }
         catch (Exception)
         {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
             DivFailed.Visible = true;
         }
     }
@@ -203,17 +207,19 @@ public partial class Web_SignInPage : System.Web.UI.Page
     private void UpdatePerson(object sender)
     {
         Button btn = sender as Button;
-        TempCustomer cust;
+        TempCustomer cust = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
 
         var client = new RestClient(port);
 
+        //Check To see if the person is just checking in
         if (btn.ID == "BtnCheckin")
-        {
-            cust = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
             cust.tempEmail = cust.email;
-        }
         else
+        {
+            if (btn.ID == "BtnRemoveGuard")
+                Cache["DD_CHOICE"] = btn.ID;
             cust = UpdateCustObj();
+        }
 
         ConvertToMillSec convert = new ConvertToMillSec();
 
@@ -239,15 +245,16 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
         if (cust.membership != "0") // Could have a Membership Already so maby a function to check if membership is out-of-date
         {
-            DateTime date = Convert.ToDateTime(cust.membership);
-            var mil = convert.DateToMillSec(date);
+            var memberDate = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.membership.ToString()));
+
+            var mil = convert.DateToMillSec(memberDate);
             cust.membership = mil.ToString();//Update the Membership with a new Date (Miliseconds)
-            HideMember.Visible = true;
+            MembershipVis.Visible = true;
         }
 
         request.AddParameter("membership", cust.membership);
 
-
+        //SendRequest
         IRestResponse response = client.Execute(request);
 
         //Deserialize the result into the class provided
@@ -276,45 +283,55 @@ public partial class Web_SignInPage : System.Web.UI.Page
     private TempCustomer UpdateCustObj()
     {
         String choice = Cache.Get("DD_CHOICE").ToString();
-        TempCustomer temp = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
+        TempCustomer tempCust = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
 
-        temp.tempEmail = temp.email;
+        tempCust.tempEmail = tempCust.email;
 
         switch (choice)
         {
             case "BtnUpName":
-                temp.name = TbUpdate.Text.ToString();
+                tempCust.name = TbUpdate.Text.ToString();
                 LblName.Text = TbUpdate.Text.ToString();
                 break;
 
             case "BtnUpGuardName":
-                temp.guardianName = TbUpdate.Text.ToString();
+                tempCust.guardianName = TbUpdate.Text.ToString();
                 LblGuardName.Text = TbUpdate.Text.ToString();
                 GuardName.Visible = true;
                 break;
 
             case "BtnUpGuardNum":
-                temp.guardianNum = TbUpdate.Text.ToString();
+                tempCust.guardianNum = TbUpdate.Text.ToString();
                 LblGuardNum.Text = TbUpdate.Text.ToString();
                 GuardNum.Visible = true;
                 break;
 
+            case "BtnRemoveGuard":
+                tempCust.guardianName = "null";
+                tempCust.guardianNum = "null";
+
+                LblGuardName.Text = tempCust.guardianName.ToString();
+                LblGuardNum.Text = tempCust.guardianNum.ToString();
+                GuardName.Visible = false;
+                GuardNum.Visible = false;
+                break;
+
             case "BtnUpEmail":
-                temp.tempEmail = TbUpdate.Text.ToString();
+                tempCust.tempEmail = TbUpdate.Text.ToString();
                 LblEmail.Text = TbUpdate.Text.ToString();
                 break;
 
             case "BthUpMembershipEndDate":
                 DateTime date = Convert.ToDateTime(TbUpdate.Text.ToString());
-                temp.membership = TbUpdate.Text;
-                HideMember.Visible = true;
+                tempCust.membership = TbUpdate.Text;
+                MembershipVis.Visible = true;
                 LblMember.Text = date.ToString("dd/MM/yyyy");
                 break;
         }
 
-        Cache.Insert("CUSTOMER_OBJ", temp, null, System.Web.Caching.Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(5));
+        Cache.Insert("CUSTOMER_OBJ", tempCust, null, System.Web.Caching.Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(10));
 
-        return temp;
+        return tempCust;
     }
 
 
@@ -352,6 +369,4 @@ public partial class Web_SignInPage : System.Web.UI.Page
         Cache["DD_CHOICE"] = btnInfo.ID;
         DivDisplay.Visible = true;
     }
-
-
 }
