@@ -230,29 +230,29 @@ router.post('/findPerson', function (req, res) {
         //Loop over Results, should always just be 1 returned
         result.records.forEach(function (record) {
           //If its A PERSON logging In
-         
-            //Send the Response Back [List]
-            res.json({
-              success: true,
-              name: record._fields[0].properties.name,
-              age: record._fields[0].properties.age,
-              dob: record._fields[0].properties.dob.toString(),
-              address: record._fields[0].properties.address,
-              phone: record._fields[0].properties.phone,
-              iceName: record._fields[0].properties.iceName,
-              icePhone: record._fields[0].properties.icePhone,
-              joined: record._fields[0].properties.joined.toString(),
-              email: record._fields[0].properties.email,
-              imgUrl: record._fields[0].properties.imgUrl,
-              guardianName: record._fields[0].properties.guardianName,
-              guardianNum: record._fields[0].properties.guardianNum,
-              visited: record._fields[0].properties.visited,
-              membership: record._fields[0].properties.membership,
 
-            });
+          //Send the Response Back [List]
+          res.json({
+            success: true,
+            name: record._fields[0].properties.name,
+            age: record._fields[0].properties.age,
+            dob: record._fields[0].properties.dob.toString(),
+            address: record._fields[0].properties.address,
+            phone: record._fields[0].properties.phone,
+            iceName: record._fields[0].properties.iceName,
+            icePhone: record._fields[0].properties.icePhone,
+            joined: record._fields[0].properties.joined.toString(),
+            email: record._fields[0].properties.email,
+            imgUrl: record._fields[0].properties.imgUrl,
+            guardianName: record._fields[0].properties.guardianName,
+            guardianNum: record._fields[0].properties.guardianNum,
+            visited: record._fields[0].properties.visited,
+            membership: record._fields[0].properties.membership,
+
+          });
         })
       }
-    
+
       else {
         res.json({ success: false, message: 'Cannot Access Unassociated Members' });
         console.log("Cannot Access Unassociated Members");
@@ -273,14 +273,14 @@ router.post('/findPerson', function (req, res) {
 router.delete('/deletePerson', function (req, res) {
 
   var session = driver.session();
-  
+
   console.log(req.body);
 
   session
     .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' AND b.email='" + req.body.bEmail.trim() + "' OPTIONAL MATCH (a)-[r]-(b) DETACH DELETE a,r Return a, b LIMIT 1")
     .then(function (result) {
       // IF count(*) Returns > 0, Entry has been made
-      if (result.records[0] != null) 
+      if (result.records[0] != null)
         res.json({ success: true, message: 'User Deleted' });
       else
         res.json({ success: false, message: 'Problem Deleting User Check Name/Email' });
@@ -301,17 +301,15 @@ router.put('/updatePerson', function (req, res) {
   var session = driver.session();
 
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone.trim().toString() + "', a.iceName='" + req.body.iceName.trim() + "', a.icePhone='" + req.body.icePhone.trim().toString() + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.dob=" + req.body.dob + ", a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone.trim().toString() + "', a.iceName='" + req.body.iceName.trim() + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.icePhone='" + req.body.icePhone.trim().toString() + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.dob=" + req.body.dob + ", a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
       if (result.records[0] != null) 
-        
         res.json({ success: true, message: 'User Details Updated' });
-      //console.log("User Details Updated");
-      else
+      else 
         res.json({ success: false, message: 'Problem Updating User, Check Name/Email' });
-
+      
       session.close();
       //driver.close();
     })
