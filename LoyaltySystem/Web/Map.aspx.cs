@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.UI;
@@ -22,25 +23,24 @@ public partial class Map : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        try
+        //MESSAGES DONT SHOW UP IF RELOADING I THINK
+        if (!IsPostBack)
         {
-            //Check If Logged in
-            GetUsrSettings();
-            init();
+            try
+            {
+                settings = Cache.Get("Settings") as UserSettings;
+                if (settings._loggedIn == null || settings._biz_Email == null || settings._auth_Token == null || settings._auth_Type == null)
+                    return;
+
+                init();
+            }
+            catch (Exception)
+            {
+                Response.Redirect("LoginPage.aspx", true);
+            };
         }
-        catch (Exception)
-        {
-            Response.Redirect("LoginPage.aspx", true);
-        };
     }
 
-
-    private void GetUsrSettings()
-    {
-        //-------------------------------- CACHE AUTH--------------------------------
-        //Cache might be cleared so need to get another token
-        settings._loggedIn = Decrypt.Base64Decode(Cache.Get("Auth_LoggedIn").ToString());
-    }
 
     private void init()
     {
@@ -122,20 +122,17 @@ public partial class Map : System.Web.UI.Page
      * Objects Only Get Added to the List if they Dont Have The Same Name(Persons Name)
     */
     [System.Web.Services.WebMethod]
-    public static void MessagesToArray(List<SosMessage> data)
+    public static Boolean MessagesToArray(List<SosMessage> data)
     {
+        //Adapted From http://stackoverflow.com/questions/9969612/how-to-combine-two-lists-without-duplication-possible-dup
+        var uniqueList = sosList
+            .Concat(data)
+            .GroupBy(item => item.name)
+            .Select(group => group.First())
+            .ToArray();
 
-        //Adapted From http://stackoverflow.com/questions/26469190/calling-an-async-method-from-within-an-web-method-and-getting-a-return
-        using (var client = new System.Net.WebClient())
-        {
-            //Adapted From http://stackoverflow.com/questions/9969612/how-to-combine-two-lists-without-duplication-possible-dup
-            var uniqueList = sosList
-                .Concat(data)
-                .GroupBy(item => item.name)
-                .Select(group => group.First())
-                .ToArray();
+        sosList = uniqueList.ToList();
 
-            sosList = uniqueList.ToList();
-        }
+        return true;
     }
 }

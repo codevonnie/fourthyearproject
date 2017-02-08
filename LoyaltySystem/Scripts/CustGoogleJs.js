@@ -53,7 +53,7 @@ function newPin(newLat, newLng, message) {
 //Also incharge of updating the MessageCounter
 function RemoveMessage() {
 
-    console.log(JSON.stringify(markerMessage.position));
+    //console.log(JSON.stringify(markerMessage.position));
     $.ajax({
         type: "POST",
         url: "Map.aspx/DeleteMessage",

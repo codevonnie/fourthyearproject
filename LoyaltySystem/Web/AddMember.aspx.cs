@@ -28,7 +28,10 @@ public partial class AddMember : System.Web.UI.Page
     {
         try
         {
-            GetUsrSettings();
+            settings = Cache.Get("Settings") as UserSettings;
+            if (settings._loggedIn == null || settings._biz_Email == null || settings._auth_Token == null || settings._auth_Type == null)
+                return;
+
             init();
         }
         catch (Exception)
@@ -37,56 +40,6 @@ public partial class AddMember : System.Web.UI.Page
         };
 
     }
-
-
-    private void GetUsrSettings()
-    {
-        //-------------------------------- CACHE AUTH--------------------------------
-        //Cache might be cleared so need to get another token
-        settings._auth_Token = Decrypt.Base64Decode(Cache.Get("AuthToken").ToString());
-        settings._auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
-        settings._biz_Name = Decrypt.Base64Decode(Cache.Get("BizName").ToString());
-        settings._loggedIn = Decrypt.Base64Decode(Cache.Get("Auth_LoggedIn").ToString());
-        settings._biz_Email = Decrypt.Base64Decode(Cache.Get("BizEmail").ToString());
-        //-------------------------------- DECRYPTION COOKIES --------------------------------
-        #region
-        //System.Web.HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-        //if (authCookie != null)
-        //{
-        //    //Extract the forms authentication cookie
-        //    FormsAuthenticationTicket authTicket = FormsAuthentication.Decrypt(authCookie.Value);
-
-        //    // If caching roles in userData field then extract
-        //    string[] roles = authTicket.UserData.Split(new char[] { '|' });
-
-        //    // Create the IIdentity instance
-        //    IIdentity id = new FormsIdentity(authTicket);
-
-        //    // Create the IPrinciple instance
-        //    IPrincipal principal = new GenericPrincipal(id, roles);
-
-        //    // Set the context user 
-        //    Context.User = principal;
-        //}
-        #endregion
-
-        //-------------------------------- SSL COOKIES --------------------------------
-        #region
-        //try
-        //{
-        //    //SSL Cookie with Auth Token etc
-        //    _bizName = Request.Cookies["BIZ_DETAILS"]["BIZ_NAME"];
-        //    _authtoken = Request.Cookies["AuthCookie"]["AC_T"];
-        //    _authType = Request.Cookies["AuthCookie"]["TYPE"];
-        //}
-        //catch (Exception)
-        //{
-        //    //Get a new Token? or ask use to Login again
-        //    Response.Redirect("LoginPage.aspx", true);
-        //}
-        #endregion
-    }
-
 
     private void init()
     {
@@ -123,6 +76,10 @@ public partial class AddMember : System.Web.UI.Page
         customer.email = TbEmail.Text.ToString();
         customer.date = DateTime.Now;//Todays Date
 
+        if (TbMember.Text != "")
+            customer.membership = Convert.ToDateTime(TbMember.Text);//Todays Date
+
+
         customer.guardianName = TbGuardianName.Text.ToString();
         customer.guardianNum = TbGuardianNumber.Text.ToString();
         return customer;
@@ -140,7 +97,7 @@ public partial class AddMember : System.Web.UI.Page
         string password = Membership.GeneratePassword(6, 3);
 
         var request = new RestRequest("api/addPerson", Method.POST);
-        request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
+        request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
         request.AddParameter("name", customer.name);
         request.AddParameter("password", "*x*" + password);//random password
         request.AddParameter("email", customer.email);
@@ -151,11 +108,19 @@ public partial class AddMember : System.Web.UI.Page
         request.AddParameter("icePhone", customer.icePhone);
         request.AddParameter("imgUrl", imgDetails.secure_url);
 
-        request.AddParameter("bEmail", settings._biz_Email);
+        request.AddParameter("bEmail", Decrypt.Base64Decode(settings._biz_Email.ToString()));
 
-        var mil = convert.DateToMillSec(customer.dob);
+        var dobMill = convert.DateToMillSec(customer.dob);
 
-        request.AddParameter("dob", mil);
+        if (customer.membership != null)
+        {
+            var memMill = convert.DateToMillSec(customer.membership);
+            request.AddParameter("membership", memMill);
+        }
+        else
+            request.AddParameter("membership", 0);//Default VALUE
+
+        request.AddParameter("dob", dobMill);
 
         //ONLY IF UNDER 18
         if (customer.guardianName != "" && customer.guardianNum != "")
@@ -172,7 +137,7 @@ public partial class AddMember : System.Web.UI.Page
 
         if (resObj.success == true)
         {
-            DivSuccess.Visible = true;         
+            DivSuccess.Visible = true;
         }
     }
 

@@ -16,13 +16,14 @@ public class Customer
     public DateTime dob { get; set; }
     public string contactNumber { get; set; }
     public string icePhone { get; set; }
-    public String iceName { get; set; }
+    public string iceName { get; set; }
     public DateTime date { get; set; }
     public DateTime joined { get; set; }//milliseconds ?
     public string guardianNum { get; set; }
     public string guardianName { get; set; }
     public string customerToken { get; set; }
     public string imgUrl { get; set; }
+    public DateTime membership { get; set; }
 }
 
 public class TempCustomer

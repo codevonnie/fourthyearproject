@@ -29,10 +29,12 @@
 
 <script>
 
-    var check = "<%= MyProperty %>";
+    var check = "<%= LoggedInStatus %>";
+
     //Holds All the messages that get sent to the user
     if (check === "true") {
         var messagesList = new Array();
+        var BizEmail = "<%= BizEmail %>";
 
         if (!!window.EventSource) {
             // http://localhost:3000/stream
@@ -46,46 +48,49 @@
 
                 messageObj = JSON.parse(e.data)//Parse the data
 
-                var msgObj = {};//Create a New Object Each Time A message Comes In
-                msgObj.status = messageObj.status;
-                msgObj.message = messageObj.message;
-                msgObj.email = messageObj.email;
-                msgObj.longitude = messageObj.longitude;
-                msgObj.latitude = messageObj.latitude;
-                msgObj.business = messageObj.business;
-                msgObj.name = messageObj.name;
+                //Check to see if the message Is for the Biz
+                if (BizEmail === messageObj.business || messageObj.business === "") {
+                    console.log("Waiting For Messages");
 
-                messagesList.push(msgObj);//Push The Obj to an Array List
+                    var msgObj = {};//Create a New Object Each Time A message Comes In
+                    msgObj.status = messageObj.status;
+                    msgObj.message = messageObj.message;
+                    msgObj.email = messageObj.email;
+                    msgObj.longitude = messageObj.longitude;
+                    msgObj.latitude = messageObj.latitude;
+                    msgObj.business = messageObj.business;
+                    msgObj.name = messageObj.name;
 
-                //Remove All Empty Messages from the List
-                messagesList.forEach(function (entry) {
-                    if (entry.business === "" || entry.email === "")
-                        messagesList.splice(entry, 1);
-                });
+                    messagesList.push(msgObj);//Push The Obj to an Array List
 
+                    //Remove All Empty Messages from the List
+                    messagesList.forEach(function (entry) {
+                        if (entry.business === "" || entry.email === "")
+                            messagesList.splice(entry, 1);
+                    });
 
-                /* Update the Header box with the Total Amount of messages that are in the Array
-                * Only if the number of messages are greater than the amount alreay Present
-                */
-                if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList != 0) {
-                    document.getElementById("messageBoxCount").innerText = messagesList.length.toString();
-                    localStorage['messageCount'] = messagesList.length.toString();
+                    /* Update the Header box with the Total Amount of messages that are in the Array
+                    * Only if the number of messages are greater than the amount alreay Present
+                    */
+                    if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList != 0) {
+                        document.getElementById("messageBoxCount").innerText = messagesList.length.toString();
+                        localStorage['messageCount'] = messagesList.length.toString();
+                    }
+
+                    if ((document.getElementById("messageBoxCount").innerText > messagesList.length.toString()) && messagesList != 0) {
+                        var num = Number(document.getElementById("messageBoxCount").innerText);
+                        num++;
+                        localStorage['messageCount'] = num.toString();
+                        document.getElementById("messageBoxCount").innerText = num.toString();
+                    }
+
+                    if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList.length === 0) {
+                        document.getElementById("messageBoxCount").innerText = localStorage['messageCount'];
+                    }
+
+                    if (document.getElementById("messageBoxCount").innerText === "undefined")
+                        document.getElementById("messageBoxCount").innerText = 0;
                 }
-
-                if ((document.getElementById("messageBoxCount").innerText > messagesList.length.toString()) && messagesList != 0) {
-                    var num = Number(document.getElementById("messageBoxCount").innerText);
-                    num++;
-                    localStorage['messageCount'] = num.toString();
-                    document.getElementById("messageBoxCount").innerText = num.toString();
-                }
-
-                if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList.length === 0) {
-                    document.getElementById("messageBoxCount").innerText = localStorage['messageCount'];
-                }
-
-                if (document.getElementById("messageBoxCount").innerText === "undefined")
-                    document.getElementById("messageBoxCount").innerText = 0;
-
             }, false)
 
             //Changes the Message Box Envelope colour - Green Is Connected
@@ -109,13 +114,19 @@
         }
 
         //Ajax Function That Posts the Array[Objects] to the Relevent Page
-        function SendListToPage() {
+        function SendListToPage(name) {
             $.ajax({
                 type: "POST",
                 url: "Map.aspx/MessagesToArray",
                 data: "{data:" + JSON.stringify(messagesList) + "}",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
+                //IMPORTANT! Wait till i get the Response Then Transfer to the Map.aspx page and populate the Map
+                //Only if The btn hit was EnvelopeBox
+                success: function (response) {
+                    if (response && (name == "EnvelopeBox" || name == "Map"))
+                        window.location = "../Web/Map.aspx";
+                },
                 failure: function (response) {
                     alert(response.d);
                 }
@@ -145,11 +156,11 @@
                         <div class="col-sm-3">
                             <ul class="nav nav-tabs ">
                                 <li class="nav-item">
-                                    <a class="nav-link active whiteColor" href="Map.aspx" onclick="SendListToPage()">Map</a>
+                                    <a class="nav-link active whiteColor" id="Map" onclick="SendListToPage(this.id)">Map</a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link active whiteColor" href="Arivals.aspx" onclick="SendListToPage()">Arrivals</a>
+                                    <a class="nav-link active whiteColor" href="Arivals.aspx" onclick="SendListToPage(this.id)">Arrivals</a>
                                 </li>
 
                                 <li class="nav-item dropdown">
@@ -158,24 +169,24 @@
                                        <!-- <span class="caret"></span>-->
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="AddMember.aspx" onclick="SendListToPage()">Add</a></li>
-                                        <li><a class="dropdown-item" href="DeleteMember.aspx" onclick="SendListToPage()">Delete</a></li>
+                                        <li><a class="dropdown-item" href="AddMember.aspx" onclick="SendListToPage(this.id)">Add</a></li>
+                                        <li><a class="dropdown-item" href="DeleteMember.aspx" onclick="SendListToPage(this.id)">Delete</a></li>
                                     </ul>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link active whiteColor" href="Default.aspx" onclick="SendListToPage()">DashBoard</a>
+                                    <a class="nav-link active whiteColor" href="Default.aspx" onclick="SendListToPage(this.id)">DashBoard</a>
                                 </li>
                             </ul>
                         </div>
                         <div class="col-sm-4">
-                            <a class="navbar-brand MarginRight30" href="Default.aspx" onclick="SendListToPage()">Member Me</a>
+                            <a class="navbar-brand MarginRight30" href="Default.aspx" onclick="SendListToPage(this.id)">Member Me</a>
                         </div>
 
                         <div class="col-sm-5">
 
-                            <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click"  />                     
-                            <a class="MessageEnvelope fa fa-envelope-o fa-2x" id="EnvelopeBox" href="Web/Map.aspx" runat="server" onclick="SendListToPage()" aria-hidden="true"><span runat="server" class="MessageBox" id="messageBoxCount"></span></a>
+                            <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click" />
+                            <a class="MessageEnvelope fa fa-envelope-o fa-2x" id="EnvelopeBox" runat="server" onclick="SendListToPage(this.id)" aria-hidden="true"><span runat="server" class="MessageBox" id="messageBoxCount"></span></a>
                         </div>
                     </div>
                 </div>

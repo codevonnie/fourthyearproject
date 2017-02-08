@@ -16,33 +16,23 @@ public partial class Web_AddCustomer : System.Web.UI.Page
     //SSL Cookie with Auth Token etc
     private UserSettings settings = new UserSettings();
 
-
-    //=================================================================> Need To Setup Post Route / Methods. <=================================================================
-
-
     protected void Page_Load(object sender, EventArgs e)
     {
         //if (!IsPostBack)
         //{
             try
             {
-                GetUsrSettings();
-                init();
+            settings = Cache.Get("Settings") as UserSettings;
+            if (settings._loggedIn == null || settings._biz_Email == null || settings._auth_Token == null || settings._auth_Type == null)
+                return;
+
+            init();
             }
             catch (Exception)
             {
                 Response.Redirect("LoginPage.aspx", true);
             };
        // }
-    }
-
-    private void GetUsrSettings()
-    {
-        //-------------------------------- CACHE AUTH--------------------------------
-        settings._auth_Token = Decrypt.Base64Decode(Cache.Get("AuthToken").ToString());
-        settings._auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
-        settings._loggedIn = Decrypt.Base64Decode(Cache.Get("Auth_LoggedIn").ToString());
-        settings._biz_Email = Decrypt.Base64Decode(Cache.Get("BizEmail").ToString());
     }
 
     private void init()
@@ -62,9 +52,9 @@ public partial class Web_AddCustomer : System.Web.UI.Page
         try
         {
             var request = new RestRequest("api/deletePerson", Method.DELETE);
-            request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
+            request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
             request.AddParameter("email", TbEmail.Text.ToString());
-            request.AddParameter("bEmail", settings._biz_Email.ToString());
+            request.AddParameter("bEmail", Decrypt.Base64Decode(settings._biz_Email.ToString()));
 
             IRestResponse response = client.Execute(request);
 
@@ -73,9 +63,7 @@ public partial class Web_AddCustomer : System.Web.UI.Page
             ResponseMessage resObj = jsonObject as ResponseMessage;
 
             if (resObj.success == true)
-            {
                 DivSuccess.Visible = true;
-            }
             else
                 DivFailed.Visible = true;
 

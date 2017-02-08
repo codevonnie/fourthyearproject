@@ -22,16 +22,18 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        init();
         try
         {
-            GetUsrSettings();
+            settings = Cache.Get("Settings") as UserSettings;
+            if (settings._loggedIn == null || settings._biz_Email == null || settings._auth_Token == null || settings._auth_Type == null)
+                return;
+
+            init();
         }
         catch (Exception)
         {
             Response.Redirect("LoginPage.aspx", true);
         };
-
     }
 
     //-------------------------------- Init Method For Start Up -----------------------------------------------
@@ -54,24 +56,14 @@ public partial class Web_SignInPage : System.Web.UI.Page
     }
 
 
-    private void GetUsrSettings()
-    {
-        //-------------------------------- CACHE AUTH Decrypted --------------------------------
-        //Cache might be cleared so need to get another token
-        settings._auth_Token = Decrypt.Base64Decode(Cache.Get("AuthToken").ToString());
-        settings._auth_Type = Decrypt.Base64Decode(Cache.Get("AuthType").ToString());
-        settings._biz_Email = Decrypt.Base64Decode(Cache.Get("BizEmail").ToString());
-    }
-
-
     //-------------------------------- Btn Check Member Click Event -------------------------------------------
     protected void BtnCheckMember_Click(object sender, EventArgs e)
     {
         //Check that something was entered into the text box first 
         try
         {
-            var custObj = ParseQRCode();
-            FindPerson(custObj);
+            String custEmail = TbQRCode.Text.ToString();
+            FindPerson(custEmail);
         }
         catch (Exception)
         {
@@ -80,48 +72,34 @@ public partial class Web_SignInPage : System.Web.UI.Page
     }
 
 
-    //-------------------------------- Parse QR Code ----------------------------------------------------------
-    /* Mehtod parses the QR Code input into a TempCustomer,
-     */
-    private TempCustomer ParseQRCode()
-    {
-        var custObj = new TempCustomer();
-        var custObject = JsonConvert.DeserializeObject<TempCustomer>(TbQRCode.Text);
-        custObj = custObject as TempCustomer;
-        return custObj;
-    }
-
-
     //-------------------------------- Find Person -----------------------------------------------------
     //Send request to api and find the person
-    private void FindPerson(TempCustomer cust)
+    private void FindPerson(string email)
     {
         var client = new RestClient(port);
 
         try
         {
             var request = new RestRequest("api/findPerson", Method.POST);
-            request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
-            request.AddParameter("email", cust.email);
-            request.AddParameter("bEmail", settings._biz_Email);
+            request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
+            request.AddParameter("email", email);
+            request.AddParameter("bEmail", Decrypt.Base64Decode(settings._biz_Email.ToString()));
 
             IRestResponse response = client.Execute(request);
 
-            //Deserialize the result into the class provided
-            var jsonObject = JsonConvert.DeserializeObject<ResponseMessage>(response.Content);
-            ResponseMessage resObj = jsonObject as ResponseMessage;
+            var jsonObject = JsonConvert.DeserializeObject<TempCustomer>(response.Content);
+            TempCustomer resObj = jsonObject as TempCustomer;
 
             if (resObj.success == true)
             {
                 //Person was found Display to the Company
-                displayPerson(cust);
+                displayPerson(resObj);
 
                 //Cached customer obj with timeout
-                Cache.Insert("CUSTOMER_OBJ", cust, null, System.Web.Caching.Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(5));
+                Cache.Insert("CUSTOMER_OBJ", resObj, null, System.Web.Caching.Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(5));
             }
             else
                 DivFailedScan.Visible = true;
-
 
         }
         catch (Exception)
@@ -136,26 +114,34 @@ public partial class Web_SignInPage : System.Web.UI.Page
     //-------------------------------- Display Person Modal ---------------------------------------------------
     private void displayPerson(TempCustomer cust)
     {
-        var date = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.joined.ToString()));
+        var joined = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.joined.ToString()));
+        var memberDate = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.membership.ToString()));
+
         LblName.Text = cust.name;
-        LblJoined.Text = date.ToString("dd/MM/yyyy");
+        LblJoined.Text = joined.ToString("dd/MM/yyyy");
         LblAge.Text = CalculateAge(cust.dob.ToString());
         LblEmail.Text = cust.email;
 
         //Dont Display Guardian Name/Num if Null
-        if (cust.guardianName.ToString() == "null" || cust.guardianNum.ToString() == "null")
-            HideGuard.Visible = false;
+        if (cust.guardianName.ToString() == "null")
+            GuardName.Visible = false;
 
-        //Dont Display membership if Null
-        if (cust.membership.ToString() == "null")
-            HideMember.Visible = false;
+        //Dont Display Guardian Name/Num if Null
+        if (cust.guardianNum.ToString() == "null")
+            GuardNum.Visible = false;
+
+        //Dont Display Membership if Null
+        if (cust.membership.ToString() != "0")
+            HideMember.Visible = true;
+
 
         LblGuardNum.Text = cust.guardianNum.ToString();
         LblGuardName.Text = cust.guardianName.ToString();
 
         LblIceName.Text = cust.iceName;
         LblIceNum.Text = cust.icePhone;
-        LblMember.Text = cust.membership;
+        LblMember.Text = memberDate.ToString("dd/MM/yyyy");
+        LblTimesVisited.Text = cust.visited.ToString();
 
         ImgPerson.ImageUrl = cust.imgUrl;
 
@@ -194,12 +180,10 @@ public partial class Web_SignInPage : System.Web.UI.Page
     }
 
 
-
-
     //=================================================================================> Update Methods <==========================================================================
 
 
-    //-------------------------------- Update Person Info, Check In + Update Btns -----------------------------------------------------------
+    //-------------------------------- Update Person Info, Check In + Update Btns -------------------------- FIX ---------------------------------
     protected void UpdatePersonInfo_Click(object sender, EventArgs e)
     {
         try
@@ -213,6 +197,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
         }
     }
 
+
     //-------------------------------- UpdatePerson -----------------------------------------------------------
     //Send request to api and find the person 
     private void UpdatePerson(object sender)
@@ -223,14 +208,17 @@ public partial class Web_SignInPage : System.Web.UI.Page
         var client = new RestClient(port);
 
         if (btn.ID == "BtnCheckin")
+        {
             cust = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
+            cust.tempEmail = cust.email;
+        }
         else
             cust = UpdateCustObj();
 
         ConvertToMillSec convert = new ConvertToMillSec();
 
         var request = new RestRequest("api/updatePerson", Method.PUT);
-        request.AddHeader("Authorization", settings._auth_Type + " " + settings._auth_Token);
+        request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
         request.AddParameter("name", cust.name);
         request.AddParameter("address", cust.address);
         request.AddParameter("dob", cust.dob);
@@ -249,10 +237,12 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
         request.AddParameter("visited", cust.visited);
 
-        if (cust.membership != "null")
+        if (cust.membership != "0") // Could have a Membership Already so maby a function to check if membership is out-of-date
         {
             DateTime date = Convert.ToDateTime(cust.membership);
             var mil = convert.DateToMillSec(date);
+            cust.membership = mil.ToString();//Update the Membership with a new Date (Miliseconds)
+            HideMember.Visible = true;
         }
 
         request.AddParameter("membership", cust.membership);
@@ -272,6 +262,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
             else
                 DivSuccess.Visible = true;
 
+            LblTimesVisited.Text = cust.visited.ToString();
             cust.email = cust.tempEmail;
         }
         else
@@ -279,6 +270,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
         ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
     }
+
 
     //Switch on the Person Property that they want to change
     private TempCustomer UpdateCustObj()
@@ -298,11 +290,13 @@ public partial class Web_SignInPage : System.Web.UI.Page
             case "BtnUpGuardName":
                 temp.guardianName = TbUpdate.Text.ToString();
                 LblGuardName.Text = TbUpdate.Text.ToString();
+                GuardName.Visible = true;
                 break;
 
             case "BtnUpGuardNum":
                 temp.guardianNum = TbUpdate.Text.ToString();
                 LblGuardNum.Text = TbUpdate.Text.ToString();
+                GuardNum.Visible = true;
                 break;
 
             case "BtnUpEmail":
@@ -313,9 +307,13 @@ public partial class Web_SignInPage : System.Web.UI.Page
             case "BthUpMembershipEndDate":
                 DateTime date = Convert.ToDateTime(TbUpdate.Text.ToString());
                 temp.membership = TbUpdate.Text;
+                HideMember.Visible = true;
                 LblMember.Text = date.ToString("dd/MM/yyyy");
                 break;
         }
+
+        Cache.Insert("CUSTOMER_OBJ", temp, null, System.Web.Caching.Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(5));
+
         return temp;
     }
 
@@ -340,8 +338,16 @@ public partial class Web_SignInPage : System.Web.UI.Page
             TbUpdate.TextMode = TextBoxMode.Email;
             TbUpdate.Attributes["placeholder"] = "Enter New " + btnInfo.Text;
         }
-        else
+        else if (btnInfo.ID == "BtnUpGuardNum")
+        {
+            TbUpdate.TextMode = TextBoxMode.Number;
             TbUpdate.Attributes["placeholder"] = "Enter New " + btnInfo.Text;
+        }
+        else
+        {
+            TbUpdate.Attributes["placeholder"] = "Enter New " + btnInfo.Text;
+            TbUpdate.TextMode = TextBoxMode.SingleLine;
+        }
 
         Cache["DD_CHOICE"] = btnInfo.ID;
         DivDisplay.Visible = true;

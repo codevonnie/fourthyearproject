@@ -8,25 +8,27 @@ using System.Web.UI.WebControls;
 
 public partial class MasterPage : System.Web.UI.MasterPage
 {
-    private object _biz_Name = "";
+    private UserSettings settings = new UserSettings();
     private string check;
-    protected string MyProperty { get { return check; } }
+    private string email;
+    protected string LoggedInStatus { get { return check; } }
+    protected string BizEmail { get { return email; } }
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        //if (!IsPostBack)
-        //{
-            try
-            {
-                _biz_Name = Decrypt.Base64Decode(Cache.Get("BizName").ToString());//Check If Logged In
-                check = "true";
-                logStatus(check);
-                //init();
-            }
-            catch (Exception)
-            {
-            };
-        //}
+        try
+        {
+            settings = Cache.Get("Settings") as UserSettings;
+            if (settings._loggedIn == null || settings._biz_Email == null || settings._auth_Token == null || settings._auth_Type == null)
+                return;
+
+            email = Decrypt.Base64Decode(settings._biz_Email.ToString());
+            check = "true";
+            logStatus(check);
+        }
+        catch (Exception)
+        {
+        };
     }
 
     //private void init()
@@ -66,20 +68,11 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     protected void LogOut_Click(object sender, EventArgs e)
     {
-
         if (check == "true")
-        {
-            Cache.Remove("BizName");
-            Cache.Remove("Auth_LoggedIn");
-            Cache.Remove("AuthToken");
-            Cache.Remove("AuthType");
-            Cache.Remove("BizEmail");
-            Response.Redirect("LoginPage.aspx", true);
-        }
+            Cache.Remove("Settings");
         else
-        {
-            Response.Redirect("LoginPage.aspx", true);
             Page.ClientScript.RegisterStartupScript(this.GetType(), "CallMyFunction", "SendListToPage()", false);
-        }
+
+        Response.Redirect("LoginPage.aspx", true);
     }
 }

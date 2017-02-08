@@ -51,6 +51,7 @@ public partial class LoginPage : System.Web.UI.Page
     private void checkLoginDetails(Token auth)
     {
         var client = new RestClient(port);
+        UserSettings settings = new UserSettings();
 
         var request = new RestRequest("api/authenticate", Method.POST);
         request.AddParameter("email", TbEmail.Text); //email fro Textbox
@@ -80,16 +81,15 @@ public partial class LoginPage : System.Web.UI.Page
             //Response.Cookies.Add(newCookie);
             #endregion
 
-            // ------------------------ TEMP CACHE KEYS ETC ------------------------ 
-            Cache["BizName"] = Encrypt.Base64Encode(bizObj.name);
-            Cache["BizEmail"] = Encrypt.Base64Encode(TbEmail.Text);
-
-
-            Cache["Auth_LoggedIn"] = Encrypt.Base64Encode(successAuth);
-
+            // ------------------------ Create Settings Obj ------------------------ 
+            settings._auth_Token = Encrypt.Base64Encode(auth.access_token);
+            settings._biz_Name = Encrypt.Base64Encode(bizObj.name);
+            settings._auth_Type = Encrypt.Base64Encode(auth.token_type);
+            settings._loggedIn= Encrypt.Base64Encode(successAuth);
+            settings._biz_Email = Encrypt.Base64Encode(TbEmail.Text);
+            
             // ------------------------ TEMP CACHE KEYS ETC Encrypted ------------------------ 
-            Cache["AuthToken"] = Encrypt.Base64Encode(auth.access_token);
-            Cache["AuthType"] = Encrypt.Base64Encode(auth.token_type);
+            Cache["Settings"] = settings;
 
             //Successful Login
             Response.Redirect("Default.aspx", true);

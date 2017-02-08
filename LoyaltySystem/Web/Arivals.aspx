@@ -77,63 +77,71 @@
                 </div>
 
                 <div class="modal-body text-center">
+
+                    <div class="text-muted">
+                        <b>Joined:</b>
+                        <span>
+                            <asp:Label ID="LblJoined" runat="server"></asp:Label></span>
+                    </div>
+
                     <br />
                     <asp:Image ID="ImgPerson" runat="server" Width="200" Height="200" class="img-responsive alignCenter img-rounded" />
-
                     <br />
 
                     <div class="container-fluid text-left maxWidthContainer">
 
-                        <div class="text-muted">
-                            <b>Joined:</b>
-                <span>
-                    <asp:Label ID="LblJoined" runat="server"></asp:Label></span>
+                        <div id="HideMember" runat="server">
+                            <div class="text-muted">
+                                <b>MemberShip Finished: </b>
+                                <span>
+                                    <asp:Label ID="LblMember" runat="server"></asp:Label></span>
+                            </div>
                         </div>
 
                         <div class="text-muted">
                             <b>Email:</b>
-                <span>
-                    <asp:Label ID="LblEmail" runat="server"></asp:Label></span>
+                            <span>
+                                <asp:Label ID="LblEmail" runat="server"></asp:Label></span>
                         </div>
 
                         <div class="text-muted">
                             <b>Age:</b>
-                <span>
-                    <asp:Label ID="LblAge" runat="server"></asp:Label></span>
+                            <span>
+                                <asp:Label ID="LblAge" runat="server"></asp:Label></span>
                         </div>
 
                         <div class="text-muted">
-                            <b>IceName:</b>
-                <span>
-                    <asp:Label ID="LblIceName" runat="server"></asp:Label></span>
+                            <b>IceName: </b>
+                            <span>
+                                <asp:Label ID="LblIceName" runat="server"></asp:Label></span>
                         </div>
 
                         <div class="text-muted">
-                            <b>IceNum:</b>
-                <span>
-                    <asp:Label ID="LblIceNum" runat="server"></asp:Label></span>
+                            <b>IceNum: </b>
+                            <span>
+                                <asp:Label ID="LblIceNum" runat="server"></asp:Label></span>
                         </div>
 
-                        <div id="HideMember" runat="server">
-                        <div class="text-muted">
-                            <b>MemberShip:</b>
-                <span>
-                    <asp:Label ID="LblMember" runat="server" Text="No"></asp:Label></span>
-                        </div>
+                        <div id="HideVisited" runat="server">
+                            <div class="text-muted">
+                                <b>Times Visited: </b>
+                                <span>
+                                    <asp:Label ID="LblTimesVisited" runat="server"></asp:Label></span>
                             </div>
+                        </div>
 
-                        <div id="HideGuard" runat="server">
+                        <div id="GuardName" runat="server">
                             <div class="text-muted">
                                 <b>Guardian Name:</b>
-                <span>
-                    <asp:Label ID="LblGuardName" runat="server"></asp:Label></span>
+                                <span>
+                                    <asp:Label ID="LblGuardName" runat="server"></asp:Label></span>
                             </div>
-
-
+                        </div>
+                        <div id="GuardNum" runat="server">
                             <div class="text-muted">
                                 <b>Guardian Num:</b>
-                <span>
-                    <asp:Label ID="LblGuardNum" runat="server"></asp:Label></span>
+                                <span>
+                                    <asp:Label ID="LblGuardNum" runat="server"></asp:Label></span>
                             </div>
                         </div>
                         <!--HideGuard-->
@@ -169,13 +177,12 @@
                         </div>
                     </div>
 
-                     <div id="DivFailedEmail" runat="server">
+                    <div id="DivFailedEmail" runat="server">
                         <div class="alert alert-danger text-center" role="alert">
                             <strong>Update Failed! Email Already In Use. Try Another</strong>
                         </div>
                     </div>
 
-                   
 
                 </div>
                 <!--Modal Footer-->
@@ -183,11 +190,10 @@
                     <asp:Button class="btn btn-block btn-success btn-lg" ID="BtnCheckin" runat="server" Text="Check Person In" OnClick="UpdatePersonInfo_Click" />
                 </div>
 
-       <script type="text/javascript">
-        function toggleModal() {
-            $('#myModal').modal('toggle');
-        };
-    </script>
-
+                <script type="text/javascript">
+                    function toggleModal() {
+                        $('#myModal').modal('toggle');
+                    };
+                </script>
 </asp:Content>
 
