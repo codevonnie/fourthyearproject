@@ -43,6 +43,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
         //Update Control
         DivDisplay.Visible = false;
+        Membership.Visible = false;
 
         //Err,Success Messages
         DivSuccess.Visible = false;
@@ -115,7 +116,6 @@ public partial class Web_SignInPage : System.Web.UI.Page
     private void displayPerson(TempCustomer cust)
     {
         var joined = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.joined.ToString()));
-        var memberDate = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.membership.ToString()));
 
         LblName.Text = cust.name;
         LblJoined.Text = joined.ToString("dd/MM/yyyy");
@@ -132,7 +132,11 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
         //Dont Display Membership if Null
         if (cust.membership.ToString() != "0")
-            MembershipVis.Visible = true;
+        {
+            Membership.Visible = true;
+            var memberDate = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.membership.ToString()));
+            LblMember.Text = memberDate.ToString("dd/MM/yyyy");
+        }
 
 
         LblGuardNum.Text = cust.guardianNum.ToString();
@@ -140,7 +144,6 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
         LblIceName.Text = cust.iceName;
         LblIceNum.Text = cust.icePhone;
-        LblMember.Text = memberDate.ToString("dd/MM/yyyy");
         LblTimesVisited.Text = cust.visited.ToString();
 
         ImgPerson.ImageUrl = cust.imgUrl;
@@ -216,7 +219,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
             cust.tempEmail = cust.email;
         else
         {
-            if (btn.ID == "BtnRemoveGuard")
+            if (btn.ID == "BtnRemoveGuard" || btn.ID == "BtnRemoveMembership")
                 Cache["DD_CHOICE"] = btn.ID;
             cust = UpdateCustObj();
         }
@@ -245,11 +248,12 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
         if (cust.membership != "0") // Could have a Membership Already so maby a function to check if membership is out-of-date
         {
+
             var memberDate = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.membership.ToString()));
 
             var mil = convert.DateToMillSec(memberDate);
             cust.membership = mil.ToString();//Update the Membership with a new Date (Miliseconds)
-            MembershipVis.Visible = true;
+            Membership.Visible = true;
         }
 
         request.AddParameter("membership", cust.membership);
@@ -316,15 +320,25 @@ public partial class Web_SignInPage : System.Web.UI.Page
                 GuardNum.Visible = false;
                 break;
 
+            case "BtnRemoveMembership":
+                tempCust.membership = "0";
+                LblMember.Text = tempCust.membership.ToString();
+
+                Membership.Visible = false;
+                break;
+
             case "BtnUpEmail":
                 tempCust.tempEmail = TbUpdate.Text.ToString();
                 LblEmail.Text = TbUpdate.Text.ToString();
                 break;
 
             case "BthUpMembershipEndDate":
+                ConvertToMillSec convert = new ConvertToMillSec();
                 DateTime date = Convert.ToDateTime(TbUpdate.Text.ToString());
-                tempCust.membership = TbUpdate.Text;
-                MembershipVis.Visible = true;
+                var memMill = convert.DateToMillSec(date);
+
+                tempCust.membership = memMill.ToString();
+                Membership.Visible = true;
                 LblMember.Text = date.ToString("dd/MM/yyyy");
                 break;
         }

@@ -67,6 +67,7 @@
                     messagesList.forEach(function (entry) {
                         if (entry.business === "" || entry.email === "")
                             messagesList.splice(entry, 1);
+                       // console.log(entry);//Prints out all the messages
                     });
 
                     /* Update the Header box with the Total Amount of messages that are in the Array

@@ -66,9 +66,11 @@
                             <li>
                                 <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardNum" runat="server" Text="Guardian Number" OnClick="UpdateChoice_Click" /></li>
                             <li>
-                                <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnRemoveGuard" runat="server" Text="Remove Guardian" OnClick="UpdatePersonInfo_Click" /></li>
+                                <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" ID="BtnRemoveGuard" runat="server" Text="Remove Guardian" OnClick="UpdatePersonInfo_Click" /></li>
                             <li>
-                                <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BthUpMembershipEndDate" runat="server" Text="Membership End Date" OnClick="UpdateChoice_Click" /></li>
+                                <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BthUpMembershipEndDate" runat="server" Text="Add New Membership" OnClick="UpdateChoice_Click" /></li>
+                             <li>
+                                <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" ID="BtnRemoveMembership" runat="server" Text="Remove Membership" OnClick="UpdatePersonInfo_Click" /></li>
                         </ul>
                     </div>
 
@@ -90,9 +92,9 @@
                     <asp:Image ID="ImgPerson" runat="server" Width="200" Height="200" class="img-responsive alignCenter img-rounded" />
                     <br />
 
-                    <div class="container-fluid text-left maxWidthContainer">
+                    <div class="container-fluid LineHeight25 text-left maxWidthContainer">
 
-                        <div id="MembershipVis" runat="server">
+                        <div id="Membership" runat="server">
                             <div class="text-muted">
                                 <b>MemberShip Finished: </b>
                                 <span>

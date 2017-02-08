@@ -1,6 +1,5 @@
 ﻿
 
-
 .navbar-brand {
     float: right;
 }
@@ -85,6 +84,9 @@
     height: 100%;
 }
 
+.LineHeight25 {
+    line-height: 25px;
+}
 
 .BtnInvis {
     background-color: transparent;
@@ -113,6 +115,10 @@
         color: whitesmoke;
     }
 
+.DangerBtn:hover {
+    background-color: firebrick;
+    color: whitesmoke;
+}
 
 .RoundTop {
     border-top-left-radius: 6px;
