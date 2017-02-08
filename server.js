@@ -104,7 +104,7 @@ router.post('/authenticate', function (req, res) {
               guardianNum: record._fields[0].properties.guardianNum,
               visited: record._fields[0].properties.visited,
               membership: record._fields[0].properties.membership,
-              businessName: record._fields[1].properties.name
+              bEmail: record._fields[1].properties.email
             });
             console.log('Found You! Permission Granted');
           }

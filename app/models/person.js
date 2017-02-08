@@ -26,7 +26,7 @@ var PersonSchema = new Schema({
     },
     guardianName:String,
     guardianNum: String,
-    businessName: String,
+    bEmail: String,
 
     password: {
         type: String,
