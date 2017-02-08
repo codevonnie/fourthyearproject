@@ -169,14 +169,16 @@ angular.module('starter.controllers', [])
 
     
     //ADD IN ONCE MEMBERSHIP HAS BEEN PUT ON SERVER
-    // if(!membership){
-    //   $scope.membership = null;
-    // }
-    // else{
-    //   $scope.membership = membership;
-    // }
+    if(!membership){
+      $scope.membership = null;
+    }
+    else{
+      $scope.membership = membership;
+    }
     
-
+    console.log($scope.profile);
+    console.log($scope.membership);
+    
     //edit function - triggered when user hits edit on profile items
     $scope.edit = function() {
       $ionicListDelegate.closeOptionButtons(); //closes the slide effect
