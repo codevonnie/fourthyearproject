@@ -59,7 +59,7 @@ router.post('/authenticate', function (req, res) {
   var session = driver.session();
 
   var pwd = req.body.password.trim();
-  var email = req.body.email.trim();
+  var email = req.body.email.trim().toLowerCase();
 
   console.log('I am authenticating');
 
@@ -81,7 +81,6 @@ router.post('/authenticate', function (req, res) {
         console.log('Failed To Get Authenticated');
       }
       else {
-        var credList = [];//create a new list
 
         //Loop over Results, should always just be 1 returned
         result.records.forEach(function (record) {
@@ -134,7 +133,7 @@ router.post('/addCompany', function (req, res) {
   business.name = req.body.name.trim();         //Set the Business name (comes from the request)
   business.address = req.body.address.trim();   //Set the Business address
   business.phone = req.body.phone.trim();       //Set the Business Phone Num
-  business.email = req.body.email.trim();       //Set the Business Email
+  business.email = req.body.email.trim().toLowerCase();       //Set the Business Email
   business.password = req.body.password.trim(); //Set the Business Password
   business.emergencyNum = req.body.emergencyNum.trim(); //Set the Business Password
 
@@ -170,7 +169,7 @@ router.post('/addPerson', function (req, res) {
   person.joined = joined.getTime(); // Join date is converted to milliseconds
 
   session
-    .run("MATCH (b:Business {email: '" + req.body.bEmail.trim() + "'}) Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:" + person.joined + ", dob:" + person.dob + ", email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
+    .run("MATCH (b:Business {email: '" + req.body.bEmail.trim().toLowerCase() + "'}) Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:" + person.joined + ", dob:" + person.dob + ", email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', visited:" + person.visited + ", membership:" + person.membership + ", guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
     .then(function () {
       console.log("Person created");
       res.json({ message: 'Person created!', success: true });
@@ -192,14 +191,14 @@ router.post('/addPerson', function (req, res) {
 //-------------> Should probably add an extra authorisation step for deletion to avoid mistakes! <---------
 router.delete('/deleteCompany', function (req, res) {
   var session = driver.session();
-  var email = req.body.email.trim();        //Set the Business email (comes from the request)
+  var email = req.body.email.trim().toLowerCase();        //Set the Business email (comes from the request)
   //query checks for business, deletes business, all of it's relationships and its members
   session.run("MATCH (b:Business {email:'" + email + "'}) OPTIONAL MATCH (b)-[r]-(p) DETACH DELETE b, r, p return COUNT(*)")
 
-    .then(function () {
+    .then(function (result) {
 
       // IF count(*) Returns > 0, Entry has been made
-      if (result.records.length > 0)
+      if (result.records.length != 0)
         res.json({ success: true, message: 'Business Deleted' });
       else
         res.json({ success: false, message: 'Problem Deleting Business Check Email/Password' });
@@ -221,14 +220,39 @@ router.post('/findPerson', function (req, res) {
   var session = driver.session();
 
   session
-    .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email.trim() + "' AND b.email='" + req.body.bEmail.trim() + "' Return a, b LIMIT 1")
+    .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' AND b.email='" + req.body.bEmail.trim() + "' Return a, b LIMIT 1")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
       if (result.records[0] != null) {
-        res.json({ success: true, message: 'Person Found!' });
-        console.log("Success: Found Person");
+        //res.json({ success: true, message: 'Person Found!' });
+
+        //Loop over Results, should always just be 1 returned
+        result.records.forEach(function (record) {
+          //If its A PERSON logging In
+         
+            //Send the Response Back [List]
+            res.json({
+              success: true,
+              name: record._fields[0].properties.name,
+              age: record._fields[0].properties.age,
+              dob: record._fields[0].properties.dob.toString(),
+              address: record._fields[0].properties.address,
+              phone: record._fields[0].properties.phone,
+              iceName: record._fields[0].properties.iceName,
+              icePhone: record._fields[0].properties.icePhone,
+              joined: record._fields[0].properties.joined.toString(),
+              email: record._fields[0].properties.email,
+              imgUrl: record._fields[0].properties.imgUrl,
+              guardianName: record._fields[0].properties.guardianName,
+              guardianNum: record._fields[0].properties.guardianNum,
+              visited: record._fields[0].properties.visited,
+              membership: record._fields[0].properties.membership,
+
+            });
+        })
       }
+    
       else {
         res.json({ success: false, message: 'Cannot Access Unassociated Members' });
         console.log("Cannot Access Unassociated Members");
@@ -253,7 +277,7 @@ router.delete('/deletePerson', function (req, res) {
   console.log(req.body);
 
   session
-    .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email.trim() + "' AND b.email='" + req.body.bEmail.trim() + "' OPTIONAL MATCH (a)-[r]-(b) DETACH DELETE a,r Return a, b LIMIT 1")
+    .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' AND b.email='" + req.body.bEmail.trim() + "' OPTIONAL MATCH (a)-[r]-(b) DETACH DELETE a,r Return a, b LIMIT 1")
     .then(function (result) {
       // IF count(*) Returns > 0, Entry has been made
       if (result.records[0] != null) 
@@ -277,22 +301,22 @@ router.put('/updatePerson', function (req, res) {
   var session = driver.session();
 
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone.trim() + "', a.iceName='" + req.body.iceName.trim() + "', a.icePhone='" + req.body.icePhone.trim() + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.dob=" + req.body.dob + ", a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone.trim() + "', a.iceName='" + req.body.iceName.trim() + "', a.icePhone='" + req.body.icePhone.trim() + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.dob=" + req.body.dob + ", a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
-      if (result.records.length > 0)
+      if (result.records[0] != null) 
+        
         res.json({ success: true, message: 'User Details Updated' });
       //console.log("User Details Updated");
       else
         res.json({ success: false, message: 'Problem Updating User, Check Name/Email' });
-      //console.log("Problem Updating User Check Name/Email");
 
       session.close();
       //driver.close();
     })
     .catch(function (error) {
-      res.json({ success: false, message: "Email Alread In Use" });
+      res.json({ success: false, message: "Email Already In Use" });
     })
 })//updateperson
 
@@ -303,7 +327,7 @@ router.put('/newPassword', function (req, res) {
   var session = driver.session();
 
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim() + "' SET a.password='" + req.body.password.trim() + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.password='" + req.body.password.trim() + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
@@ -334,12 +358,16 @@ function newPersonObj(req) {
 
   person.joined = req.body.joined;
   person.dob = req.body.dob;
-  person.email = req.body.email.trim();
+  person.email = req.body.email.trim().toLowerCase();
   person.password = req.body.password.trim();
   person.imgUrl = req.body.imgUrl;
+  person.visited = 0;
+  person.membership = 0;
 
   person.guardianName = null;
   person.guardianNum = null;
+
+
 
   //Check to see if the person was under 18 and Added a Guardian
   if (req.body.guardianName != null && req.body.guardianNum != null) {
