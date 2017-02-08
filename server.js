@@ -301,7 +301,7 @@ router.put('/updatePerson', function (req, res) {
   var session = driver.session();
 
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone.trim() + "', a.iceName='" + req.body.iceName.trim() + "', a.icePhone='" + req.body.icePhone.trim() + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.dob=" + req.body.dob + ", a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone.trim().toString() + "', a.iceName='" + req.body.iceName.trim() + "', a.icePhone='" + req.body.icePhone.trim().toString() + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.dob=" + req.body.dob + ", a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
