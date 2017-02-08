@@ -106,6 +106,7 @@ angular.module('starter.services', [])
        return $q(function(resolve, reject) {
          $http.put(API_ENDPOINT.url + '/updatePerson', user).then(function(result) {
            if (result.data.success) {
+             console.log(user);
              resolve(result.data.message);
            } else {
              reject(result.data.success);

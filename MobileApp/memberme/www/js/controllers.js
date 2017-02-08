@@ -75,6 +75,7 @@ angular.module('starter.controllers', [])
         //called if user cancels changing their password - closes modal
         $scope.closeModal = function() {
               $scope.modal.hide();
+              $scope.message="";
         };
 
         //called when user clicks Save button for new password
@@ -154,10 +155,12 @@ angular.module('starter.controllers', [])
     $scope.toggle=false; 
     $scope.listCanSwipe = true; //profile list is swipeable
     var profileData=window.localStorage.getItem('profile'); //get profile data from local storage
-    $scope.qrcode=profileData; //qrcode text is the object 
     profileData=JSON.parse(profileData); //parse JSON object
     $scope.profile=profileData; //save JSON object to $scope variable
-
+    $scope.qrcode=$scope.profile.email; //qrcode text is the object 
+    $scope.profile.icePhone = parseInt(profileData.icePhone);
+    $scope.profile.phone = parseInt(profileData.phone);
+    
     console.log($scope.profile);
     //convert date milliseconds to date string
     var joined = new Date(parseInt(profileData.joined)).toDateString();
@@ -200,14 +203,16 @@ angular.module('starter.controllers', [])
             template: "You need an internet connection to update details"
             });
 
-      $scope.toggle=!$scope.toggle; //hide input box
-      profileData=window.localStorage.getItem('profile');
-      profileData=JSON.parse(profileData); //parse JSON object
-      $scope.profile=profileData; //save JSON object to $scope variable
+        $scope.toggle=!$scope.toggle; //hide input box
+        profileData=window.localStorage.getItem('profile');
+        profileData=JSON.parse(profileData); //parse JSON object
+        $scope.profile=profileData; //save JSON object to $scope variable
     }
     else{
       AuthService.checkAuthOnRefresh(); //check if token has expired
       $scope.toggle=!$scope.toggle; //hide input box
+      $scope.profile.tempEmail=$scope.profile.email;
+      console.log($scope.profile);
       AuthService.updateProfile($scope.profile).then(onSuccess, onError); //call AuthService method updateProfile and pass $scope.profile object
 
       
@@ -222,7 +227,6 @@ angular.module('starter.controllers', [])
             });
         profileData=$scope.profile; //save updated $scope obj to profileData obj
         window.localStorage.setItem('profile', JSON.stringify(profileData)); //set updated profile details to local storage
-        $scope.qrcode=JSON.stringify(profileData); //set qr text to updated profile details
       }
       
       var onError = function(){
