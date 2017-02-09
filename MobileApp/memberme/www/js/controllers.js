@@ -158,29 +158,26 @@ angular.module('starter.controllers', [])
     profileData=JSON.parse(profileData); //parse JSON object
     $scope.profile=profileData; //save JSON object to $scope variable
     $scope.qrcode=$scope.profile.email; //qrcode text is the object 
-    $scope.profile.icePhone = parseInt(profileData.icePhone);
+    $scope.profile.icePhone = parseInt(profileData.icePhone); //convert phone numbers to strings
     $scope.profile.phone = parseInt(profileData.phone);
-    
-    console.log($scope.profile);
+     
     //convert date milliseconds to date string
     var joined = new Date(parseInt(profileData.joined)).toDateString();
     var dob = new Date(parseInt(profileData.dob)).toDateString();
-    var membership = new Date(parseInt(profileData.membership)).toDateString();
+    var membership = membership = new Date(parseInt(profileData.membership)).toDateString();;
     
     $scope.joined = joined;
     $scope.dob = dob;
 
     
-    //ADD IN ONCE MEMBERSHIP HAS BEEN PUT ON SERVER
-    if(!membership){
+    //if membership is not a valid date set it to null or save the date value to the scope
+    if(membership=='Invalid Date'){
       $scope.membership = null;
     }
     else{
       $scope.membership = membership;
     }
-    
-    console.log($scope.profile);
-    console.log($scope.membership);
+
     
     //edit function - triggered when user hits edit on profile items
     $scope.edit = function() {
@@ -191,9 +188,11 @@ angular.module('starter.controllers', [])
     $scope.cancel = function(){
       
       $scope.toggle=!$scope.toggle; //hide input box
-      profileData=window.localStorage.getItem('profile');
+      profileData=window.localStorage.getItem('profile');//get profile details from local storage
       profileData=JSON.parse(profileData); //parse JSON object
       $scope.profile=profileData; //save JSON object to $scope variable
+      $scope.profile.icePhone = parseInt(profileData.icePhone); //convert phone number string to number
+      $scope.profile.phone = parseInt(profileData.phone);
     }
     //submit function for profile edits
     $scope.submit = function() {
@@ -207,17 +206,20 @@ angular.module('starter.controllers', [])
         profileData=window.localStorage.getItem('profile');
         profileData=JSON.parse(profileData); //parse JSON object
         $scope.profile=profileData; //save JSON object to $scope variable
+        $scope.profile.icePhone = parseInt(profileData.icePhone);//convert phone number string to number
+        $scope.profile.phone = parseInt(profileData.phone);
     }
     else{
       AuthService.checkAuthOnRefresh(); //check if token has expired
       $scope.toggle=!$scope.toggle; //hide input box
-      $scope.profile.tempEmail=$scope.profile.email;
-      $scope.profile.icePhone = $scope.profile.icePhone.toString();
+      $scope.profile.tempEmail=$scope.profile.email; //set tempEmail for updateMethod on server
+      $scope.profile.icePhone = $scope.profile.icePhone.toString();//convert phone number string to number
       $scope.profile.phone = $scope.profile.phone.toString();
-      console.log($scope.profile);
-      AuthService.updateProfile($scope.profile).then(onSuccess, onError); //call AuthService method updateProfile and pass $scope.profile object
+      profileData=$scope.profile;
+      AuthService.updateProfile(profileData).then(onSuccess, onError); //call AuthService method updateProfile and pass profileData object
+      $scope.profile.icePhone = parseInt(profileData.icePhone); //convert phone numbers to strings
+      $scope.profile.phone = parseInt(profileData.phone);
 
-      
       }//end else
 
     }//end submit
@@ -227,6 +229,7 @@ angular.module('starter.controllers', [])
             title: 'Success',
             template: "Details updated."
             });
+
         profileData=$scope.profile; //save updated $scope obj to profileData obj
         window.localStorage.setItem('profile', JSON.stringify(profileData)); //set updated profile details to local storage
       }

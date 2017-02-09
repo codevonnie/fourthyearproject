@@ -92,7 +92,7 @@
             <h3>{{profile.visited}}</h3>
           </ion-item>
 
-          <ion-item ng-show="membership!=''">
+          <ion-item ng-hide="!membership">
             <h2 class="profile-list">Membership End Date</h2>
             <h3>{{membership}}</h3>
           </ion-item>
