@@ -102,7 +102,7 @@ router.post('/authenticate', function (req, res) {
               imgUrl: record._fields[0].properties.imgUrl,
               guardianName: record._fields[0].properties.guardianName,
               guardianNum: record._fields[0].properties.guardianNum,
-              visited: record._fields[0].properties.visited,
+              visited: record._fields[0].properties.visited.toString(),
               membership: record._fields[0].properties.membership,
               bEmail: record._fields[1].properties.email
             });
@@ -301,7 +301,7 @@ router.put('/updatePerson', function (req, res) {
   var session = driver.session();
 
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone.trim().toString() + "', a.iceName='" + req.body.iceName.trim() + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.icePhone='" + req.body.icePhone.trim().toString() + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.dob=" + req.body.dob + ", a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone + "', a.iceName='" + req.body.iceName.trim() + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.icePhone='" + req.body.icePhone + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.dob=" + req.body.dob + ", a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
@@ -349,10 +349,10 @@ function newPersonObj(req) {
   var person = new Person();
   person.name = req.body.name.trim();
   person.address = req.body.address.trim();
-  person.phone = req.body.phone.trim();
+  person.phone = req.body.phone;
 
   person.iceName = req.body.iceName.trim();
-  person.icePhone = req.body.icePhone.trim();
+  person.icePhone = req.body.icePhone;
 
   person.joined = req.body.joined;
   person.dob = req.body.dob;
