@@ -5,21 +5,22 @@
 
 .MaxWidth {
     width: 100%;
-
 }
 
-.NavBarLeft{
-    float:left;
-}
-
-
-.NavDDL{
-    padding: 10px 10px!important;;
-    margin-top: 15px!important;;
+.NavBarLeft {
+    float: left;
 }
 
 
-.AddPointer{
+.NavDDL {
+    padding: 10px 10px !important;
+    ;
+    margin-top: 15px !important;
+    ;
+}
+
+
+.AddPointer {
     cursor: pointer;
 }
 
@@ -110,8 +111,7 @@
 .BtnInvis {
     background-color: transparent;
     border: none;
-    margin-right:50px;
-
+    margin-right: 50px;
 }
 
 
@@ -173,6 +173,9 @@
     border-bottom-right-radius: 6px;
 }
 
+.RoundImg {
+    border-radius:50px;
+}
 
 
 /*ICON CSS Here*/
@@ -198,9 +201,10 @@
     text-align: center;
     margin: auto;
 }
+
 .navbar-toggle {
-    z-index:3;
-    float:left!important;
+    z-index: 3;
+    float: left !important;
 }
 
 
@@ -213,26 +217,24 @@
 
 
 .RemoveATag {
-    padding-top: 18px!important;
-
+    padding-top: 18px !important;
 }
 
 
 .TxtAreaSize {
     width: 90%;
-
 }
 
 .SSEConnected {
-    color: green!important;
+    color: green !important;
 }
 
 .SSEConnected {
-    color: green!important;
+    color: green !important;
 }
 
 .SSEDisconnected {
-    color: firebrick!important;
+    color: firebrick !important;
 }
 
 .SSEConnecting {
@@ -251,6 +253,17 @@
         color: whitesmoke;
         text-decoration: none;
     }
+
+
+.DisplayPersonBox {
+    margin-bottom: 50px;
+}
+
+.HalfWidth {
+    width: 50%;
+}
+
+
 
 
 /*Map CSS Here*/

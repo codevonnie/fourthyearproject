@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Web.Security;
 using System.Security.Principal;
 using System.Web.Configuration;
+using System.Web.UI.HtmlControls;
 
 public partial class _Default : System.Web.UI.Page
 {
@@ -25,6 +26,7 @@ public partial class _Default : System.Web.UI.Page
 
     private void Page_Load(object sender, EventArgs e)
     {
+        PrintCustomer();
         //if (!IsPostBack)
         //{
         try
@@ -60,6 +62,54 @@ public partial class _Default : System.Web.UI.Page
 
         bindData(bizObj);
     }
+
+
+    private void GetAllCustomers(List<TempCustomer> custList)
+    {
+        foreach (var cust in custList)
+        {
+
+        }
+
+            //< div class="col-xs-6 col-sm-3 placeholder">
+            //    <img src = "data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail" />
+            //    <h4>Label</h4>
+            //    <span class="text-muted">Something else</span>
+            //</div>
+    }
+
+
+    private void PrintCustomer()
+    {
+        for (int i = 0; i <= 5; i++)
+        {
+            HtmlGenericControl divcontrol = new HtmlGenericControl();
+            divcontrol.Attributes["class"] = "col-xs-6 col-sm-3 placeholder DisplayPersonBox";
+            divcontrol.TagName = "Div";        
+
+            PeoplePlaceHolder.Controls.Add(divcontrol);
+
+            Image img = new Image();
+            img.CssClass = "img-responsive RoundImg";
+            img.Height = 200;
+            img.Width = 300;
+            img.ImageUrl = "https://s-media-cache-ak0.pinimg.com/736x/c0/eb/50/c0eb50139ab9e21f5f2a0eae120d6ae0.jpg";
+            img.ID = i.ToString();
+
+            Label lbl = new Label();
+            lbl.Text = "Lbl" + i;
+
+
+            divcontrol.Controls.Add(img); // add to the new div, not to the panel
+            divcontrol.Controls.Add(lbl); // add to the new div, not to the panel
+        }
+        //< div class="col-xs-6 col-sm-3 placeholder">
+        //    <img src = "data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail" />
+        //    <h4>Label</h4>
+        //    <span class="text-muted">Something else</span>
+        //</div>
+    }
+
 
 
     private void bindData(BuisinessRoot bizObj)
