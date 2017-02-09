@@ -212,6 +212,8 @@ angular.module('starter.controllers', [])
       AuthService.checkAuthOnRefresh(); //check if token has expired
       $scope.toggle=!$scope.toggle; //hide input box
       $scope.profile.tempEmail=$scope.profile.email;
+      $scope.profile.icePhone = $scope.profile.icePhone.toString();
+      $scope.profile.phone = $scope.profile.phone.toString();
       console.log($scope.profile);
       AuthService.updateProfile($scope.profile).then(onSuccess, onError); //call AuthService method updateProfile and pass $scope.profile object
 
