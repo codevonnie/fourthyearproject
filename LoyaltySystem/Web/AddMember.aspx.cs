@@ -1,18 +1,10 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
 using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Security.Principal;
-using System.Threading;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 
 public partial class AddMember : System.Web.UI.Page
@@ -102,7 +94,7 @@ public partial class AddMember : System.Web.UI.Page
         request.AddParameter("password", "*x*" + password);//random password
         request.AddParameter("email", customer.email);
         request.AddParameter("phone", customer.contactNumber);
-        request.AddParameter("joined", customer.date.ToString("MMMM dd, yyyy"));
+        request.AddParameter("joined", customer.date.ToString("MMMM dd, yyyy"));// not used **************
         request.AddParameter("address", customer.address);
         request.AddParameter("iceName", customer.iceName);
         request.AddParameter("icePhone", customer.icePhone);

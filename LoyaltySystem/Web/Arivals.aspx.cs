@@ -1,15 +1,13 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.UI;
+
 using System.Web.UI.WebControls;
 
-public partial class Web_SignInPage : System.Web.UI.Page
+public partial class Arivals : System.Web.UI.Page
 {
 
 
@@ -189,7 +187,7 @@ public partial class Web_SignInPage : System.Web.UI.Page
     //=================================================================================> Update Methods <==========================================================================
 
 
-    //-------------------------------- Update Person Info, Check In + Update Btns -------------------------- FIX ---------------------------------
+    //-------------------------------- Update Person Info, Check In + Update Btns -----------------------------------------------------------
     protected void UpdatePersonInfo_Click(object sender, EventArgs e)
     {
         try
@@ -248,7 +246,6 @@ public partial class Web_SignInPage : System.Web.UI.Page
 
         if (cust.membership != "0") // Could have a Membership Already so maby a function to check if membership is out-of-date
         {
-
             var memberDate = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.membership.ToString()));
 
             var mil = convert.DateToMillSec(memberDate);
@@ -277,7 +274,10 @@ public partial class Web_SignInPage : System.Web.UI.Page
             cust.email = cust.tempEmail;
         }
         else
+        {
             DivFailedEmail.Visible = true;
+            LblEmail.Text = cust.email;
+        }
 
         ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
     }
@@ -332,6 +332,11 @@ public partial class Web_SignInPage : System.Web.UI.Page
                 LblEmail.Text = TbUpdate.Text.ToString();
                 break;
 
+            case "BntResetPwd":
+                //string password = Membership.GeneratePassword(6, 3);
+                //tempCust.tempPwd = password;
+                break;
+
             case "BthUpMembershipEndDate":
                 ConvertToMillSec convert = new ConvertToMillSec();
                 DateTime date = Convert.ToDateTime(TbUpdate.Text.ToString());
@@ -383,4 +388,15 @@ public partial class Web_SignInPage : System.Web.UI.Page
         Cache["DD_CHOICE"] = btnInfo.ID;
         DivDisplay.Visible = true;
     }
+
+
+
+    //=================================================================================> Local Storage <==========================================================================
+
+    private void storePeople()
+    {
+
+    }
+
+
 }

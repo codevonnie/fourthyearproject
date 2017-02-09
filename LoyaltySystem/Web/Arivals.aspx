@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Arivals.aspx.cs" Inherits="Web_SignInPage" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Arivals.aspx.cs" Inherits="Arivals" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
@@ -52,25 +52,51 @@
             <div class="modal-content ">
                 <div class="modal-header text-center ModalHeadColor RoundTop">
 
-                    <div class="dropdown">
+                    <div class="dropdown" data-toggle="dropdown">
                         <button class="fa fa-cogs fa-2x floatLeft BtnInvis" id="DdmSettings" data-toggle="dropdown" aria-hidden="true" aria-haspopup="true" aria-expanded="false">
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu MarginTop35">
-                            <li>
-                                <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpName" runat="server" Text="Name" OnClick="UpdateChoice_Click" /></li>
-                            <li>
-                                <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpEmail" runat="server" Text="Email" OnClick="UpdateChoice_Click" /></li>
-                            <li>
-                                <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardName" runat="server" Text="Guardian Name" OnClick="UpdateChoice_Click" /></li>
-                            <li>
-                                <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardNum" runat="server" Text="Guardian Number" OnClick="UpdateChoice_Click" /></li>
-                            <li>
-                                <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" ID="BtnRemoveGuard" runat="server" Text="Remove Guardian" OnClick="UpdatePersonInfo_Click" /></li>
-                            <li>
-                                <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BthUpMembershipEndDate" runat="server" Text="Add New Membership" OnClick="UpdateChoice_Click" /></li>
-                             <li>
-                                <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" ID="BtnRemoveMembership" runat="server" Text="Remove Membership" OnClick="UpdatePersonInfo_Click" /></li>
+                        <ul class="dropdown-menu MarginTop35 DropDownMenu">
+
+                            <li class="text-center h5">Update Person</li>
+                            <div class="DropDownContentColour">
+
+                                <li>
+                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpName" runat="server" Text="Name" OnClick="UpdateChoice_Click" /></li>
+
+                                <li>
+                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpEmail" runat="server" Text="Email" OnClick="UpdateChoice_Click" />
+                                </li>
+
+                                <li>
+                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardName" runat="server" Text="Guardian Name" OnClick="UpdateChoice_Click" />
+                                </li>
+
+                                <li>
+                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardNum" runat="server" Text="Guardian Number" OnClick="UpdateChoice_Click" />
+                                </li>
+
+                                <li>
+                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BthUpMembershipEndDate" runat="server" Text="Add New Membership" OnClick="UpdateChoice_Click" />
+                                </li>
+
+                                <li role="presentation" class="divider"></li>
+
+                                <li>
+                                    <div class="btn DropDownBtns DangerBtn btn-sm btn-block" id="DeleteDanger">Enable Delete Buttons</div>
+                                </li>
+
+                                <li>
+                                    <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnRemoveGuard" runat="server" Text="Remove Guardian" OnClick="UpdatePersonInfo_Click" />
+                                </li>
+                                <li>
+                                    <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnRemoveMembership" runat="server" Text="Remove Membership" OnClick="UpdatePersonInfo_Click" />
+                                </li>
+
+                                 <li>
+                                    <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BntResetPwd" runat="server" Text="Reset Password" OnClick="UpdatePersonInfo_Click" />
+                                </li>
+                            </div>
                         </ul>
                     </div>
 
@@ -85,7 +111,8 @@
                     <div class="text-muted">
                         <b>Joined:</b>
                         <span>
-                            <asp:Label ID="LblJoined" runat="server"></asp:Label></span>
+                            <asp:Label ID="LblJoined" runat="server"></asp:Label>
+                        </span>
                     </div>
 
                     <br />
@@ -98,39 +125,45 @@
                             <div class="text-muted">
                                 <b>MemberShip Finished: </b>
                                 <span>
-                                    <asp:Label ID="LblMember" runat="server"></asp:Label></span>
+                                    <asp:Label ID="LblMember" runat="server"></asp:Label>
+                                </span>
                             </div>
                         </div>
 
                         <div class="text-muted">
                             <b>Email:</b>
                             <span>
-                                <asp:Label ID="LblEmail" runat="server"></asp:Label></span>
+                                <asp:Label ID="LblEmail" runat="server"></asp:Label>
+                            </span>
                         </div>
 
                         <div class="text-muted">
                             <b>Age:</b>
                             <span>
-                                <asp:Label ID="LblAge" runat="server"></asp:Label></span>
+                                <asp:Label ID="LblAge" runat="server"></asp:Label>
+                            </span>
                         </div>
 
                         <div class="text-muted">
                             <b>IceName: </b>
                             <span>
-                                <asp:Label ID="LblIceName" runat="server"></asp:Label></span>
+                                <asp:Label ID="LblIceName" runat="server"></asp:Label>
+                            </span>
                         </div>
 
                         <div class="text-muted">
                             <b>IceNum: </b>
                             <span>
-                                <asp:Label ID="LblIceNum" runat="server"></asp:Label></span>
+                                <asp:Label ID="LblIceNum" runat="server"></asp:Label>
+                            </span>
                         </div>
 
                         <div id="HideVisited" runat="server">
                             <div class="text-muted">
                                 <b>Times Visited: </b>
                                 <span>
-                                    <asp:Label ID="LblTimesVisited" runat="server"></asp:Label></span>
+                                    <asp:Label ID="LblTimesVisited" runat="server"></asp:Label>
+                                </span>
                             </div>
                         </div>
 
@@ -138,14 +171,16 @@
                             <div class="text-muted">
                                 <b>Guardian Name:</b>
                                 <span>
-                                    <asp:Label ID="LblGuardName" runat="server"></asp:Label></span>
+                                    <asp:Label ID="LblGuardName" runat="server"></asp:Label>
+                                </span>
                             </div>
                         </div>
                         <div id="GuardNum" runat="server">
                             <div class="text-muted">
                                 <b>Guardian Num:</b>
                                 <span>
-                                    <asp:Label ID="LblGuardNum" runat="server"></asp:Label></span>
+                                    <asp:Label ID="LblGuardNum" runat="server"></asp:Label>
+                                </span>
                             </div>
                         </div>
                         <!--HideGuard-->
@@ -195,9 +230,23 @@
                 </div>
 
                 <script type="text/javascript">
+                    //Toggle The Modal Per Person
                     function toggleModal() {
                         $('#myModal').modal('toggle');
                     };
+
+                    //Enables The Delete buttons in the DDL
+                    $('#DeleteDanger').on('click', function (event) {
+                        event.preventDefault(); // To prevent following the link (optional)
+                        document.getElementById('<%=BtnRemoveGuard.ClientID%>').disabled = false;
+                        document.getElementById('<%=BtnRemoveMembership.ClientID %>').disabled = false;
+                        document.getElementById('<%=BntResetPwd.ClientID %>').disabled = false;
+                    });
+
+                    //Stops The Drop Down From Closing On Clicks inside The DDL
+                    $('.dropdown-menu').click(function (e) {
+                        e.stopPropagation();
+                    });
                 </script>
 </asp:Content>
 

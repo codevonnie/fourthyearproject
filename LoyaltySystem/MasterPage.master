@@ -67,7 +67,7 @@
                     messagesList.forEach(function (entry) {
                         if (entry.business === "" || entry.email === "")
                             messagesList.splice(entry, 1);
-                       // console.log(entry);//Prints out all the messages
+                        // console.log(entry);//Prints out all the messages
                     });
 
                     /* Update the Header box with the Total Amount of messages that are in the Array
@@ -149,49 +149,45 @@
         <div class="Container MaxHeightHeader">
 
             <!-- ======== HEADER MENU  ======== -->
-            <div class="navbar navbar-inverse navbar-fixed-top">
-                <div class="container-fluid row content">
-                    <div class="col-sm-12">
+            <nav class="navbar-inverse navbar-fixed-top" role="navigation">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
 
-
-                        <div class="col-sm-3">
-                            <ul class="nav nav-tabs ">
-                                <li class="nav-item">
-                                    <a class="nav-link active whiteColor" id="Map" onclick="SendListToPage(this.id)">Map</a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link active whiteColor" href="Arivals.aspx" onclick="SendListToPage(this.id)">Arrivals</a>
-                                </li>
-
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle whiteColor" data-toggle="dropdown"
-                                        href="#" role="button" aria-haspopup="true" aria-expanded="false">Members
-                                       <!-- <span class="caret"></span>-->
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="AddMember.aspx" onclick="SendListToPage(this.id)">Add</a></li>
-                                        <li><a class="dropdown-item" href="DeleteMember.aspx" onclick="SendListToPage(this.id)">Delete</a></li>
-                                    </ul>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link active whiteColor" href="Default.aspx" onclick="SendListToPage(this.id)">DashBoard</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-sm-4">
-                            <a class="navbar-brand MarginRight30" href="Default.aspx" onclick="SendListToPage(this.id)">Member Me</a>
-                        </div>
-
-                        <div class="col-sm-5">
-
-                            <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click" />
-                            <a class="MessageEnvelope fa fa-envelope-o fa-2x" id="EnvelopeBox" runat="server" onclick="SendListToPage(this.id)" aria-hidden="true"><span runat="server" class="MessageBox" id="messageBoxCount"></span></a>
-                        </div>
-                    </div>
                 </div>
-            </div>
+                <a class="navbar-brand navbar-Logo" href="Default.aspx" onclick="SendListToPage(this.id)">Member Me</a>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <div class="MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand" id="EnvelopeBox" runat="server" onclick="SendListToPage(this.id)" aria-hidden="true"><span runat="server" class="AddPointer MessageBox" id="messageBoxCount"></span></div>
+                    </li>
+                    <li>
+                        <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click" /></li>
+                </ul>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li><a class="active whiteColor" href="Default.aspx" onclick="SendListToPage(this.id)">DashBoard</a></li>
+                        <li><a class="active whiteColor AddPointer" id="Map" onclick="SendListToPage(this.id)">Map</a></li>
+                        <li><a class="active whiteColor" href="Arivals.aspx" onclick="SendListToPage(this.id)">Arrivals</a></li>
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Members <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="AddMember.aspx" onclick="SendListToPage(this.id)">Add</a></li>
+                                <li><a class="dropdown-item" href="DeleteMember.aspx" onclick="SendListToPage(this.id)">Delete</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </nav>
+
 
             <br />
             <br />

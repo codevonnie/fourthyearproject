@@ -42,5 +42,6 @@ public class TempCustomer
     public string guardianName { get; set; }
     public string guardianNum { get; set; }
     public string membership { get; set; }
+    public string tempPwd { get; set; }
     public int visited { get; set; }
 }

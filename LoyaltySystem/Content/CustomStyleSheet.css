@@ -1,11 +1,26 @@
 ﻿
-
-.navbar-brand {
-    float: right;
-}
-
 .MaxHeightHeader {
     max-height: 50px;
+}
+
+.MaxWidth {
+    width: 100%;
+
+}
+
+.NavBarLeft{
+    float:left;
+}
+
+
+.NavDDL{
+    padding: 10px 10px!important;;
+    margin-top: 15px!important;;
+}
+
+
+.AddPointer{
+    cursor: pointer;
 }
 
 .padRight65 {
@@ -78,6 +93,10 @@
     cursor: pointer;
 }
 
+    .CloseModal:hover {
+        opacity: 0.5;
+    }
+
 .boxArea {
     display: block;
     width: 100%;
@@ -91,6 +110,8 @@
 .BtnInvis {
     background-color: transparent;
     border: none;
+    margin-right:50px;
+
 }
 
 
@@ -101,6 +122,22 @@
 
 .BoxHeight {
     height: 42px;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+
+.DropDownMenu {
+    background-color: cornflowerblue;
+    color: white;
+    padding-bottom: 0px;
+}
+
+.DropDownContentColour {
+    background-color: whitesmoke;
+    color: #5f667d;
 }
 
 .DropDownBtns {
@@ -115,10 +152,16 @@
         color: whitesmoke;
     }
 
+.DropDownContainer {
+    width: 240px;
+}
+
+
 .DangerBtn:hover {
     background-color: firebrick;
     color: whitesmoke;
 }
+
 
 .RoundTop {
     border-top-left-radius: 6px;
@@ -145,10 +188,22 @@
     background-color: red;
 }*/
 
-.navbar-brand {
-    padding: 10px 30px;
-    line-height: inherit;
+
+
+.navbar-Logo {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 0;
+    text-align: center;
+    margin: auto;
 }
+.navbar-toggle {
+    z-index:3;
+    float:left!important;
+}
+
+
 
 .MessageBox {
     font-size: x-large;
@@ -157,21 +212,27 @@
 }
 
 
+.RemoveATag {
+    padding-top: 18px!important;
+
+}
+
 
 .TxtAreaSize {
-    width: 100%;
+    width: 90%;
+
 }
 
 .SSEConnected {
-    color: green;
+    color: green!important;
 }
 
 .SSEConnected {
-    color: green;
+    color: green!important;
 }
 
 .SSEDisconnected {
-    color: firebrick;
+    color: firebrick!important;
 }
 
 .SSEConnecting {
@@ -181,9 +242,9 @@
 .MessageEnvelope {
     padding: 10px 30px;
     line-height: inherit;
-    float: right;
+    /*float: right;*/
     text-decoration: none;
-    max-height: 48px;
+    /*max-height: 48px;*/
 }
 
     .MessageEnvelope:hover {
