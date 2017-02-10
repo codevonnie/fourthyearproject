@@ -109,16 +109,6 @@
                             }
                         }
                     },
-
-                    // -- MEMBERSHIP --
-                    <%=TbMember.UniqueID%>: {
-                        validators: {
-                            date: {
-                                format: 'DD/MM/YYYY',
-                                message: 'The value is not a valid date'
-                            }
-                        }
-                    },
                     
                     // -- FILE UPLOAD --
                     FileInput: {
@@ -228,14 +218,6 @@
                                 <i class="fa fa-map-marker iconWidth" aria-hidden="true"></i>
                             </span>
                             <asp:TextBox ID="TbAddress" runat="server" CssClass="form-control" placeholder="Current Address"></asp:TextBox>
-                        </div>
-
-                        <asp:Label ID="LblMember" runat="server" Text="Full MemberShip End Date" Font-Bold="True"></asp:Label>
-                        <div class="form-group input-group input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-birthday-cake iconWidth" aria-hidden="true"></i>
-                            </span>
-                            <asp:TextBox ID="TbMember" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
                         </div>
 
                         <asp:Label ID="LblUpload" runat="server" Text="Person's Image" Font-Bold="True"></asp:Label>

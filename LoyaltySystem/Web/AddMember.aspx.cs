@@ -11,7 +11,7 @@ public partial class AddMember : System.Web.UI.Page
 {
 
     private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
-    // private string port = WebConfigurationManager.AppSettings["API_PORT"];
+    //private string port = WebConfigurationManager.AppSettings["API_PORT"];
 
     //SSL Cookie with Auth Token etc
     private UserSettings settings = new UserSettings();
@@ -68,8 +68,9 @@ public partial class AddMember : System.Web.UI.Page
         customer.email = TbEmail.Text.ToString();
         customer.date = DateTime.Now;//Todays Date
 
-        if (TbMember.Text != "")
-            customer.membership = Convert.ToDateTime(TbMember.Text);//Todays Date
+        //if (TbMember.Text != "")
+        //    customer.membership = Convert.ToDateTime(TbMember.Text);//Todays Date
+
 
 
         customer.guardianName = TbGuardianName.Text.ToString();
@@ -88,13 +89,12 @@ public partial class AddMember : System.Web.UI.Page
         var client = new RestClient(port);
         string password = Membership.GeneratePassword(6, 3);
 
-        var request = new RestRequest("api/addPerson", Method.POST);
+        var request = new RestRequest("addPerson", Method.POST);
         request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
         request.AddParameter("name", customer.name);
         request.AddParameter("password", "*x*" + password);//random password
         request.AddParameter("email", customer.email);
         request.AddParameter("phone", customer.contactNumber);
-        request.AddParameter("joined", customer.date.ToString("MMMM dd, yyyy"));// not used **************
         request.AddParameter("address", customer.address);
         request.AddParameter("iceName", customer.iceName);
         request.AddParameter("icePhone", customer.icePhone);
@@ -103,15 +103,6 @@ public partial class AddMember : System.Web.UI.Page
         request.AddParameter("bEmail", Decrypt.Base64Decode(settings._biz_Email.ToString()));
 
         var dobMill = convert.DateToMillSec(customer.dob);
-
-        if (customer.membership != null)
-        {
-            var memMill = convert.DateToMillSec(customer.membership);
-            request.AddParameter("membership", memMill);
-        }
-        else
-            request.AddParameter("membership", 0);//Default VALUE
-
         request.AddParameter("dob", dobMill);
 
         //ONLY IF UNDER 18

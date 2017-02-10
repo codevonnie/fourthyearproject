@@ -69,7 +69,11 @@ public partial class MasterPage : System.Web.UI.MasterPage
     protected void LogOut_Click(object sender, EventArgs e)
     {
         if (check == "true")
+        {
             Cache.Remove("Settings");
+            Cache.Remove("CUSTOMER_OBJ");
+        }
+
         else
             Page.ClientScript.RegisterStartupScript(this.GetType(), "CallMyFunction", "SendListToPage()", false);
 

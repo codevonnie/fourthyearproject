@@ -11,7 +11,7 @@ using System.Web.UI.WebControls;
 public partial class Web_AddCustomer : System.Web.UI.Page
 {
     private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
-    // private string port = WebConfigurationManager.AppSettings["API_PORT"];
+    //private string port = WebConfigurationManager.AppSettings["API_PORT"];
 
     //SSL Cookie with Auth Token etc
     private UserSettings settings = new UserSettings();
@@ -51,7 +51,7 @@ public partial class Web_AddCustomer : System.Web.UI.Page
         var client = new RestClient(port);
         try
         {
-            var request = new RestRequest("api/deletePerson", Method.DELETE);
+            var request = new RestRequest("deletePerson", Method.DELETE);
             request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
             request.AddParameter("email", TbEmail.Text.ToString());
             request.AddParameter("bEmail", Decrypt.Base64Decode(settings._biz_Email.ToString()));

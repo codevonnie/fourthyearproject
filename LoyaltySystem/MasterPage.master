@@ -61,7 +61,7 @@
                     msgObj.business = messageObj.business;
                     msgObj.name = messageObj.name;
 
-                    messagesList.push(msgObj);//Push The Obj to an Array List
+                    messagesList.push(msgObj);//Push The Obj to an Array List  ******problem here
 
                     //Remove All Empty Messages from the List
                     messagesList.forEach(function (entry) {

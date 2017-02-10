@@ -14,7 +14,8 @@ using System.Web.UI.WebControls;
 public partial class LoginPage : System.Web.UI.Page
 {
     private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
-    //  private string port = WebConfigurationManager.AppSettings["API_PORT"];
+    //private string port = WebConfigurationManager.AppSettings["API_PORT"];
+
     private string successAuth = "KeepMeLoggedIn";
 
     protected void Page_Load(object sender, EventArgs e)
@@ -53,7 +54,7 @@ public partial class LoginPage : System.Web.UI.Page
         var client = new RestClient(port);
         UserSettings settings = new UserSettings();
 
-        var request = new RestRequest("api/authenticate", Method.POST);
+        var request = new RestRequest("authenticate", Method.POST);
         request.AddParameter("email", TbEmail.Text); //email fro Textbox
         request.AddParameter("password", TbPassword.Text); //pwd from Textbox
         request.AddParameter("type", "business");
@@ -128,7 +129,7 @@ public partial class LoginPage : System.Web.UI.Page
     {
         var client = new RestClient(port);
 
-        var request = new RestRequest("api/addCompany", Method.POST);
+        var request = new RestRequest("addCompany", Method.POST);
         request.AddParameter("email", comp.email); //email fro Textbox
         request.AddParameter("password", comp.password); //Pwd from Textbox
         request.AddParameter("address", comp.address); //address from Textbox

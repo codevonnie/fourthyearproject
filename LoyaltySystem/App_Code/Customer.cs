@@ -23,7 +23,6 @@ public class Customer
     public string guardianName { get; set; }
     public string customerToken { get; set; }
     public string imgUrl { get; set; }
-    public DateTime membership { get; set; }
 }
 
 public class TempCustomer

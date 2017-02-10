@@ -93,7 +93,7 @@
                                     <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnRemoveMembership" runat="server" Text="Remove Membership" OnClick="UpdatePersonInfo_Click" />
                                 </li>
 
-                                 <li>
+                                <li>
                                     <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BntResetPwd" runat="server" Text="Reset Password" OnClick="UpdatePersonInfo_Click" />
                                 </li>
                             </div>
@@ -229,7 +229,10 @@
                     <asp:Button class="btn btn-block btn-success btn-lg" ID="BtnCheckin" runat="server" Text="Check Person In" OnClick="UpdatePersonInfo_Click" />
                 </div>
 
-                <script type="text/javascript">
+                <script type="text/javascript">  
+                    
+                    var check = "<%=NewPerson %>";
+
                     //Toggle The Modal Per Person
                     function toggleModal() {
                         $('#myModal').modal('toggle');
@@ -247,6 +250,48 @@
                     $('.dropdown-menu').click(function (e) {
                         e.stopPropagation();
                     });
+
+                    console.log("Check For New Person: ", check);
+                    if (check === "True") {
+                        var cust = <%=GetCustomer%>;
+                        var custList = new Array();
+
+                        custObj = cust//Parse the data
+
+                        var msgObj = {};//Create a New Object Each Time an Arival Comes In
+                        msgObj.email = custObj.email;
+                        msgObj.name = custObj.name;
+                        msgObj.dob = custObj.dob;
+                        msgObj.phone = custObj.phone;
+                        msgObj.imgUrl = custObj.imgUrl;
+                        msgObj.joined = custObj.joined;
+                        msgObj.iceName = custObj.iceName;
+                        msgObj.icePhone = custObj.icePhone;
+                        msgObj.visited = custObj.visited;
+                        msgObj.membership = custObj.membership;
+                        msgObj.day = Date.now();
+
+                        //push the obj to an Array
+                        custList.push(msgObj);
+
+                        //cHECK local Storage for other Arivals
+                        var ListOfCust =JSON.parse(localStorage.getItem("TodaysArivals"));
+                        
+                        if(ListOfCust!=null){
+                            //Check For New Arivals Only and add to Array
+                            ListOfCust.forEach(function (entry) {
+                                //Removes The Local Storage Every Day
+                                if(msgObj.day < entry.day){
+                                    return;
+                                }
+                                if (entry.name != msgObj.name)
+                                    custList.push(entry);
+                            });                          
+                        }
+                        //Store The Array as a JSON.stringify in local storage / over write if all ready there
+                        localStorage.setItem("TodaysArivals", JSON.stringify(custList));
+                    }
+
                 </script>
 </asp:Content>
 

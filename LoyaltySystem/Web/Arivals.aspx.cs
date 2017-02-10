@@ -10,13 +10,20 @@ using System.Web;
 using System.Web.Security;
 
 using System.Web.UI.WebControls;
+using System.Collections.Generic;
 
 public partial class Arivals : System.Web.UI.Page
 {
-
-
     private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
+    //private string port = WebConfigurationManager.AppSettings["API_PORT"];
 
+    private TempCustomer _TempCust = new TempCustomer();
+    private Boolean _newCust;
+    private string _custJson="null";
+
+   
+    protected string GetCustomer { get { return _custJson; } }
+    protected Boolean NewPerson { get { return _newCust; } }
 
     //SSL Cookie with Auth Token etc
     private UserSettings settings = new UserSettings();
@@ -83,7 +90,7 @@ public partial class Arivals : System.Web.UI.Page
 
         try
         {
-            var request = new RestRequest("api/findPerson", Method.POST);
+            var request = new RestRequest("findPerson", Method.POST);
             request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
             request.AddParameter("email", email);
             request.AddParameter("bEmail", Decrypt.Base64Decode(settings._biz_Email.ToString()));
@@ -95,11 +102,14 @@ public partial class Arivals : System.Web.UI.Page
 
             if (resObj.success == true)
             {
-                //Person was found Display to the Company
+                //Person was found Display to the Company               
                 displayPerson(resObj);
 
+                //Used To Trigger JS On Check in only
+                Cache["CheckingIn"] = true;
+
                 //Cached customer obj with timeout
-                Cache.Insert("CUSTOMER_OBJ", resObj, null, System.Web.Caching.Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(10));
+                Cache.Insert("CUSTOMER_OBJ", resObj, null, System.Web.Caching.Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(10)); //
             }
             else
                 DivFailedScan.Visible = true;
@@ -228,7 +238,7 @@ public partial class Arivals : System.Web.UI.Page
 
         ConvertToMillSec convert = new ConvertToMillSec();
 
-        var request = new RestRequest("api/updatePerson", Method.PUT);
+        var request = new RestRequest("updatePerson", Method.PUT);
         request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
         request.AddParameter("name", cust.name);
         request.AddParameter("address", cust.address);
@@ -268,6 +278,14 @@ public partial class Arivals : System.Web.UI.Page
 
         if (resObj.success == true)
         {
+
+            if ((Boolean)Cache.Get("CheckingIn")==true)
+            {
+                _newCust = true;
+                dynamic jsonect = JsonConvert.SerializeObject(cust);
+                _custJson = jsonect;
+            }
+
             //Person UPDATED
             if (btn.ID == "BtnCheckin")
                 DivSuccessCheckIn.Visible = true;
