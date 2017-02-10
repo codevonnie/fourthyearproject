@@ -103,7 +103,7 @@ router.post('/authenticate', function (req, res) {
               guardianName: record._fields[0].properties.guardianName,
               guardianNum: record._fields[0].properties.guardianNum,
               visited: record._fields[0].properties.visited.toString(),
-              membership: record._fields[0].properties.membership,
+              membership: record._fields[0].properties.membership.toString(),
               bEmail: record._fields[1].properties.email
             });
             console.log('Found You! Permission Granted');
@@ -246,8 +246,8 @@ router.post('/findPerson', function (req, res) {
             imgUrl: record._fields[0].properties.imgUrl,
             guardianName: record._fields[0].properties.guardianName,
             guardianNum: record._fields[0].properties.guardianNum,
-            visited: record._fields[0].properties.visited,
-            membership: record._fields[0].properties.membership,
+            visited: record._fields[0].properties.visited.toString(),
+            membership: record._fields[0].properties.membership.toString(),
 
           });
         })
