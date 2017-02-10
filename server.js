@@ -246,8 +246,8 @@ router.post('/findPerson', function (req, res) {
             imgUrl: record._fields[0].properties.imgUrl,
             guardianName: record._fields[0].properties.guardianName,
             guardianNum: record._fields[0].properties.guardianNum,
-            visited: record._fields[0].properties.visited.toString(),
-            membership: record._fields[0].properties.membership.toString(),
+            visited: record._fields[0].properties.visited,
+            membership: record._fields[0].properties.membership,
 
           });
         })
@@ -359,8 +359,8 @@ function newPersonObj(req) {
   person.email = req.body.email.trim().toLowerCase();
   person.password = req.body.password.trim();
   person.imgUrl = req.body.imgUrl;
-  person.visited = 0;
-  person.membership = 0;
+  person.visited = "0";
+  person.membership = "0";
 
   person.guardianName = null;
   person.guardianNum = null;

@@ -12,8 +12,8 @@ var PersonSchema = new Schema({
     icePhone: String,
     joined: Number,
     dob: Number,
-    visited: Number,
-    membership: Number,
+    visited: String,
+    membership: String,
     imgUrl:{
         type:String,
         unique: true,
