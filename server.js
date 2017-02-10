@@ -354,7 +354,6 @@ function newPersonObj(req) {
   person.iceName = req.body.iceName.trim();
   person.icePhone = req.body.icePhone;
 
-  person.joined = req.body.joined;
   person.dob = req.body.dob;
   person.email = req.body.email.trim().toLowerCase();
   person.password = req.body.password.trim();
