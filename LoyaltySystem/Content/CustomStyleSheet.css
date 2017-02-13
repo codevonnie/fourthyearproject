@@ -172,7 +172,13 @@
 }
 
 .RoundImg {
-    border-radius:50px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.Img-size {
+    width: 200px;
+    height: 200px;
 }
 
 
@@ -255,6 +261,9 @@
 
 .DisplayPersonBox {
     margin-bottom: 50px;
+    letter-spacing: 1px;
+    font-size: small;
+    word-wrap: break-word;
 }
 
 .HalfWidth {

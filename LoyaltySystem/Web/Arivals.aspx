@@ -49,7 +49,7 @@
 
         <!-- Content -->
         <div class="modal-dialog">
-            <div class="modal-content ">
+            <div class="modal-content">
                 <div class="modal-header text-center ModalHeadColor RoundTop">
 
                     <div class="dropdown" data-toggle="dropdown">
@@ -83,7 +83,7 @@
                                 <li role="presentation" class="divider"></li>
 
                                 <li>
-                                    <div class="btn DropDownBtns DangerBtn btn-sm btn-block" id="DeleteDanger">Enable Delete Buttons</div>
+                                    <div class="btn DropDownBtns DangerBtn btn-sm btn-block" id="DeleteDanger">Enable Danger Buttons</div>
                                 </li>
 
                                 <li>
@@ -250,6 +250,7 @@
                     $('.dropdown-menu').click(function (e) {
                         e.stopPropagation();
                     });
+
 
                     console.log("Check For New Person: ", check);
                     if (check === "True") {

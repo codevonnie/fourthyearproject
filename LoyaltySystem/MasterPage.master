@@ -24,17 +24,78 @@
 
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"> </script>
 
+<body>
+    <form id="form1" runat="server">
 
-<%-- If a message comes in, save it to a list straight away. then wipe the message obj on the server side --%>
+        <!-- Used To Add Js File to Page Via Programatically-->
+        <asp:ScriptManager runat="server" ID="ScriptManager1"></asp:ScriptManager>
 
-<script>
+        <div class="Container MaxHeightHeader">
 
-    var check = "<%= LoggedInStatus %>";
+            <!-- ======== HEADER MENU  ======== -->
+            <nav class="navbar-inverse navbar-fixed-top" role="navigation">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
 
-    //Holds All the messages that get sent to the user
-    if (check === "true") {
-        var messagesList = new Array();
-        var BizEmail = "<%= BizEmail %>";
+                </div>
+                <a class="navbar-brand navbar-Logo" href="Default.aspx" onclick="SendListToPage(this.id)">Member Me</a>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li><a class="active whiteColor" href="Default.aspx" onclick="SendListToPage(this.id)">DashBoard</a></li>
+                        <li><a class="active whiteColor AddPointer" id="Map" onclick="SendListToPage(this.id)">Map</a></li>
+                        <li><a class="active whiteColor" href="Arivals.aspx" onclick="SendListToPage(this.id)">Arrivals</a></li>
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Members <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="AddMember.aspx" onclick="SendListToPage(this.id)">Add</a></li>
+                                <li><a class="dropdown-item" href="DeleteMember.aspx" onclick="SendListToPage(this.id)">Delete</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <div class="MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand" id="EnvelopeBox" runat="server" onclick="SendListToPage(this.id)" aria-hidden="true"><span runat="server" class="AddPointer MessageBox" id="messageBoxCount"></span></div>
+                        </li>
+                        <li>
+                            <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click" /></li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </nav>
+
+
+            <br />
+            <br />
+            <br />
+
+            <!-- ======== CONTENT AREA ======== -->
+            <div class="col-sm-12 text-left textFontFamilyBody">
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+        </div>
+
+    </form>
+
+    <%-- If a message comes in, save it to a list straight away. then wipe the message obj on the server side --%>
+    <script>
+
+        var check = "<%= LoggedInStatus %>";
+
+        //Holds All the messages that get sent to the user
+        if (check === "true") {
+            var messagesList = new Array();
+            var BizEmail = "<%= BizEmail %>";
 
         if (!!window.EventSource) {
             // http://localhost:3000/stream
@@ -137,72 +198,7 @@
         }
     }
 
-</script>
-
-
-<body>
-    <form id="form1" runat="server">
-
-        <!-- Used To Add Js File to Page Via Programatically-->
-        <asp:ScriptManager runat="server" ID="ScriptManager1"></asp:ScriptManager>
-
-        <div class="Container MaxHeightHeader">
-
-            <!-- ======== HEADER MENU  ======== -->
-            <nav class="navbar-inverse navbar-fixed-top" role="navigation">
-                <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-
-                </div>
-                <a class="navbar-brand navbar-Logo" href="Default.aspx" onclick="SendListToPage(this.id)">Member Me</a>
-
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <div class="MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand" id="EnvelopeBox" runat="server" onclick="SendListToPage(this.id)" aria-hidden="true"><span runat="server" class="AddPointer MessageBox" id="messageBoxCount"></span></div>
-                    </li>
-                    <li>
-                        <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click" /></li>
-                </ul>
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse" id="navbar-collapse-1">
-                    <ul class="nav navbar-nav navbar-left">
-                        <li><a class="active whiteColor" href="Default.aspx" onclick="SendListToPage(this.id)">DashBoard</a></li>
-                        <li><a class="active whiteColor AddPointer" id="Map" onclick="SendListToPage(this.id)">Map</a></li>
-                        <li><a class="active whiteColor" href="Arivals.aspx" onclick="SendListToPage(this.id)">Arrivals</a></li>
-
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Members <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="AddMember.aspx" onclick="SendListToPage(this.id)">Add</a></li>
-                                <li><a class="dropdown-item" href="DeleteMember.aspx" onclick="SendListToPage(this.id)">Delete</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-                <!-- /.navbar-collapse -->
-            </nav>
-
-
-            <br />
-            <br />
-            <br />
-
-            <!-- ======== CONTENT AREA ======== -->
-            <div class="col-sm-12 text-left textFontFamilyBody">
-                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-                </asp:ContentPlaceHolder>
-            </div>
-        </div>
-
-    </form>
-
-
+    </script>
 
 
 </body>
