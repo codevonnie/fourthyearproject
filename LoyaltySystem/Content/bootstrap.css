@@ -4263,7 +4263,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   }
 }
 .navbar-fixed-top {
-  top: 3px;
+  top: 0;
   border-width: 0 0 1px;
 }
 .navbar-fixed-bottom {
@@ -6543,9 +6543,6 @@ button.close {
 }
 .affix {
   position: fixed;
-    top: 39px;
-    left: 0px;
-    width: 165px;
 }
 @-ms-viewport {
   width: device-width;

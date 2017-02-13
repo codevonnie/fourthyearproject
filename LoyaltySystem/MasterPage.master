@@ -5,71 +5,201 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>MASTERPAGE</title>
+
     <link href="Content/bootstrap.css" rel="stylesheet" />
+    <link href="Content/CustomStyleSheet.css" rel="stylesheet" />
+    <link href="Content/font-awesome.css" rel="stylesheet" />
+    <link href="Content/jasny-bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/css/bootstrapValidator.min.css" />
+
     <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
 </head>
+
+<!-- ======== Bootstrap core JavaScript ======== -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+<!--<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+<script src="/Scripts/bootstrap.min.js"></script>
+<script src="/Scripts/jasny-bootstrap.min.js"></script>
+
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"> </script>
+
 <body>
     <form id="form1" runat="server">
-        <div class="Container">
-            <div class="navbar navbar-inverse navbar-fixed-top">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a class="navbar-brand" href="#">Member Me</a>
-                    </div>
-                    <div id="navbar" class="navbar-collapse collapse">
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a href="Default.aspx">Dashboard</a></li>
-                            <li><a href="#">Settings</a></li>
-                            <li><a href="#">Notifications</a></li>
-                            <li><a href="LoginPage.aspx">Login</a></li>
-                        </ul>
-                        <div class="navbar-form navbar-right">
-                            <input type="text" class="form-control" placeholder="Search..." />
-                        </div>
-                    </div>
+
+        <!-- Used To Add Js File to Page Via Programatically-->
+        <asp:ScriptManager runat="server" ID="ScriptManager1"></asp:ScriptManager>
+
+        <div class="Container MaxHeightHeader">
+
+            <!-- ======== HEADER MENU  ======== -->
+            <nav class="navbar-inverse navbar-fixed-top" role="navigation">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
                 </div>
-            </div>
+                <a class="navbar-brand navbar-Logo" href="Default.aspx" onclick="SendListToPage(this.id)">Member Me</a>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li><a class="active whiteColor" href="Default.aspx" onclick="SendListToPage(this.id)">DashBoard</a></li>
+                        <li><a class="active whiteColor AddPointer" id="Map" onclick="SendListToPage(this.id)">Map</a></li>
+                        <li><a class="active whiteColor" href="Arivals.aspx" onclick="SendListToPage(this.id)">Arrivals</a></li>
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Members <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="AddMember.aspx" onclick="SendListToPage(this.id)">Add</a></li>
+                                <li><a class="dropdown-item" href="DeleteMember.aspx" onclick="SendListToPage(this.id)">Delete</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <div class="MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand" id="EnvelopeBox" runat="server" onclick="SendListToPage(this.id)" aria-hidden="true"><span runat="server" class="AddPointer MessageBox" id="messageBoxCount"></span></div>
+                        </li>
+                        <li>
+                            <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click" /></li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </nav>
+
+
+            <br />
+            <br />
             <br />
 
-
-            <div class="container-fluid text-center">
-                <div class="row content">
-                    <div class="col-sm-2 sidenav">
-                        <asp:Menu ID="Menu2" runat="server" CssClass="nav nav-sidebar active  ">
-                            <Items>
-                                <asp:MenuItem Text="Reports" Value="New Item"></asp:MenuItem>
-                                <asp:MenuItem Text="Analytics" Value="New Item"></asp:MenuItem>
-                                <asp:MenuItem Text="Customer" Value="Customer">
-                                    <asp:MenuItem NavigateUrl="~/Web/AddCustomer.aspx" Text="Add" Value="Add"></asp:MenuItem>
-                                    <asp:MenuItem NavigateUrl="~/Web/UpdateCustomer.aspx" Text="Update" Value="Update"></asp:MenuItem>
-                                    <asp:MenuItem NavigateUrl="~/Web/DeleteCustomer.aspx" Text="Delete" Value="Delete"></asp:MenuItem>
-                                </asp:MenuItem>
-                                <asp:MenuItem Text="Map" Value="New Item"></asp:MenuItem>
-                                <asp:MenuItem Text="Other" Value="New Item"></asp:MenuItem>
-                            </Items>
-                            <StaticMenuItemStyle HorizontalPadding="80px" VerticalPadding="10px" />
-                        </asp:Menu>
-                    </div>
-                    <div class="col-sm-8 text-left">
-                        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-                        </asp:ContentPlaceHolder>
-                    </div>
-                </div>
+            <!-- ======== CONTENT AREA ======== -->
+            <div class="col-sm-12 text-left textFontFamilyBody">
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
             </div>
         </div>
+
     </form>
 
+    <%-- If a message comes in, save it to a list straight away. then wipe the message obj on the server side --%>
+    <script>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="Scripts/jquery-3.1.1.min.js"></script>
-    <script src="Scripts/bootstrap.min.js"></script>
+        var check = "<%= LoggedInStatus %>";
+
+        //Holds All the messages that get sent to the user
+        if (check === "true") {
+            var messagesList = new Array();
+            var BizEmail = "<%= BizEmail %>";
+
+        if (!!window.EventSource) {
+            // http://localhost:3000/stream
+            // https://membermemessageserver.herokuapp.com/stream
+            var source = new EventSource('https://membermemessageserver.herokuapp.com/stream')
+
+            //Listens to see if it there is a message w8ing for him
+            source.addEventListener('message', function (e) {
+
+                document.getElementById("messageBoxCount").value = "";//Reset the Value of the TextBox TO "", So not to repeat 
+
+                messageObj = JSON.parse(e.data)//Parse the data
+
+                //Check to see if the message Is for the Biz
+                if (BizEmail === messageObj.business || messageObj.business === "") {
+                    console.log("Waiting For Messages");
+
+                    var msgObj = {};//Create a New Object Each Time A message Comes In
+                    msgObj.status = messageObj.status;
+                    msgObj.message = messageObj.message;
+                    msgObj.email = messageObj.email;
+                    msgObj.longitude = messageObj.longitude;
+                    msgObj.latitude = messageObj.latitude;
+                    msgObj.business = messageObj.business;
+                    msgObj.name = messageObj.name;
+
+                    messagesList.push(msgObj);//Push The Obj to an Array List  ******problem here
+
+                    //Remove All Empty Messages from the List
+                    messagesList.forEach(function (entry) {
+                        if (entry.business === "" || entry.email === "")
+                            messagesList.splice(entry, 1);
+                        // console.log(entry);//Prints out all the messages
+                    });
+
+                    /* Update the Header box with the Total Amount of messages that are in the Array
+                    * Only if the number of messages are greater than the amount alreay Present
+                    */
+                    if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList != 0) {
+                        document.getElementById("messageBoxCount").innerText = messagesList.length.toString();
+                        localStorage['messageCount'] = messagesList.length.toString();
+                    }
+
+                    if ((document.getElementById("messageBoxCount").innerText > messagesList.length.toString()) && messagesList != 0) {
+                        var num = Number(document.getElementById("messageBoxCount").innerText);
+                        num++;
+                        localStorage['messageCount'] = num.toString();
+                        document.getElementById("messageBoxCount").innerText = num.toString();
+                    }
+
+                    if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList.length === 0) {
+                        document.getElementById("messageBoxCount").innerText = localStorage['messageCount'];
+                    }
+
+                    if (document.getElementById("messageBoxCount").innerText === "undefined")
+                        document.getElementById("messageBoxCount").innerText = 0;
+                }
+            }, false)
+
+            //Changes the Message Box Envelope colour - Green Is Connected
+            source.addEventListener('open', function (e) {
+                document.getElementById("EnvelopeBox").className += " SSEConnected";
+            }, false)
+
+            //Changes the Message Box Envelope colour - FireBrick(Red) Is Disconnected
+            source.addEventListener('error', function (e) {
+                if (e.target.readyState == EventSource.CLOSED) {
+                    document.getElementById("EnvelopeBox").className += " SSEDisconnected";
+                }
+                    //Changes the Message Box Envelope colour -Orange Is Connecting...
+                else if (e.target.readyState == EventSource.CONNECTING) {
+                    document.getElementById("EnvelopeBox").className += " SSEConnecting";
+                }
+            }, false)
+        } else {
+            console.log("Your browser doesn't support SSE")
+            alert("Your browser doesn't support SSE");
+        }
+
+        //Ajax Function That Posts the Array[Objects] to the Relevent Page
+        function SendListToPage(name) {
+            $.ajax({
+                type: "POST",
+                url: "Map.aspx/MessagesToArray",
+                data: "{data:" + JSON.stringify(messagesList) + "}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                //IMPORTANT! Wait till i get the Response Then Transfer to the Map.aspx page and populate the Map
+                //Only if The btn hit was EnvelopeBox
+                success: function (response) {
+                    if (response && (name == "EnvelopeBox" || name == "Map"))
+                        window.location = "../Web/Map.aspx";
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+            //Clear the Array of Messages
+            messagesList = [];
+        }
+    }
+
+    </script>
+
+
 </body>
 </html>
