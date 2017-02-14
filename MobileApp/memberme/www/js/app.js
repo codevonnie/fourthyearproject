@@ -19,9 +19,9 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       StatusBar.styleDefault();
     }
     //timeout function for splashscreen to disappear once app is loaded
-    setTimeout(function() {
-        navigator.splashscreen.hide();
-    }, 10000);
+    // setTimeout(function() {
+    //     navigator.splashscreen.hide();
+    // }, 10000);
 
   });
 });

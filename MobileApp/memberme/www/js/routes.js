@@ -35,12 +35,12 @@ angular.module('starter.routes', ['ionic'])
     }
   })
 
-  .state('tab.settings', {
-    url: '/settings',
+  .state('tab.logout', {
+    url: '/logout',
     views: {
-      'settings': {
-        templateUrl: 'templates/settings.html',
-        controller: 'SettingsCtrl'
+      'logout': {
+        templateUrl: 'templates/logout.html',
+        controller: 'LogoutCtrl'
       }
     }
   })

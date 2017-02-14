@@ -1,10 +1,27 @@
 angular.module('starter.controllers', [])
  
-.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, jwtHelper, ConnectivityMonitor) {
+.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, jwtHelper, ConnectivityMonitor, $ionicLoading) {
   
   $scope.user={}; //user object for displaying profile details
+  $scope.logo="img/logo.png";
 
   var logInDetails = window.localStorage.getItem('signIn'); //check localStorage for stored sign in details
+
+  $scope.loginButton=true;
+
+  $scope.validateEmail=function(email){
+
+    var re=/^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+\.([a-zA-Z])+([a-zA-Z])+/;
+    if (email == '' || !re.test(email))
+    {
+      $scope.emailVal=true;
+      $scope.loginButton=true;
+    }
+    else{
+      $scope.emailVal=false;
+      $scope.loginButton=false;
+    }
+  }
     
   if(logInDetails==undefined){ //if no stored details exist set user to take in email and password from user
 
@@ -42,15 +59,16 @@ angular.module('starter.controllers', [])
   $scope.login = function(user) {
 
       //if user is not connected to the internet - popup alert shows
-    if(!ConnectivityMonitor.isOnline()){
-        var alertPopup = $ionicPopup.alert({
-            title: 'No internet connection',
-            template: "You need an internet connection to login"
-            });
-      }
+      if(!ConnectivityMonitor.isOnline()){
+          var alertPopup = $ionicPopup.alert({
+              title: 'No internet connection',
+              template: "You need an internet connection to login"
+              });
+        }
       //if login is successful
       var onSuccess = function () {
-  
+        
+        $ionicLoading.hide();
         $scope.check={};
         
         //if user password starts with *x* - it's the first time login so open set password modal
@@ -123,9 +141,11 @@ angular.module('starter.controllers', [])
       }
 
 
-      };
+    };//end success
+    
       //if login is not successful, alert user with popup and allow them to reenter deails
       var onError = function () {
+        $ionicLoading.hide();
         var alertPopup = $ionicPopup.alert({
             title: 'Login failed!',
             template: "Check details and try again"
@@ -134,10 +154,20 @@ angular.module('starter.controllers', [])
 
       //call AuthService method login to get token
       AuthService.login().then(function() {
+        //show loading spinner while call to Google maps api takes place
+        $scope.loading = $ionicLoading.show({
+              content: '<i class="icon ion-loading-c"></i>',
+              animation: 'fade-in',
+              showBackdrop: false,
+              maxWidth: 50,
+              showDelay: 0
+            })
         //call AuthService method getInfo to get user profile details
         AuthService.getInfo(user).then(onSuccess, onError);
           });
-      }
+      }//end login
+
+
   })//end LoginCtrl
 
  //Profile view controller
@@ -244,7 +274,7 @@ angular.module('starter.controllers', [])
    
 })//end ProfileCtrl
 
-.controller('SettingsCtrl', function($scope, AuthService, $state, $ionicPopup) {
+ .controller('LogoutCtrl', function($scope, AuthService, $state, $ionicPopup) {
   
     //logout function
     $scope.logout = function() {
@@ -262,7 +292,7 @@ angular.module('starter.controllers', [])
      }
    })
   }//logout
- }) //SettingsCtrl
+ }) //LogoutCtrl
 
 
 //Controller for user if they are having an issue while on the business premises
@@ -270,6 +300,7 @@ angular.module('starter.controllers', [])
   
   //empty object to take sos details for sending to business
   $scope.sos={};
+  $scope.emer=true;
 
     //submit function called from sos page when Send SOS button is clicked
   $scope.submit=function(){
@@ -345,6 +376,10 @@ angular.module('starter.controllers', [])
             });
       $scope.toggle=false; //hide map div on sos page
 
+  }
+
+  $scope.emerSelect = function(){
+    $scope.emer=false;
   }
 
   //function to reload page if user connects to internet or gps after initially not having them turned on

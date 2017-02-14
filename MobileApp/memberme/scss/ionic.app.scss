@@ -17,27 +17,45 @@ $dark:                            #444 !default;
 
 .list .item {
   //background-color: #F0F8FF;
-  border-width: 1px;
+  //border-width: 1px;
   border-style: ridge;
   //border-color: #C0C0C0;
+}
+
+
+.login{
+  background-color: #F0F8FF;
 }
 
 .profile-list{
   color: #0652D4;
 }
 
-.sos-text{
+.sos-noConnection-text{
   text-align: center;
   font-weight: bolder !important;
   font-size: 1.5em !important;
+  padding-top: 5%;
+
   
+}
+
+.sos-div{
+  padding-top: 2.5%;
+  padding-bottom: 2.5%;
+  background-color: transparent !important;
+}
+
+.sos-emergency-text{
+  font-weight: bolder !important;
+  font-size: 1em !important;
 }
  
 .sos {
     text-align: center;
     border-color: transparent !important;
-    border-width: 0.2px;
-    background-color: #F0E6FF !important;
+    //border-width: 0.2px;
+    background-color: transparent !important;
 }
 
 .sos-list{
@@ -60,11 +78,27 @@ $dark:                            #444 !default;
     height: 50%;
 }
 
+.map{
+  padding-top: 10px;
+}
+
 .message {
-  height: 20%;
+  height: 30%;
   border-width: 5px;
   border-style: ridge;
   border-color: #387ef5;
+  word-wrap: break-word;
+}
+
+.sos-message{
+  padding-top: 15px;
+  padding-left: 5%;
+  padding-right: 5%;
+  resize: none;
+  overflow: auto;
+  line-height: 20px;
+  height: 100%;
+  width: 100%;
 }
 
 .content-stable{
@@ -75,12 +109,14 @@ $dark:                            #444 !default;
   background-color: #8BB3F8;
 }
 
-.content-red{
-  background-color: #95CBF1;
-}
-
 $tabs-icon-size:                  30px !default;
 
+.logo{
+  height: 50%;
+  width: 100%;
+  margin: auto;
+  padding: auto;
+}
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;

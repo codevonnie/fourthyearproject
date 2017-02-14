@@ -6,35 +6,27 @@
     <ion-refresher pulling-text="Pull to refresh..." on-refresh="reload()">
   </ion-refresher>
   
-    <div id="map" data-tap-disabled="true" ng-show="toggle">
-    </div>
+    <div id="map" data-tap-disabled="true" ng-show="toggle"></div>
 
     <div class="card" ng-hide="toggle">
-        <h3 class="sos-text">Ensure internet and GPS are enabled and pull to refresh</h3>
+        <h3 class="sos-noConnection-text">Ensure internet and GPS are enabled and pull to refresh</h3>
       </div>
     
+<div class="sos-div">
+<label class="item item-select item-text-wrap sos-div">
+        <h2 class="sos-emergency-text">Emergency type:</h2>
 
-      <ion-list>
-        <ion-item class="sos">
-        <h2 class="sos-text">Emergency type</h2>
-        </ion-item>
-        <ion-item class="sos">
-        <select ng-model="sos.status">
+        <select ng-model="sos.status" ng-change="emerSelect()">
           <option>Medical Emergency</option>
           <option>Other</option>
         </select>
-        </ion-item>
-      </ion-list>
-
-    
-
-      <div class="card message">
-          <div class="item item-input">
-            <input type="text" placeholder="Message (Optional)" ng-model="sos.message">
-          </div>
+</label>
+</div>
+      <div class="message">
+            <textarea class="sos-message" placeholder="Message (Optional)" rows="1" cols="26" ng-model="sos.message"></textarea>
       </div>
 
-      <button class="button button-full button-assertive" ng-click="submit(sos)">
+      <button class="button button-full button-assertive" ng-click="submit(sos)" ng-disabled="emer">
         Send SOS
       </button>
   </ion-content>
