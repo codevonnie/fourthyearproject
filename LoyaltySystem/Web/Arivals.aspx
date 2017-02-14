@@ -230,9 +230,7 @@
                 </div>
 
                 <script type="text/javascript">  
-                    
-                    var check = "<%=NewPerson %>";
-
+                   
                     //Toggle The Modal Per Person
                     function toggleModal() {
                         $('#myModal').modal('toggle');
@@ -252,8 +250,11 @@
                     });
 
 
+                     var check = "<%=NewPerson %>";
+
                     console.log("Check For New Person: ", check);
                     if (check === "True") {
+                        var cust = <%=GetCustomer%>;
                         var custList = new Array();
 
                         custObj = cust//Parse the data
@@ -281,7 +282,7 @@
                             //Check For New Arivals Only and add to Array
                             ListOfCust.forEach(function (entry) {
                                 //Removes The Local Storage Every Day
-                                if(msgObj.day < entry.day){
+                                if(arvlObj.day < entry.day){
                                     return;
                                 }
                                 if (entry.name != arvlObj.name)
