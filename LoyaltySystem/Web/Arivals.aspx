@@ -254,28 +254,27 @@
 
                     console.log("Check For New Person: ", check);
                     if (check === "True") {
-                        var cust = <%=GetCustomer%>;
                         var custList = new Array();
 
                         custObj = cust//Parse the data
 
-                        var msgObj = {};//Create a New Object Each Time an Arival Comes In
-                        msgObj.email = custObj.email;
-                        msgObj.name = custObj.name;
-                        msgObj.dob = custObj.dob;
-                        msgObj.phone = custObj.phone;
-                        msgObj.imgUrl = custObj.imgUrl;
-                        msgObj.joined = custObj.joined;
-                        msgObj.iceName = custObj.iceName;
-                        msgObj.icePhone = custObj.icePhone;
-                        msgObj.visited = custObj.visited;
-                        msgObj.membership = custObj.membership;
-                        msgObj.day = Date.now();
+                        var arvlObj = {};//Create a New Object Each Time an Arival Comes In
+                        arvlObj.email = custObj.email;
+                        arvlObj.name = custObj.name;
+                        arvlObj.dob = custObj.dob;
+                        arvlObj.phone = custObj.phone;
+                        arvlObj.imgUrl = custObj.imgUrl;
+                        arvlObj.joined = custObj.joined;
+                        arvlObj.iceName = custObj.iceName;
+                        arvlObj.icePhone = custObj.icePhone;
+                        arvlObj.visited = custObj.visited;
+                        arvlObj.membership = custObj.membership;
+                        arvlObj.day = Date.now();
 
                         //push the obj to an Array
-                        custList.push(msgObj);
+                        custList.push(arvlObj);
 
-                        //cHECK local Storage for other Arivals
+                        //CHECK local Storage for other Arivals
                         var ListOfCust =JSON.parse(localStorage.getItem("TodaysArivals"));
                         
                         if(ListOfCust!=null){
@@ -285,7 +284,7 @@
                                 if(msgObj.day < entry.day){
                                     return;
                                 }
-                                if (entry.name != msgObj.name)
+                                if (entry.name != arvlObj.name)
                                     custList.push(entry);
                             });                          
                         }

@@ -11,6 +11,8 @@ else {
     alert("Your Browser Does Not Support This Feature")
 }
 
+
+//Creates all the Html Per Arival from local Storage
 function CreateArivals() {
 
     for (step = 0; step < 3; step++) {
@@ -46,8 +48,6 @@ function CreateArivals() {
                 var iceNum = document.createElement("div");
                 iceNum.innerHTML = "<b>iceNum:</b> " + val.icePhone;
 
-
-
                 para.appendChild(img);
                 para.appendChild(name);
                 para.appendChild(email);
@@ -55,9 +55,6 @@ function CreateArivals() {
                 para.appendChild(contactNum);
                 para.appendChild(iceName);
                 para.appendChild(iceNum);
-
-
-
 
                 var element = document.getElementById("ArivalsData");
                 element.appendChild(para);

@@ -27,6 +27,6 @@
     </div>
 
     <%--Get Arivals from local storage--%>
-    <script src="../Scripts/Arivals.js"></script>
+    <script src="../Scripts/DisplayArivals.js"></script>
 </asp:Content>
 

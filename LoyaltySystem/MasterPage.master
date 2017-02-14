@@ -44,27 +44,27 @@
                     </button>
 
                 </div>
-                <a class="navbar-brand navbar-Logo" href="Default.aspx" onclick="SendListToPage(this.id)">Member Me</a>
+                <a class="navbar-brand navbar-Logo" href="Default.aspx" ">Member Me</a>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="navbar-collapse-1">
                     <ul class="nav navbar-nav navbar-left">
-                        <li><a class="active whiteColor" href="Default.aspx" onclick="SendListToPage(this.id)">DashBoard</a></li>
-                        <li><a class="active whiteColor AddPointer" id="Map" onclick="SendListToPage(this.id)">Map</a></li>
-                        <li><a class="active whiteColor" href="Arivals.aspx" onclick="SendListToPage(this.id)">Arrivals</a></li>
+                        <li><a class="active whiteColor" href="Default.aspx" ">DashBoard</a></li>
+                        <li><a class="active whiteColor AddPointer" href="Map.aspx" id="Map" ">Map</a></li>
+                        <li><a class="active whiteColor" href="Arivals.aspx">Arrivals</a></li>
 
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Members <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="AddMember.aspx" onclick="SendListToPage(this.id)">Add</a></li>
-                                <li><a class="dropdown-item" href="DeleteMember.aspx" onclick="SendListToPage(this.id)">Delete</a></li>
+                                <li><a class="dropdown-item" href="AddMember.aspx" ">Add</a></li>
+                                <li><a class="dropdown-item" href="DeleteMember.aspx" ">Delete</a></li>
                             </ul>
                         </li>
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                            <div class="MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand" id="EnvelopeBox" runat="server" onclick="SendListToPage(this.id)" aria-hidden="true"><span runat="server" class="AddPointer MessageBox" id="messageBoxCount"></span></div>
+                            <div class="MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand" id="EnvelopeBox" runat="server" href="Map.aspx" aria-hidden="true"><span runat="server" class="AddPointer MessageBox" id="messageBoxCount"></span></div>
                         </li>
                         <li>
                             <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click" /></li>
@@ -89,7 +89,6 @@
 
     <%-- If a message comes in, save it to a list straight away. then wipe the message obj on the server side --%>
     <script>
-
         var check = "<%= LoggedInStatus %>";
 
         //Holds All the messages that get sent to the user
@@ -97,106 +96,81 @@
             var messagesList = new Array();
             var BizEmail = "<%= BizEmail %>";
 
-        if (!!window.EventSource) {
-            // http://localhost:3000/stream
-            // https://membermemessageserver.herokuapp.com/stream
-            var source = new EventSource('https://membermemessageserver.herokuapp.com/stream')
+            var msgCnt = localStorage.getItem("MessageCount");
+            document.getElementById("messageBoxCount").innerText = msgCnt;
 
-            //Listens to see if it there is a message w8ing for him
-            source.addEventListener('message', function (e) {
+            if (!!window.EventSource) {
+                // http://localhost:3000/stream
+                // https://membermemessageserver.herokuapp.com/stream
+                var source = new EventSource('https://membermemessageserver.herokuapp.com/stream')
 
-                document.getElementById("messageBoxCount").value = "";//Reset the Value of the TextBox TO "", So not to repeat 
+                //Listens to see if it there is a message w8ing for him
+                source.addEventListener('message', function (e) {
 
-                messageObj = JSON.parse(e.data)//Parse the data
+                    document.getElementById("messageBoxCount").value = " ";//Reset the Value of the TextBox TO "", So not to repeat 
 
-                //Check to see if the message Is for the Biz
-                if (BizEmail === messageObj.business || messageObj.business === "") {
-                    console.log("Waiting For Messages");
+                    messageObj = JSON.parse(e.data)//Parse the data
 
-                    var msgObj = {};//Create a New Object Each Time A message Comes In
-                    msgObj.status = messageObj.status;
-                    msgObj.message = messageObj.message;
-                    msgObj.email = messageObj.email;
-                    msgObj.longitude = messageObj.longitude;
-                    msgObj.latitude = messageObj.latitude;
-                    msgObj.business = messageObj.business;
-                    msgObj.name = messageObj.name;
+                    console.log("Waithing For Messages");
+                    //Check to see if the message Is for the Biz
+                    if (BizEmail === messageObj.business) {
+                        console.log("Message Recieved!");
 
-                    messagesList.push(msgObj);//Push The Obj to an Array List  ******problem here
+                        var msgObj = {};//Create a New Object Each Time A message Comes In
+                        msgObj.status = messageObj.status;
+                        msgObj.message = messageObj.message;
+                        msgObj.email = messageObj.email;
+                        msgObj.longitude = messageObj.longitude;
+                        msgObj.latitude = messageObj.latitude;
+                        msgObj.business = messageObj.business;
+                        msgObj.name = messageObj.name;
 
-                    //Remove All Empty Messages from the List
-                    messagesList.forEach(function (entry) {
-                        if (entry.business === "" || entry.email === "")
-                            messagesList.splice(entry, 1);
-                        // console.log(entry);//Prints out all the messages
-                    });
+                        messagesList.push(msgObj);//Push The Obj to an Array List  ******problem here
 
-                    /* Update the Header box with the Total Amount of messages that are in the Array
-                    * Only if the number of messages are greater than the amount alreay Present
-                    */
-                    if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList != 0) {
-                        document.getElementById("messageBoxCount").innerText = messagesList.length.toString();
-                        localStorage['messageCount'] = messagesList.length.toString();
+
+                        //CHECK local Storage for other Arivals
+                        var ListOfMessages = JSON.parse(localStorage.getItem("MessageObjects"));
+
+                        if (ListOfMessages != null) {
+
+                            //Check For New Unique Messages in local storage
+                            ListOfMessages.forEach(function (item) {
+                                if (item.name != msgObj.name)
+                                    messagesList.push(item);
+                            });
+                        }
+
+                        //Store The Array as a JSON.stringify in local storage / over write if all ready there
+                        localStorage.setItem("MessageObjects", JSON.stringify(messagesList));
+
+                        document.getElementById("messageBoxCount").innerText = messagesList.length;
+                        localStorage.setItem("MessageCount", messagesList.length);
+
+                        //Reset the Array 
+                        messagesList = [];
                     }
+                }, false)
 
-                    if ((document.getElementById("messageBoxCount").innerText > messagesList.length.toString()) && messagesList != 0) {
-                        var num = Number(document.getElementById("messageBoxCount").innerText);
-                        num++;
-                        localStorage['messageCount'] = num.toString();
-                        document.getElementById("messageBoxCount").innerText = num.toString();
+                //Changes the Message Box Envelope colour - Green Is Connected
+                source.addEventListener('open', function (e) {
+                    document.getElementById("EnvelopeBox").className += " SSEConnected";
+                }, false)
+
+                //Changes the Message Box Envelope colour - FireBrick(Red) Is Disconnected
+                source.addEventListener('error', function (e) {
+                    if (e.target.readyState == EventSource.CLOSED) {
+                        document.getElementById("EnvelopeBox").className += " SSEDisconnected";
                     }
-
-                    if ((document.getElementById("messageBoxCount").innerText < messagesList.length.toString()) && messagesList.length === 0) {
-                        document.getElementById("messageBoxCount").innerText = localStorage['messageCount'];
+                        //Changes the Message Box Envelope colour -Orange Is Connecting...
+                    else if (e.target.readyState == EventSource.CONNECTING) {
+                        document.getElementById("EnvelopeBox").className += " SSEConnecting";
                     }
-
-                    if (document.getElementById("messageBoxCount").innerText === "undefined")
-                        document.getElementById("messageBoxCount").innerText = 0;
-                }
-            }, false)
-
-            //Changes the Message Box Envelope colour - Green Is Connected
-            source.addEventListener('open', function (e) {
-                document.getElementById("EnvelopeBox").className += " SSEConnected";
-            }, false)
-
-            //Changes the Message Box Envelope colour - FireBrick(Red) Is Disconnected
-            source.addEventListener('error', function (e) {
-                if (e.target.readyState == EventSource.CLOSED) {
-                    document.getElementById("EnvelopeBox").className += " SSEDisconnected";
-                }
-                    //Changes the Message Box Envelope colour -Orange Is Connecting...
-                else if (e.target.readyState == EventSource.CONNECTING) {
-                    document.getElementById("EnvelopeBox").className += " SSEConnecting";
-                }
-            }, false)
-        } else {
-            console.log("Your browser doesn't support SSE")
-            alert("Your browser doesn't support SSE");
+                }, false)
+            } else {
+                console.log("Your browser doesn't support SSE")
+                alert("Your browser doesn't support SSE");
+            }
         }
-
-        //Ajax Function That Posts the Array[Objects] to the Relevent Page
-        function SendListToPage(name) {
-            $.ajax({
-                type: "POST",
-                url: "Map.aspx/MessagesToArray",
-                data: "{data:" + JSON.stringify(messagesList) + "}",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                //IMPORTANT! Wait till i get the Response Then Transfer to the Map.aspx page and populate the Map
-                //Only if The btn hit was EnvelopeBox
-                success: function (response) {
-                    if (response && (name == "EnvelopeBox" || name == "Map"))
-                        window.location = "../Web/Map.aspx";
-                },
-                failure: function (response) {
-                    alert(response.d);
-                }
-            });
-            //Clear the Array of Messages
-            messagesList = [];
-        }
-    }
 
     </script>
 
