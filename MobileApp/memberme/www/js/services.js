@@ -204,7 +204,7 @@ angular.module('starter.services', [])
         }       
     }
   }
-})
+}); 
 
  
 // .factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {

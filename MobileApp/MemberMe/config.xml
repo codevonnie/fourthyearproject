@@ -4,8 +4,8 @@
   <description>&#xD;&#xD;
         An Ionic Framework and Cordova project.&#xD;&#xD;
     </description>
-  <author email="you@example.com" href="http://example.com.com/">&#xD;&#xD;
-      Your Name Here&#xD;&#xD;
+  <author email="yvonnegrealy@hotmail.com" href="https://github.com/codevonnie">;
+      Yvonne Grealy;
     </author>
   <content src="index.html"/>
   <access origin="*"/>
@@ -25,6 +25,8 @@
   <plugin name="cordova-plugin-whitelist" spec="~1.3.0"/>
   <plugin name="cordova-plugin-splashscreen" spec="~4.0.0"/>
   <plugin name="cordova-plugin-statusbar" spec="~2.2.0"/>
+  <plugin name="cordova-plugin-geolocation" spec="~2.4.1"/>
+  <plugin name="cordova-plugin-network-information" spec="~1.3.1"/>
   <plugin name="ionic-plugin-keyboard" spec="~2.2.1"/>
   <platform name="android">
     <icon src="resources/android/icon/drawable-ldpi-icon.png" density="ldpi"/>

@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
  
-.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, ConnectivityMonitor, jwtHelper) {
+.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, jwtHelper, ConnectivityMonitor) {
   
   $scope.user={}; //user object for displaying profile details
 
@@ -14,14 +14,7 @@ angular.module('starter.controllers', [])
       password: '',
       type: 'person'
     };
-    //if the user is not connected to internet they can not sign in - popup alert
-    if(!ConnectivityMonitor.isOnline()){
-      var alertPopup = $ionicPopup.alert({
-          title: 'No internet connection',
-          template: "You need an internet connection to login"
-          });
-    }
-  }//end if
+  }
   //if sign in details exist in local storage
   else{
     AuthService.checkAuthOnRefresh(); //check if token has expired
@@ -47,8 +40,8 @@ angular.module('starter.controllers', [])
 
   //login method called when user presses login button - passes entered user details  
   $scope.login = function(user) {
-    
-    //if user is not connected to the internet - popup alert shows
+
+      //if user is not connected to the internet - popup alert shows
     if(!ConnectivityMonitor.isOnline()){
         var alertPopup = $ionicPopup.alert({
             title: 'No internet connection',
@@ -57,7 +50,7 @@ angular.module('starter.controllers', [])
       }
       //if login is successful
       var onSuccess = function () {
-      
+  
         $scope.check={};
         
         //if user password starts with *x* - it's the first time login so open set password modal
@@ -69,7 +62,7 @@ angular.module('starter.controllers', [])
         }
         //else send user to profile tab
         else{
-          $state.go('tab.profile');
+              $state.go('tab.profile');
         }
 
         //called if user cancels changing their password - closes modal
@@ -148,7 +141,7 @@ angular.module('starter.controllers', [])
   })//end LoginCtrl
 
  //Profile view controller
-.controller('ProfileCtrl', function($scope, AuthService, API_ENDPOINT, $http, $state, $ionicListDelegate, ConnectivityMonitor, $ionicPopup) {
+.controller('ProfileCtrl', function($scope, AuthService, API_ENDPOINT, $http, $state, $ionicListDelegate, $ionicPopup, ConnectivityMonitor) {
   
     $scope.profile={}; //empty profile object
     $scope.origProfile={};
@@ -196,6 +189,7 @@ angular.module('starter.controllers', [])
     }
     //submit function for profile edits
     $scope.submit = function() {
+      
       if(!ConnectivityMonitor.isOnline()){
         var alertPopup = $ionicPopup.alert({
             title: 'No internet connection',
@@ -250,16 +244,25 @@ angular.module('starter.controllers', [])
    
 })//end ProfileCtrl
 
-.controller('SettingsCtrl', function($scope, AuthService, $state) {
+.controller('SettingsCtrl', function($scope, AuthService, $state, $ionicPopup) {
   
     //logout function
     $scope.logout = function() {
-      
+        
+        var confirmPopup = $ionicPopup.confirm({
+        title: 'Logout',
+        template: 'Are you sure you want to logout?'
+      });
+   //call confirmation popup
+   confirmPopup.then(function(res) {
+     //if user selects ok
+     if(res) {
       AuthService.logout(); //call AuthService method logout
       $state.go('login'); //go to login view
-
-    };
-})//SettingsCtrl
+     }
+   })
+  }//logout
+ }) //SettingsCtrl
 
 
 //Controller for user if they are having an issue while on the business premises
@@ -279,21 +282,31 @@ angular.module('starter.controllers', [])
    confirmPopup.then(function(res) {
      //if user selects ok
      if(res) {
-       //get user profile details from local storage
-      var sosDetails = window.localStorage.getItem('profile');
-      sosDetails = JSON.parse(sosDetails); //parse object
-      $scope.sos.email = sosDetails.email; //save person email to sos object
-      $scope.sos.business = sosDetails.businessName;
-      $scope.sos.name = sosDetails.name;
-      var sosDetails = window.localStorage.getItem('latLng'); //get user lat and long (set below)
-      sosDetails = JSON.parse(sosDetails); //parse object
-      //save user lat and long coordinates to sos object
-      $scope.sos.latitude = sosDetails.lat; 
-      $scope.sos.longitude = sosDetails.lng;
-      sosDetails=$scope.sos;
-      //calls service sendMessage and passes sosDetails object
-      AuthService.sendMessage(sosDetails).then(onSuccess, onError);
 
+       if(!ConnectivityMonitor.isOnline()){
+        var alertPopup = $ionicPopup.alert({
+            title: 'No internet connection',
+            template: "You need an internet connection to send SOS"
+            });
+        $scope.toggle=false; //hide map div on sos page
+
+      }
+      else{
+        //get user profile details from local storage
+        var sosDetails = window.localStorage.getItem('profile');
+        sosDetails = JSON.parse(sosDetails); //parse object
+        $scope.sos.email = sosDetails.email; //save person email to sos object
+        $scope.sos.business = sosDetails.businessName;
+        $scope.sos.name = sosDetails.name;
+        var sosDetails = window.localStorage.getItem('latLng'); //get user lat and long (set below)
+        sosDetails = JSON.parse(sosDetails); //parse object
+        //save user lat and long coordinates to sos object
+        $scope.sos.latitude = sosDetails.lat; 
+        $scope.sos.longitude = sosDetails.lng;
+        sosDetails=$scope.sos;
+        //calls service sendMessage and passes sosDetails object
+        AuthService.sendMessage(sosDetails).then(onSuccess, onError);
+      }
     }
       else {
       //if user selects to cancel sending SOS
@@ -322,7 +335,8 @@ angular.module('starter.controllers', [])
     };
 
 
-  }
+  }//end submit
+
   //if user is not connected to the internet - popup alert shows
   if(!ConnectivityMonitor.isOnline()){
         var alertPopup = $ionicPopup.alert({
@@ -332,19 +346,10 @@ angular.module('starter.controllers', [])
       $scope.toggle=false; //hide map div on sos page
 
   }
+
   //function to reload page if user connects to internet or gps after initially not having them turned on
   $scope.reload = function(){
     $state.reload();
-
-        //if user is not connected to the internet - popup alert shows
-        if(!ConnectivityMonitor.isOnline()){
-            var alertPopup = $ionicPopup.alert({
-                title: 'No internet connection',
-                template: "You need an internet connection to send SOS"
-                });
-          $scope.toggle=false; //hide map div
-
-      }
   }//end reload
 
   //if device is connected to the internet
@@ -411,6 +416,5 @@ angular.module('starter.controllers', [])
         $scope.toggle=false; //hide map div
     });  
   }//end
-  
+    
 });//end SosCtrl
- 
