@@ -20,8 +20,9 @@ public partial class Arivals : System.Web.UI.Page
     private TempCustomer _TempCust = new TempCustomer();
     private Boolean _newCust;
     private string _custJson="null";
+    private ConvertToMillSec convert = new ConvertToMillSec();
 
-   
+
     protected string GetCustomer { get { return _custJson; } }
     protected Boolean NewPerson { get { return _newCust; } }
 
@@ -228,15 +229,19 @@ public partial class Arivals : System.Web.UI.Page
 
         //Check To see if the person is just checking in
         if (btn.ID == "BtnCheckin")
+        {
             cust.tempEmail = cust.email;
+            cust.lastVisited = convert.DateToMillSec(DateTime.Now).ToString();//Todays Current DateTim Now In Millseconds
+        }
         else
         {
             if (btn.ID == "BtnRemoveGuard" || btn.ID == "BtnRemoveMembership")
                 Cache["DD_CHOICE"] = btn.ID;
+
             cust = UpdateCustObj();
         }
 
-        ConvertToMillSec convert = new ConvertToMillSec();
+        
 
         var request = new RestRequest("updatePerson", Method.PUT);
         request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
@@ -246,15 +251,21 @@ public partial class Arivals : System.Web.UI.Page
         request.AddParameter("phone", cust.phone);
         request.AddParameter("iceName", cust.iceName);
         request.AddParameter("icePhone", cust.icePhone);
-        request.AddParameter("joined", cust.joined);//milliseconds ?
+        request.AddParameter("joined", cust.joined);
         request.AddParameter("email", cust.email);
         request.AddParameter("imgUrl", cust.imgUrl);
         request.AddParameter("guardianName", cust.guardianName);
         request.AddParameter("guardianNum", cust.guardianNum);
         request.AddParameter("tempEmail", cust.tempEmail);
 
+        request.AddParameter("lastVisited", cust.lastVisited);
+
         if (btn.ID == "BtnCheckin")
-            cust.visited++;
+        {
+            int num = int.Parse(cust.visited);
+            num++;
+            cust.visited= num.ToString();
+        }
 
         request.AddParameter("visited", cust.visited);
 
@@ -279,6 +290,7 @@ public partial class Arivals : System.Web.UI.Page
         if (resObj.success == true)
         {
 
+            //Pass the Objects to Js here
             if ((Boolean)Cache.Get("CheckingIn")==true)
             {
                 _newCust = true;

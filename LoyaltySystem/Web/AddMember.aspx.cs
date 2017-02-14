@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Web;
 using System.Web.Configuration;
@@ -56,22 +57,16 @@ public partial class AddMember : System.Web.UI.Page
 
 
     //---------------- Create/Return Customer Object ----------------
-    private Customer createCustomer()
+    private TempCustomer createCustomer()
     {
-        Customer customer = new Customer();
+        TempCustomer customer = new TempCustomer();
         customer.name = TbName.Text.ToString();
         customer.address = TbAddress.Text.ToString();
-        customer.dob = Convert.ToDateTime(TbDob.Text);
-        customer.contactNumber = TbContactNum.Text;
+        customer.dob = TbDob.Text;
+        customer.phone = TbContactNum.Text.ToString();
         customer.icePhone = TbEmergencyNum.Text;
         customer.iceName = TbEmergencyName.Text;
         customer.email = TbEmail.Text.ToString();
-        customer.date = DateTime.Now;//Todays Date
-
-        //if (TbMember.Text != "")
-        //    customer.membership = Convert.ToDateTime(TbMember.Text);//Todays Date
-
-
 
         customer.guardianName = TbGuardianName.Text.ToString();
         customer.guardianNum = TbGuardianNumber.Text.ToString();
@@ -83,7 +78,7 @@ public partial class AddMember : System.Web.UI.Page
     //NEEDS VALIDATION ON INPUTS
     private void newCustomerRequest(CloudinaryApi.results imgDetails)
     {
-        Customer customer = createCustomer();
+        TempCustomer customer = createCustomer();
         ConvertToMillSec convert = new ConvertToMillSec();
 
         var client = new RestClient(port);
@@ -94,7 +89,7 @@ public partial class AddMember : System.Web.UI.Page
         request.AddParameter("name", customer.name);
         request.AddParameter("password", "*x*" + password);//random password
         request.AddParameter("email", customer.email);
-        request.AddParameter("phone", customer.contactNumber);
+        request.AddParameter("phone", customer.phone);
         request.AddParameter("address", customer.address);
         request.AddParameter("iceName", customer.iceName);
         request.AddParameter("icePhone", customer.icePhone);
@@ -102,8 +97,8 @@ public partial class AddMember : System.Web.UI.Page
 
         request.AddParameter("bEmail", Decrypt.Base64Decode(settings._biz_Email.ToString()));
 
-        var dobMill = convert.DateToMillSec(customer.dob);
-        request.AddParameter("dob", dobMill);
+        var dobMill = convert.DateToMillSec(Convert.ToDateTime(customer.dob));
+        request.AddParameter("dob", dobMill.ToString());
 
         //ONLY IF UNDER 18
         if (customer.guardianName != "" && customer.guardianNum != "")
@@ -121,8 +116,24 @@ public partial class AddMember : System.Web.UI.Page
         if (resObj.success == true)
         {
             DivSuccess.Visible = true;
+            ClearAddForm();
         }
     }
+
+    //Clear The Form
+    private void ClearAddForm()
+    {
+        TbAddress.Text = "";
+        TbContactNum.Text = "";
+        TbDob.Text = "";
+        TbEmail.Text = "";
+        TbEmergencyName.Text = "";
+        TbGuardianName.Text = "";
+        TbAddress.Text = "";
+        TbEmergencyNum.Text = "";
+        TbName.Text = "";
+    }
+   
 
 
     // --------------------------- Upload image To The Database On Cloudinary --------------------------- 

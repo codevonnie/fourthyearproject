@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="/MasterPage.master" AutoEventWireup="true" CodeFile="LoginPage.aspx.cs" Inherits="LoginPage" %>
+﻿<%@ Page Title="Login" Language="C#" MasterPageFile="/MasterPage.master" AutoEventWireup="true" CodeFile="LoginPage.aspx.cs" Inherits="LoginPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
@@ -164,7 +164,7 @@
                             <span class="input-group-addon">
                                 <i class="fa fa-lock iconWidth"></i>
                             </span>
-                            <asp:TextBox ID="TbPassword" runat="server" class="form-control" placeholder="Password" TextMode="Password"></asp:TextBox>
+                            <asp:TextBox ID="TbPassword" runat="server" CssClass="form-control" placeholder="Password" TextMode="Password"></asp:TextBox>
                         </div>
 
                         <%--Error Messages--%>
@@ -190,7 +190,7 @@
                     <%--Footer--%>
                     <div class="modal-footer">                       
                         <div class="form-group">
-                            <asp:Button class="btn btn-success btn-lg btn-block" ID="BtnSignIn" runat="server" Text="Sign In" OnClick="singInBtn_Click" />
+                            <asp:Button CssClass="btn btn-success btn-lg btn-block" ID="BtnSignIn" runat="server" Text="Sign In" OnClick="singInBtn_Click" />
                         </div>
 
                         <div class="form-group">
@@ -291,7 +291,7 @@
 
                     <!--Modal Footer-->
                     <div class="modal-footer RoundBottom">
-                        <asp:Button class="btn btn-block btn-success btn-lg" ID="BtnSubmitCompany" runat="server" Text="Submit" OnClick="BtnCheckPersonIn_Click" />
+                        <asp:Button CssClass="btn btn-block btn-success btn-lg" ID="BtnSubmitCompany" runat="server" Text="Submit" OnClick="BtnCheckPersonIn_Click" />
                     </div>
                 </div>
             </div>

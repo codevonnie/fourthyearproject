@@ -117,19 +117,16 @@ function RemoveMessage() {
         if (MessageObjects.hasOwnProperty(key)) {
             var pin = MessageObjects[key];
 
-            //console.log("Pin: ", LongClick + " : " + LatClick + " Clicked");
             //Remove The Pin Clicked From The Array
             if (pin.longitude == LongClick && pin.latitude == LatClick) {
                 MessageObjects.splice(key);
-                console.log("Pin: ", pin.longitude + " : " + pin.latitude + " Removed");
+
                 //Clear Local Storage
                 localStorage.clear("MessageObjects");
-
                 num--;
             }
         }
     }
-
     localStorage.setItem("MessageCount", num);
     document.getElementById("messageBoxCount").innerText = num;
     //Reset Local Storage with new Messages

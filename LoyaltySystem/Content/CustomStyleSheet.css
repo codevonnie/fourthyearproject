@@ -11,6 +11,10 @@
     float: left;
 }
 
+.HeaderColour{
+    color:lightblue;
+}
+
 
 .NavDDL {
     padding: 10px 10px !important;
@@ -28,6 +32,10 @@
 
 .MarginTop35 {
     margin-top: 35px;
+}
+
+.MarginBot60 {
+    margin-bottom: 60px;
 }
 
 .MarginRight30 {
@@ -182,6 +190,19 @@
 }
 
 
+.BtnDefaultPage {
+    width: 33%;
+    overflow: hidden;
+}
+
+
+.BtnGroupDefault {
+    margin-top: 5%;
+}
+
+
+
+
 /*ICON CSS Here*/
 .has-success .form-control-feedback {
     margin-top: 5px;
@@ -191,9 +212,6 @@
     margin-top: 5px;
 }
 
-/*fa-envelope-o {
-    background-color: red;
-}*/
 
 
 

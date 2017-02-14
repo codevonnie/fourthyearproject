@@ -4,29 +4,79 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
 
+
+    <style>
+        .bar {
+            fill: palevioletred;
+        }
+
+            .bar:hover {
+                fill: lightpink;
+            }
+
+        .axis--x path {
+            display: none;
+        }
+    </style>
+
+
     <div class="text-center alignCenter HalfWidth">
 
-        <h1 class="page-header">Dashboard</h1>
+        <div class="btn-group btn-group-lg TxtAreaSize BtnGroupDefault" role="group">
+            <button type="button" class="btn btn-info BtnDefaultPage" onclick="DisplayArivals(); TopTenToggle();">Arrivals</button>
+            <button type="button" id="BtnTopVisited" runat="server" onserverclick="BtnTopVisited_Click" class="btn btn-info BtnDefaultPage">Top Visitors</button>
+            <button type="button" id="BtnBarChart" class="btn btn-info BtnDefaultPage" onserverclick="BtnBarChart_ServerClick" runat="server">BarChart</button>
+        </div>
 
+        <h1 id="HeaderTitle" class="page-header HeaderColour"></h1>
 
         <div id="ArivalsData" class="row placeholders text-capitalize">
         </div>
+    </div>
 
+    <div id="chart" class="center-block MarginBot60"></div>
 
-        <h2 class="sub-header">Data From Neo4j hosted on heroku</h2>
-        <div class="table-responsive">
-            <asp:datagrid runat="server" id="GridView1" autogeneratecolumns="False" cellpadding="0" cssclass="table table-striped">
-                <Columns>
-                    <asp:BoundColumn HeaderText="Name" DataField="name" />
-                    <asp:BoundColumn HeaderText="Address" DataField="address" />
-                    <asp:BoundColumn HeaderText="Phone" DataField="phone" />
-                    <asp:BoundColumn HeaderText="Email" DataField="email" />
-                </Columns>
-            </asp:datagrid>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="../Scripts/BarChart.js"></script>
+
+    <script>
+        //Bind Server Data to js
+        var arr = <%=VisitData%>;
+    </script>
+    
+    
+
+    <%--Modal Top Ten--%>
+    <div id="TopTenModal" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <h1 class="text-center">Top 10 Visitors</h1>
+                </div>
+
+                <%--Modal Body--%>
+                <div class="modal-body">
+                    <ul class="list-group" id="UlTopChart" runat="server">
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
+
     <%--Get Arivals from local storage--%>
     <script src="../Scripts/DisplayArivals.js"></script>
+
+    <script>
+        function TopTenToggle() {
+            var x = document.getElementById('TopTenModal');
+            if (x.style.display === 'none') {
+                x.style.display = 'block';
+            } else {
+                x.style.display = 'none';
+            }
+        }
+    </script>
+
 </asp:Content>
 

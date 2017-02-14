@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Message Map" Language="C#" MasterPageFile="/MasterPage.master" AutoEventWireup="true" CodeFile="Map.aspx.cs" Inherits="Map" %>
+﻿<%@ Page Title="SOS Message" Language="C#" MasterPageFile="/MasterPage.master" AutoEventWireup="true" CodeFile="Map.aspx.cs" Inherits="Map" %>
 
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
@@ -8,8 +8,8 @@
     <!--Allows access to Master Page Methods *IMPORTANT*-->
     <%@ MasterType VirtualPath="~/MasterPage.Master" %>
 
-    <h1 class="text-center">Google Maps</h1>
-
+    <h1 class="text-center page-header">SOS Messages</h1>
+    <br />
     <!-- Js attaches to the Div id map-->
     <div id="map"></div>
 

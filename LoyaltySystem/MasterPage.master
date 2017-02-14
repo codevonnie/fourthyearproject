@@ -64,7 +64,7 @@
 
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                            <div class="MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand" id="EnvelopeBox" runat="server" href="Map.aspx" aria-hidden="true"><span runat="server" class="AddPointer MessageBox" id="messageBoxCount"></span></div>
+                            <a class="MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand" id="EnvelopeBox" runat="server" href="Web/Map.aspx" aria-hidden="true"><span runat="server" class="AddPointer MessageBox" id="messageBoxCount"></span></a>
                         </li>
                         <li>
                             <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click" /></li>
@@ -153,17 +153,17 @@
 
                 //Changes the Message Box Envelope colour - Green Is Connected
                 source.addEventListener('open', function (e) {
-                    document.getElementById("EnvelopeBox").className += " SSEConnected";
+                    document.getElementById("EnvelopeBox").className = "MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand SSEConnected";
                 }, false)
 
                 //Changes the Message Box Envelope colour - FireBrick(Red) Is Disconnected
                 source.addEventListener('error', function (e) {
                     if (e.target.readyState == EventSource.CLOSED) {
-                        document.getElementById("EnvelopeBox").className += " SSEDisconnected";
+                        document.getElementById("EnvelopeBox").className = "MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand SSEDisconnected";
                     }
                         //Changes the Message Box Envelope colour -Orange Is Connecting...
                     else if (e.target.readyState == EventSource.CONNECTING) {
-                        document.getElementById("EnvelopeBox").className += " SSEConnecting";
+                        document.getElementById("EnvelopeBox").className = "MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand SSEConnecting";
                     }
                 }, false)
             } else {

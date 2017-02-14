@@ -7,22 +7,10 @@ using System.Web;
 /// Summary description for Customer
 /// </summary>
 
-public class Customer
+public class CustomersList
 {
-    public string name { get; set; }
-    public string address { get; set; }
-    public string email { get; set; }
-    public string phone { get; set; }
-    public DateTime dob { get; set; }
-    public string contactNumber { get; set; }
-    public string icePhone { get; set; }
-    public string iceName { get; set; }
-    public DateTime date { get; set; }
-    public DateTime joined { get; set; }//milliseconds ?
-    public string guardianNum { get; set; }
-    public string guardianName { get; set; }
-    public string customerToken { get; set; }
-    public string imgUrl { get; set; }
+    public string success { get; set; }
+    public List<TempCustomer> message { get; set; }
 }
 
 public class TempCustomer
@@ -42,5 +30,6 @@ public class TempCustomer
     public string guardianNum { get; set; }
     public string membership { get; set; }
     public string tempPwd { get; set; }
-    public int visited { get; set; }
+    public string visited { get; set; }
+    public string lastVisited { get; set; }
 }
