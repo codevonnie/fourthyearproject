@@ -39,22 +39,8 @@ $dark:                            #444 !default;
   font-weight: bolder !important;
   font-size: 1em !important; }
 
-.sos {
-  text-align: center;
-  border-color: transparent !important;
-  background-color: transparent !important; }
-
-.sos-list {
-  border-color: darkred !important; }
-
 .align-qr {
   padding-left: 10px; }
-
-.list {
-  margin-top: 10%; }
-
-.scroll {
-  height: 100%; }
 
 #map {
   width: 100%;
@@ -83,8 +69,11 @@ $dark:                            #444 !default;
 .content-stable {
   background-color: #CFD8DC; }
 
-.content-blue {
+.content-profile {
   background-color: #8BB3F8; }
+
+.content-sos {
+  background-color: #95CBF1; }
 
 .logo {
   height: 50%;

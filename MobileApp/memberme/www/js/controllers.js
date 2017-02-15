@@ -3,21 +3,24 @@ angular.module('starter.controllers', [])
 .controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, jwtHelper, ConnectivityMonitor, $ionicLoading) {
   
   $scope.user={}; //user object for displaying profile details
-  $scope.logo="img/logo.png";
+  $scope.logo="img/logo.png"; //sample logo
 
   var logInDetails = window.localStorage.getItem('signIn'); //check localStorage for stored sign in details
 
-  $scope.loginButton=true;
+  $scope.loginButton=true; //hide login button until email is entered
 
+  //validated entered email - fired on ng-change event
   $scope.validateEmail=function(email){
-
+    //pattern to test email against
     var re=/^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+\.([a-zA-Z])+([a-zA-Z])+/;
     if (email == '' || !re.test(email))
     {
-      $scope.emailVal=true;
+      //invalid email - show error message and continue to disable login button
+      $scope.emailVal=true; 
       $scope.loginButton=true;
     }
     else{
+      //on valid email - hide error message and enable login button
       $scope.emailVal=false;
       $scope.loginButton=false;
     }
@@ -68,8 +71,8 @@ angular.module('starter.controllers', [])
       //if login is successful
       var onSuccess = function () {
         
-        $ionicLoading.hide();
-        $scope.check={};
+        $ionicLoading.hide(); //hide loading icon if call is successful
+        $scope.check={}; //object for new password entry
         
         //if user password starts with *x* - it's the first time login so open set password modal
         if(user.password.startsWith("*x*")){
@@ -145,7 +148,8 @@ angular.module('starter.controllers', [])
     
       //if login is not successful, alert user with popup and allow them to reenter deails
       var onError = function () {
-        $ionicLoading.hide();
+        $ionicLoading.hide(); //hide loading animation if call is unsuccessful
+        //error message popup
         var alertPopup = $ionicPopup.alert({
             title: 'Login failed!',
             template: "Check details and try again"
@@ -274,6 +278,7 @@ angular.module('starter.controllers', [])
    
 })//end ProfileCtrl
 
+//controller for logging out of app - injected into tabs so accessible from all pages
  .controller('LogoutCtrl', function($scope, AuthService, $state, $ionicPopup) {
   
     //logout function
@@ -327,7 +332,7 @@ angular.module('starter.controllers', [])
         var sosDetails = window.localStorage.getItem('profile');
         sosDetails = JSON.parse(sosDetails); //parse object
         $scope.sos.email = sosDetails.email; //save person email to sos object
-        $scope.sos.business = sosDetails.businessName;
+        $scope.sos.business = sosDetails.bEmail;
         $scope.sos.name = sosDetails.name;
         var sosDetails = window.localStorage.getItem('latLng'); //get user lat and long (set below)
         sosDetails = JSON.parse(sosDetails); //parse object
