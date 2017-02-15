@@ -11,8 +11,8 @@
     float: left;
 }
 
-.HeaderColour{
-    color:lightblue;
+.HeaderColour {
+    color: lightblue;
 }
 
 
@@ -42,8 +42,8 @@
     margin-right: 30px;
 }
 
-.MarginRight50 {
-    margin-right: 50px;
+.MarginRight100 {
+    margin-right:100px;
 }
 
 .MarginTop60 {
@@ -287,6 +287,21 @@
 .HalfWidth {
     width: 50%;
 }
+
+
+/*barchar css here*/
+.bar {
+    fill: gainsboro;
+}
+
+    .bar:hover {
+        fill: darkseagreen;
+    }
+
+.axis--x path {
+    display: none;
+}
+
 
 
 

@@ -158,7 +158,7 @@ public partial class _Default : System.Web.UI.Page
     {
         var client = new RestClient(port);
 
-        var request = new RestRequest("topTenVisited", Method.POST);
+        var request = new RestRequest("visitedTotal", Method.POST);
         request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
         request.AddParameter("bEmail", Decrypt.Base64Decode(settings._biz_Email.ToString()));
 
@@ -174,18 +174,23 @@ public partial class _Default : System.Web.UI.Page
         }
     }
 
+    /* Loop through the List of custObjList objects, and add the month / LastVisited to a Dictionary
+     * Sort the List By Visits and then 
+     */
     private void SortAllVisited(List<TempCustomer> custObjList)
     {
-
         Data data = new Data();
         Dictionary<string, int> tempDic = new Dictionary<string, int>();
 
         foreach (var cust in custObjList)
         {
+            //Convert the Mill to DateTime
             var month = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.lastVisited));
 
+            //Get the current month by number eg 1-12
             string CurrentMonth = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(month.Month);
 
+            //If the Dic Has the month already add 1 to the value else add a new month
             if (tempDic.ContainsKey(CurrentMonth))
             {
                 int value;
@@ -196,6 +201,8 @@ public partial class _Default : System.Web.UI.Page
                 tempDic.Add(CurrentMonth, 0);
 
         }
+
+        //Temp Data for chart
         tempDic.Add("Jan", 20);
         tempDic.Add("April", 54);
         tempDic.Add("Dec", 145);
@@ -203,14 +210,15 @@ public partial class _Default : System.Web.UI.Page
         tempDic.Add("June", 35);
         tempDic.Add("July", 75);
 
-
         //Convert The Dictonary To A List of Objects
         _custList.data = tempDic.Select(p => new Data { Month = p.Key, Visits = p.Value }).ToList();
+
+        //Sort List By Visits Number
+        _custList.data = _custList.data.OrderBy(x => x.Visits).ToList();
+
+        //Register the js script
         Page.ClientScript.RegisterStartupScript(this.GetType(), "DisplayBarChart", "DisplayChart()", true);
     }
-
-
-
 
 
     protected void BtnBarChart_ServerClick(object sender, EventArgs e)

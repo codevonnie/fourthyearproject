@@ -1,19 +1,21 @@
 ﻿
 var custList;
 var element = document.getElementById("ArivalsData");
+var x = document.getElementById('TopTenModal');
 
 
 function DisplayArivals() {
     document.getElementById("HeaderTitle").innerText = "Today's Arrivals";
+    document.getElementById('TopTenModal').style.display = 'none';
+    document.getElementById('chart').style.display = 'none';
+
     if (localStorage) {
-        console.log("Local Storage Avail");
         custList = JSON.parse(localStorage.getItem("TodaysArivals"));
 
         if (custList != null)
             CreateArivals();
         else {
             var noArrivals = document.createElement("div");
-            noArrivals.className += "text-center";
             noArrivals.innerHTML = "<h4>No One Checked In Today So Far</h4>";
             element.appendChild(noArrivals);
         }

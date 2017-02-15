@@ -1,6 +1,7 @@
 ﻿function DisplayChart() {
 
     document.getElementById("HeaderTitle").innerText = "Quietest Months";
+    document.getElementById('chart').style.display = 'block';
 
     var data =[];
 

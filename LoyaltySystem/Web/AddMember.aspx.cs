@@ -3,6 +3,7 @@ using RestSharp;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Security;
@@ -82,7 +83,10 @@ public partial class AddMember : System.Web.UI.Page
         ConvertToMillSec convert = new ConvertToMillSec();
 
         var client = new RestClient(port);
+
+        //Generate a random Password and replaces all non alphanumeric wiht numbers
         string password = Membership.GeneratePassword(6, 3);
+        password = Regex.Replace(password, @"[^a-zA-Z0-9]", m => "9");
 
         var request = new RestRequest("addPerson", Method.POST);
         request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));

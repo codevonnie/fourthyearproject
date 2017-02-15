@@ -4,38 +4,6 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
 
-
-    <style>
-        .bar {
-            fill: palevioletred;
-        }
-
-            .bar:hover {
-                fill: lightpink;
-            }
-
-        .axis--x path {
-            display: none;
-        }
-    </style>
-
-
-    <div class="text-center alignCenter HalfWidth">
-
-        <div class="btn-group btn-group-lg TxtAreaSize BtnGroupDefault" role="group">
-            <button type="button" class="btn btn-info BtnDefaultPage" onclick="DisplayArivals(); TopTenToggle();">Arrivals</button>
-            <button type="button" id="BtnTopVisited" runat="server" onserverclick="BtnTopVisited_Click" class="btn btn-info BtnDefaultPage">Top Visitors</button>
-            <button type="button" id="BtnBarChart" class="btn btn-info BtnDefaultPage" onserverclick="BtnBarChart_ServerClick" runat="server">BarChart</button>
-        </div>
-
-        <h1 id="HeaderTitle" class="page-header HeaderColour"></h1>
-
-        <div id="ArivalsData" class="row placeholders text-capitalize">
-        </div>
-    </div>
-
-    <div id="chart" class="center-block MarginBot60"></div>
-
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="../Scripts/BarChart.js"></script>
 
@@ -43,8 +11,27 @@
         //Bind Server Data to js
         var arr = <%=VisitData%>;
     </script>
-    
-    
+
+
+    <div class="text-center alignCenter HalfWidth">
+
+        <div class="btn-group btn-group-lg TxtAreaSize BtnGroupDefault" role="group">
+            <button type="button" class="btn btn-info BtnDefaultPage" onclick="DisplayArivals()">Arrivals</button>
+            <button type="button" id="BtnTopVisited" runat="server" onserverclick="BtnTopVisited_Click" class="btn btn-info BtnDefaultPage">Top Visitors</button>
+            <button type="button" id="BtnBarChart" class="btn btn-info BtnDefaultPage" onserverclick="BtnBarChart_ServerClick" runat="server">BarChart</button>
+        </div>
+
+        <h1 id="HeaderTitle" class="page-header HeaderColour"></h1>
+
+        <div id="ArivalsData" class="row placeholders text-capitalize">
+        </div>         
+    </div>
+     <div id="chart" class="center-block MarginBot60"></div>
+
+ 
+
+
+
 
     <%--Modal Top Ten--%>
     <div id="TopTenModal" style="display: none;">

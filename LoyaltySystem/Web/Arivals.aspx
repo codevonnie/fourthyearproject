@@ -94,13 +94,13 @@
                                 </li>
 
                                 <li>
-                                    <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BntResetPwd" runat="server" Text="Reset Password" OnClick="UpdatePersonInfo_Click" />
+                                    <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BntResetPwd" runat="server" Text="Reset Password" OnClick="BntResetPwd_Click" />
                                 </li>
                             </div>
                         </ul>
                     </div>
 
-                    <asp:Label ID="LblName" runat="server" CssClass="h1 MarginRight50 text-capitalize"></asp:Label>
+                    <asp:Label ID="LblName" runat="server" CssClass="h1 MarginRight100 text-capitalize"></asp:Label>
 
                     <div class="fa fa-times fa-2x CloseModal" id="BtnCloseModal" onclick="toggleModal()"></div>
 
@@ -121,7 +121,7 @@
 
                     <div class="container-fluid LineHeight25 text-left maxWidthContainer">
 
-                        <div id="Membership" runat="server">
+                        <div id="MembershipControl" runat="server">
                             <div class="text-muted">
                                 <b>MemberShip Finished: </b>
                                 <span>
@@ -183,6 +183,15 @@
                                 </span>
                             </div>
                         </div>
+
+                         <div id="LastVisited" runat="server">
+                            <div class="text-muted">
+                                <b>Last Time Visited:</b>
+                                <span>
+                                    <asp:Label ID="LblLastVisited" runat="server"></asp:Label>
+                                </span>
+                            </div>
+                        </div>
                         <!--HideGuard-->
                     </div>
                     <!--Container-->
@@ -203,6 +212,10 @@
                             <strong>Update Successful!</strong>
                         </div>
                     </div>
+
+                        <div id="DivTempPwd" class="alert alert-success text-center" runat="server" role="alert">
+    <%--                        <strong>Update Successful!</strong>--%>
+                        </div>
 
                     <div id="DivSuccessCheckIn" runat="server">
                         <div class="alert alert-success text-center" role="alert">
@@ -278,6 +291,7 @@
                         //CHECK local Storage for other Arivals
                         var ListOfCust =JSON.parse(localStorage.getItem("TodaysArivals"));
                         
+                        //Loop over all the Objects From Local Storage
                         if(ListOfCust!=null){
                             //Check For New Arivals Only and add to Array
                             ListOfCust.forEach(function (entry) {
@@ -289,6 +303,7 @@
                                     custList.push(entry);
                             });                          
                         }
+
                         //Store The Array as a JSON.stringify in local storage / over write if all ready there
                         localStorage.setItem("TodaysArivals", JSON.stringify(custList));
                     }

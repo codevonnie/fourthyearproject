@@ -118,19 +118,19 @@ function RemoveMessage() {
             var pin = MessageObjects[key];
 
             //Remove The Pin Clicked From The Array
-            if (pin.longitude == LongClick && pin.latitude == LatClick) {
-                MessageObjects.splice(key);
+            if (pin.longitude === LongClick && pin.latitude === LatClick) {
+                MessageObjects.splice(key, 1);
 
-                //Clear Local Storage
-                localStorage.clear("MessageObjects");
                 num--;
+                localStorage.setItem("MessageCount", num);
+                document.getElementById("messageBoxCount").innerText = num;
+                //Reset Local Storage with new Messages
+                localStorage.setItem("MessageObjects", JSON.stringify(MessageObjects));
+                return;
             }
         }
     }
-    localStorage.setItem("MessageCount", num);
-    document.getElementById("messageBoxCount").innerText = num;
-    //Reset Local Storage with new Messages
-    localStorage.setItem("MessageObjects", JSON.stringify(MessageObjects));
+
 }
 
 
