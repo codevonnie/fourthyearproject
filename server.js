@@ -91,19 +91,19 @@ router.post('/authenticate', function (req, res) {
             res.json({
               success: true,
               name: record._fields[0].properties.name,
-              dob: record._fields[0].properties.dob.toString(),
+              dob: record._fields[0].properties.dob,
               address: record._fields[0].properties.address,
               phone: record._fields[0].properties.phone,
               iceName: record._fields[0].properties.iceName,
               icePhone: record._fields[0].properties.icePhone,
-              joined: record._fields[0].properties.joined.toString(),
+              joined: record._fields[0].properties.joined,
               email: record._fields[0].properties.email,
               imgUrl: record._fields[0].properties.imgUrl,
               guardianName: record._fields[0].properties.guardianName,
               guardianNum: record._fields[0].properties.guardianNum,
-              visited: record._fields[0].properties.visited.toString(),
-              membership: record._fields[0].properties.membership.toString(),
-              lastVisited: record._fields[0].properties.lastVisited.toString(),
+              visited: record._fields[0].properties.visited,
+              membership: record._fields[0].properties.membership,
+              lastVisited: record._fields[0].properties.lastVisited,
 
               bEmail: record._fields[1].properties.email,//BUSINESS EMAIL
             });
@@ -130,13 +130,13 @@ router.post('/authenticate', function (req, res) {
 router.post('/addCompany', function (req, res) {
   var session = driver.session();
 
-  var business = new Business();                //create a new instance of the Business model
-  business.name = req.body.name.trim().toString();         //Set the Business name (comes from the request)
-  business.address = req.body.address.trim().toString();   //Set the Business address
-  business.phone = req.body.phone.trim().toString();       //Set the Business Phone Num
-  business.email = req.body.email.trim().toLowerCase();       //Set the Business Email
-  business.password = req.body.password.trim().toString(); //Set the Business Password
-  business.emergencyNum = req.body.emergencyNum.trim().toString(); //Set the Business Password
+  var business = new Business();                                    //create a new instance of the Business model
+  business.name = req.body.name.trim().toString();                  //Set the Business name (comes from the request)
+  business.address = req.body.address.trim().toString();            //Set the Business address
+  business.phone = req.body.phone.trim().toString();                //Set the Business Phone Num
+  business.email = req.body.email.trim().toString().toLowerCase();  //Set the Business Email
+  business.password = req.body.password.trim().toString();          //Set the Business Password
+  business.emergencyNum = req.body.emergencyNum.trim().toString();  //Set the Business Password
 
   session
     .run("Create (b:Business {name:'" + business.name + "', address:'" + business.address + "', phone:'" + business.phone + "',emergencyNum:'" + business.emergencyNum + "', email:'" + business.email + "', password:'" + business.password + "'})")
@@ -173,7 +173,7 @@ router.post('/addPerson', function (req, res) {
   person.lastVisited = mill.toString();
 
   session
-    .run("MATCH (b:Business {email: '" + req.body.bEmail.trim().toLowerCase() + "'}) Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:'" + person.joined + "', dob:'" + person.dob + "', email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', visited:'" + person.visited + "', membership:'" + person.membership + "', lastVisited:'" + person.lastVisited + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
+    .run("MATCH (b:Business {email: '" + req.body.bEmail.trim().toLowerCase() + "'}) Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:'" + person.joined + "', dob:'" + person.dob + "', email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', visited:'" + person.visited + "', membership:'" + person.membership + "', lastVisited:'" + person.lastVisited + "', publicImgId:'" + person.publicImgId + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
     .then(function () {
       console.log("Person created");
       res.json({ message: 'Person created!', success: true });
@@ -240,20 +240,21 @@ router.post('/findPerson', function (req, res) {
           res.json({
             success: true,
             name: record._fields[0].properties.name,
-            dob: record._fields[0].properties.dob.toString(),
+            dob: record._fields[0].properties.dob,
             address: record._fields[0].properties.address,
             phone: record._fields[0].properties.phone,
             iceName: record._fields[0].properties.iceName,
             icePhone: record._fields[0].properties.icePhone,
-            joined: record._fields[0].properties.joined.toString(),
+            joined: record._fields[0].properties.joined,
             email: record._fields[0].properties.email,
             imgUrl: record._fields[0].properties.imgUrl,
             guardianName: record._fields[0].properties.guardianName,
             guardianNum: record._fields[0].properties.guardianNum,
-            visited: record._fields[0].properties.visited.toString(),
-            membership: record._fields[0].properties.membership.toString(),
+            visited: record._fields[0].properties.visited,
+            membership: record._fields[0].properties.membership,
+            publicImgId: record._fields[0].properties.publicImgId,
 
-            lastVisited: record._fields[0].properties.lastVisited.toString(),
+            lastVisited: record._fields[0].properties.lastVisited,
 
           });
         })
@@ -281,7 +282,7 @@ router.put('/deletePerson', function (req, res) {
   var session = driver.session();
 
   session
-    .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email+ "' AND b.email='" + req.body.bEmail + "' OPTIONAL MATCH (a)-[r]-(b) DETACH DELETE a,r Return a, b LIMIT 1")
+    .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email + "' AND b.email='" + req.body.bEmail + "' OPTIONAL MATCH (a)-[r]-(b) DETACH DELETE a,r Return a, b LIMIT 1")
     .then(function (result) {
       // IF count(*) Returns > 0, Entry has been made
       if (result.records[0] != null)
@@ -305,7 +306,7 @@ router.put('/updatePerson', function (req, res) {
   var session = driver.session();
 
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership.toString() + "', a.phone='" + req.body.phone + "', a.iceName='" + req.body.iceName.trim() + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.icePhone='" + req.body.icePhone.toString() + "', a.joined='" + req.body.joined.toString() + "', a.visited='" + req.body.visited.toString() + "', a.lastVisited='" + req.body.lastVisited + "', a.dob='" + req.body.dob.toString() + "', a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone + "', a.iceName='" + req.body.iceName.trim() + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.icePhone='" + req.body.icePhone + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.lastVisited='" + req.body.lastVisited + "', a.publicImgId='" + req.body.publicImgId + "', a.dob='" + req.body.dob + "', a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
@@ -329,7 +330,7 @@ router.put('/newPassword', function (req, res) {
   var session = driver.session();
 
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email+ "' SET a.password='" + req.body.password+ "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email + "' SET a.password='" + req.body.password + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
@@ -353,28 +354,33 @@ function newPersonObj(req) {
   var person = new Person();
   person.name = req.body.name.trim();
   person.address = req.body.address.trim();
-  person.phone = req.body.phone.toString();
+  person.phone = req.body.phone;
 
   person.iceName = req.body.iceName.trim();
-  person.icePhone = req.body.icePhone.toString();
+  person.icePhone = req.body.icePhone;
 
-  person.dob = req.body.dob.toString();
+  person.dob = req.body.dob;
   person.email = req.body.email.trim().toLowerCase();
   person.password = req.body.password.trim();
   person.imgUrl = req.body.imgUrl;
-  person.visited = "0".toString();
-  person.membership = "0".toString();
 
-  person.lastVisited = "0".toString();
+  person.visited = "0";
+  person.membership = "0";
+  person.lastVisited = "0";
+
+  person.publicImgId = req.body.publicImgId;
 
   person.guardianName = null;
   person.guardianNum = null;
 
-  //Check to see if the person was under 18 and Added a Guardian
-  if (req.body.guardianName != null && req.body.guardianNum != null) {
+  //Check to see if the person was under 18 and Added a Guardian Name
+  if (req.body.guardianName != null)
     person.guardianName = req.body.guardianName;
+
+  //Check to see if the person was under 18 and Added a Guardian Num
+  if (req.body.guardianNum != null)
     person.guardianNum = req.body.guardianNum;
-  }
+
   return person;
 }
 
@@ -393,7 +399,7 @@ router.post('/topTenVisited', function (req, res) {
         topTenList.push(record._fields[0].properties)//Add The business To a list
       });
 
-      res.json({success: true, message: topTenList});//send the bizList as a response
+      res.json({ success: true, message: topTenList });//send the bizList as a response
 
       session.close();//close the session
     })
@@ -418,7 +424,7 @@ router.post('/visitedTotal', function (req, res) {
         topTenList.push(record._fields[0].properties)//Add The business To a list
       });
 
-      res.json({success: true, message: topTenList});//send the bizList as a response
+      res.json({ success: true, message: topTenList });//send the bizList as a response
 
       session.close();//close the session
       //driver.close();////close driver
