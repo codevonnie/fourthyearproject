@@ -10,14 +10,15 @@ var PersonSchema = new Schema({
     phone: String,
     iceName: String,
     icePhone: String,
-    joined: Number,
-    dob: Number,
+    joined: String,
+    dob: String,
     visited: String,
+    lastVisited: String,
     membership: String,
     imgUrl:{
         type:String,
         unique: true,
-        //required: true
+        required: true,
         },
     email: {
         type: String,
