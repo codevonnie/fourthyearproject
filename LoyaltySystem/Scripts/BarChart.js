@@ -1,6 +1,6 @@
 ﻿function DisplayChart() {
 
-    document.getElementById("HeaderTitle").innerText = "Quietest Months";
+    document.getElementById("HeaderTitle").innerText = "Highest Months By Last Visited Total";
     document.getElementById('chart').style.display = 'block';
 
     var data =[];

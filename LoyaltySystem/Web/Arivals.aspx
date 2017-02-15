@@ -52,52 +52,58 @@
             <div class="modal-content">
                 <div class="modal-header text-center ModalHeadColor RoundTop">
 
-                    <div class="dropdown" data-toggle="dropdown">
-                        <button class="fa fa-cogs fa-2x floatLeft BtnInvis" id="DdmSettings" data-toggle="dropdown" aria-hidden="true" aria-haspopup="true" aria-expanded="false">
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu MarginTop35 DropDownMenu">
+                    <div id="DropDownHide" runat="server">
+                        <div class="dropdown" data-toggle="dropdown">
+                            <button class="fa fa-cogs fa-2x floatLeft BtnInvis" id="DdmSettings" data-toggle="dropdown" aria-hidden="true" aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu MarginTop35 DropDownMenu">
 
-                            <li class="text-center h5">Update Person</li>
-                            <div class="DropDownContentColour">
+                                <li class="text-center h5">Update Person</li>
+                                <div class="DropDownContentColour">
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpName" runat="server" Text="Name" OnClick="UpdateChoice_Click" /></li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpName" runat="server" Text="Name" OnClick="UpdateChoice_Click" /></li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpEmail" runat="server" Text="Email" OnClick="UpdateChoice_Click" />
-                                </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpEmail" runat="server" Text="Email" OnClick="UpdateChoice_Click" />
+                                    </li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardName" runat="server" Text="Guardian Name" OnClick="UpdateChoice_Click" />
-                                </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardName" runat="server" Text="Guardian Name" OnClick="UpdateChoice_Click" />
+                                    </li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardNum" runat="server" Text="Guardian Number" OnClick="UpdateChoice_Click" />
-                                </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardNum" runat="server" Text="Guardian Number" OnClick="UpdateChoice_Click" />
+                                    </li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BthUpMembershipEndDate" runat="server" Text="Add New Membership" OnClick="UpdateChoice_Click" />
-                                </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BthUpMembershipEndDate" runat="server" Text="Add New Membership" OnClick="UpdateChoice_Click" />
+                                    </li>
 
-                                <li role="presentation" class="divider"></li>
+                                    <li role="presentation" class="divider"></li>
 
-                                <li>
-                                    <div class="btn DropDownBtns DangerBtn btn-sm btn-block" id="DeleteDanger">Enable Danger Buttons</div>
-                                </li>
+                                    <li>
+                                        <div class="btn DropDownBtns DangerBtn btn-sm btn-block" id="DeleteDanger">Enable Danger Buttons</div>
+                                    </li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnRemoveGuard" runat="server" Text="Remove Guardian" OnClick="UpdatePersonInfo_Click" />
-                                </li>
-                                <li>
-                                    <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnRemoveMembership" runat="server" Text="Remove Membership" OnClick="UpdatePersonInfo_Click" />
-                                </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnRemoveGuard" runat="server" Text="Remove Guardian" OnClick="UpdatePersonInfo_Click" />
+                                    </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnRemoveMembership" runat="server" Text="Remove Membership" OnClick="UpdatePersonInfo_Click" />
+                                    </li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BntResetPwd" runat="server" Text="Reset Password" OnClick="BntResetPwd_Click" />
-                                </li>
-                            </div>
-                        </ul>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BntResetPwd" runat="server" Text="Reset Password" OnClick="BntResetPwd_Click" />
+                                    </li>
+                                    <li role="presentation" class="divider"></li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnDeleteMember" runat="server" Text="Delete Member (CAUTION)" OnClick="BtnDeleteMember_Click" />
+                                    </li>
+                                </div>
+                            </ul>
+                        </div>
                     </div>
 
                     <asp:Label ID="LblName" runat="server" CssClass="h1 MarginRight100 text-capitalize"></asp:Label>
@@ -108,7 +114,7 @@
 
                 <div class="modal-body text-center">
 
-                    <div class="text-muted">
+                    <div id="DivJoined" runat="server" class="text-muted">
                         <b>Joined:</b>
                         <span>
                             <asp:Label ID="LblJoined" runat="server"></asp:Label>
@@ -119,7 +125,7 @@
                     <asp:Image ID="ImgPerson" runat="server" Width="200" Height="200" class="img-responsive alignCenter img-rounded" />
                     <br />
 
-                    <div class="container-fluid LineHeight25 text-left maxWidthContainer">
+                    <div id="PersonDetails" runat="server" class="container-fluid LineHeight25 text-left maxWidthContainer">
 
                         <div id="MembershipControl" runat="server">
                             <div class="text-muted">
@@ -184,7 +190,7 @@
                             </div>
                         </div>
 
-                         <div id="LastVisited" runat="server">
+                        <div id="LastVisited" runat="server">
                             <div class="text-muted">
                                 <b>Last Time Visited:</b>
                                 <span>
@@ -213,9 +219,12 @@
                         </div>
                     </div>
 
-                        <div id="DivTempPwd" class="alert alert-success text-center" runat="server" role="alert">
-    <%--                        <strong>Update Successful!</strong>--%>
-                        </div>
+
+                    <div id="DivDeletedMember" runat="server" class="alert alert-success text-center" role="alert">
+                    </div>
+
+                    <div id="DivTempPwd" class="alert alert-success text-center" runat="server" role="alert">
+                    </div>
 
                     <div id="DivSuccessCheckIn" runat="server">
                         <div class="alert alert-success text-center" role="alert">
@@ -241,33 +250,39 @@
                 <div class="modal-footer RoundBottom">
                     <asp:Button class="btn btn-block btn-success btn-lg" ID="BtnCheckin" runat="server" Text="Check Person In" OnClick="UpdatePersonInfo_Click" />
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <script type="text/javascript">  
+
+
+    <script type="text/javascript">  
                    
-                    //Toggle The Modal Per Person
-                    function toggleModal() {
-                        $('#myModal').modal('toggle');
-                    };
+        //Toggle The Modal Per Person
+        function toggleModal() {
+            $('#myModal').modal('toggle');
+        };
 
-                    //Enables The Delete buttons in the DDL
-                    $('#DeleteDanger').on('click', function (event) {
-                        event.preventDefault(); // To prevent following the link (optional)
-                        document.getElementById('<%=BtnRemoveGuard.ClientID%>').disabled = false;
-                        document.getElementById('<%=BtnRemoveMembership.ClientID %>').disabled = false;
-                        document.getElementById('<%=BntResetPwd.ClientID %>').disabled = false;
-                    });
+        //Enables The Delete buttons in the DDL
+        $('#DeleteDanger').on('click', function (event) {
+            event.preventDefault(); // To prevent following the link
+            document.getElementById('<%=BtnRemoveGuard.ClientID%>').disabled = false;
+            document.getElementById('<%=BtnRemoveMembership.ClientID %>').disabled = false;
+            document.getElementById('<%=BntResetPwd.ClientID %>').disabled = false;
+            document.getElementById('<%=BtnDeleteMember.ClientID %>').disabled = false;               
+        });
 
-                    //Stops The Drop Down From Closing On Clicks inside The DDL
-                    $('.dropdown-menu').click(function (e) {
-                        e.stopPropagation();
-                    });
+        //Stops The Drop Down From Closing On Clicks inside The DDL
+        $('.dropdown-menu').click(function (e) {
+            e.stopPropagation();
+        });
 
 
-                     var check = "<%=NewPerson %>";
+        var check = "<%=NewPerson %>";
 
-                    console.log("Check For New Person: ", check);
-                    if (check === "True") {
-                        var cust = <%=GetCustomer%>;
+            console.log("Check For New Person: ", check);
+            if (check === "True") {
+                var cust = <%=GetCustomer%>;
                         var custList = new Array();
 
                         custObj = cust//Parse the data
@@ -308,6 +323,6 @@
                         localStorage.setItem("TodaysArivals", JSON.stringify(custList));
                     }
 
-                </script>
+    </script>
 </asp:Content>
 

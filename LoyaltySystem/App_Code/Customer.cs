@@ -32,4 +32,5 @@ public class TempCustomer
     public string tempPwd { get; set; }
     public string visited { get; set; }
     public string lastVisited { get; set; }
+    public string publicImgId { get; set; }   
 }

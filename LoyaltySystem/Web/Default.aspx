@@ -4,7 +4,8 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
 
-    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+
     <script src="../Scripts/BarChart.js"></script>
 
     <script>
@@ -24,11 +25,11 @@
         <h1 id="HeaderTitle" class="page-header HeaderColour"></h1>
 
         <div id="ArivalsData" class="row placeholders text-capitalize">
-        </div>         
+        </div>
     </div>
-     <div id="chart" class="center-block MarginBot60"></div>
+    <div id="chart" class="center-block"></div>
 
- 
+
 
 
 
@@ -38,7 +39,7 @@
         <div class="modal-dialog">
             <div class="modal-content ">
                 <div class="modal-header">
-                    <h1 class="text-center">Top 10 Visitors</h1>
+                    <h1 class="text-center" style="color: goldenrod">Top 10 Visitors</h1>
                 </div>
 
                 <%--Modal Body--%>

@@ -12,6 +12,8 @@ using System.Web.Security;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
 
 public partial class Arivals : System.Web.UI.Page
 {
@@ -52,6 +54,7 @@ public partial class Arivals : System.Web.UI.Page
     {
         Page.SetFocus(TbQRCode);//Refocus on InputBox
 
+
         //Update Control
         DivDisplay.Visible = false;
         MembershipControl.Visible = false;
@@ -61,11 +64,22 @@ public partial class Arivals : System.Web.UI.Page
         DivFailed.Visible = false;
         DivConnectionErr.Visible = false;
         DivSuccessCheckIn.Visible = false;
+        DivDeletedMember.Visible = false;
+
+
+        //PersonDetails
+        ImgPerson.Visible = true;
+        LblJoined.Visible = true;
+        ImgPerson.Visible = true;
+        PersonDetails.Visible = true;
+        BtnCheckin.Visible = true;
+        DropDownHide.Visible = true;
+        DivJoined.Visible = true;
+
+
 
         DivTempPwd.Visible = false;
-
         DivFailedEmail.Visible = false;
-
         DivFailedScan.Visible = false;
     }
 
@@ -271,6 +285,7 @@ public partial class Arivals : System.Web.UI.Page
         request.AddParameter("guardianName", cust.guardianName);
         request.AddParameter("guardianNum", cust.guardianNum);
         request.AddParameter("tempEmail", cust.tempEmail);
+        request.AddParameter("publicImgId", cust.publicImgId);
 
         request.AddParameter("lastVisited", cust.lastVisited);
 
@@ -417,10 +432,10 @@ public partial class Arivals : System.Web.UI.Page
         TempCustomer cust = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
 
         //Generate a random Password and replaces all non alphanumeric wiht numbers
-        string password = Membership.GeneratePassword(6,3);
+        string password = Membership.GeneratePassword(6, 3);
         password = Regex.Replace(password, @"[^a-zA-Z0-9]", m => "9");
 
-        cust.tempPwd = "*x*"+password;
+        cust.tempPwd = "*x*" + password;
 
         var client = new RestClient(port);
 
@@ -438,7 +453,7 @@ public partial class Arivals : System.Web.UI.Page
 
         if (resObj.success == true)
         {
-            DivTempPwd.InnerHtml = "Tempoary Password: <strong>"+ cust.tempPwd + "</strong>";
+            DivTempPwd.InnerHtml = "Tempoary Password: <strong>" + cust.tempPwd + "</strong>";
             DivTempPwd.Visible = true;
 
         }
@@ -484,5 +499,99 @@ public partial class Arivals : System.Web.UI.Page
         Cache["DD_CHOICE"] = btnInfo.ID;
         DivDisplay.Visible = true;
     }
+
+
+
+    /*=================================================================================> Delete Member <==========================================================================
+ //*****************************************************************************************************************************************************************************/
+
+
+    //Btn Click Event to call Delete Person Method
+    protected void BtnDeleteMember_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            DeleteMember();
+        }
+        catch (Exception)
+        {
+            DivConnectionErr.Visible = true;
+        }
+    }
+
+
+    //Deletes the person form the data base and all relationships assocciated with the Business
+    private void DeleteMember()
+    {
+        var client = new RestClient(port);
+        TempCustomer cust = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
+        try
+        {
+            var request = new RestRequest("deletePerson", Method.PUT);
+            request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
+            request.AddParameter("email", cust.email);
+            request.AddParameter("bEmail", Decrypt.Base64Decode(settings._biz_Email.ToString()));
+
+            IRestResponse response = client.Execute(request);
+
+            //Deserialize the result into the class provided
+            var jsonObject = JsonConvert.DeserializeObject<ResponseMessage>(response.Content);
+            ResponseMessage resObj = jsonObject as ResponseMessage;
+
+            if (resObj.success == true)
+            {
+                DeleteImage(cust);
+                HidePersonDetails();
+                DivDeletedMember.InnerHtml ="Success! Customer: "+cust.name+" Deleted!";
+            }
+
+            else
+                DivFailed.Visible = true;
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
+        }
+        catch (Exception)
+        {
+            DivConnectionErr.Visible = true;
+        }
+
+    }
+
+    //Hide All The Details of a person
+    private void HidePersonDetails()
+    {
+        DivDeletedMember.Visible = true;
+        BtnCheckin.Visible = false;
+        DropDownHide.Visible = false;
+        ImgPerson.Visible = false;
+
+        LblJoined.Visible = false;
+        ImgPerson.Visible = false;
+        PersonDetails.Visible = false;
+        DivJoined.Visible = false;
+    }
+
+
+
+    //Deletes The Image From The Database
+    private void DeleteImage(TempCustomer cust)
+    {
+        string key = WebConfigurationManager.AppSettings["CLOUDINARY_API_KEY"];
+        string secret = WebConfigurationManager.AppSettings["CLOUDINARY_API_SECRET"];
+        string name = WebConfigurationManager.AppSettings["CLOUDINARY_API_NAME"];
+
+
+        Account account = new Account(name, key, secret);
+        Cloudinary cloudinary = new Cloudinary(account);
+
+
+        var delParams = new DelResParams()
+        {
+            PublicIds = new List<string>() { cust.publicImgId},
+            Invalidate = true
+        };
+        var delResult = cloudinary.DeleteResources(delParams);
+    }
+
 
 }

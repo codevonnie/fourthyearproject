@@ -1,13 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Newtonsoft.Json;
 using RestSharp;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Security;
-
+using System.Web.UI.WebControls;
 
 public partial class AddMember : System.Web.UI.Page
 {
@@ -44,17 +47,24 @@ public partial class AddMember : System.Web.UI.Page
 
     protected void BtnSubmit_Click(object sender, EventArgs e)
     {
-        try
+        if (Page.IsValid)
         {
-            CloudinaryApi.results cloudImg = StoreImgOnCloudinary();
+            CloudinaryApi.results cloudImg = new CloudinaryApi.results();
+            try
+            {
+                cloudImg = StoreImgOnCloudinary();
 
-            newCustomerRequest(cloudImg);
-        }
-        catch (Exception)
-        {
-            DivFailed.Visible = true;
+                newCustomerRequest(cloudImg);
+            }
+            catch (Exception)
+            {
+                DivFailed.Visible = true;
+                DeleteImage(cloudImg);
+            }
         }
     }
+
+
 
 
     //---------------- Create/Return Customer Object ----------------
@@ -79,7 +89,7 @@ public partial class AddMember : System.Web.UI.Page
     //NEEDS VALIDATION ON INPUTS
     private void newCustomerRequest(CloudinaryApi.results imgDetails)
     {
-        TempCustomer customer = createCustomer();
+        TempCustomer cust = createCustomer();
         ConvertToMillSec convert = new ConvertToMillSec();
 
         var client = new RestClient(port);
@@ -90,25 +100,26 @@ public partial class AddMember : System.Web.UI.Page
 
         var request = new RestRequest("addPerson", Method.POST);
         request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
-        request.AddParameter("name", customer.name);
+        request.AddParameter("name", cust.name);
         request.AddParameter("password", "*x*" + password);//random password
-        request.AddParameter("email", customer.email);
-        request.AddParameter("phone", customer.phone);
-        request.AddParameter("address", customer.address);
-        request.AddParameter("iceName", customer.iceName);
-        request.AddParameter("icePhone", customer.icePhone);
+        request.AddParameter("email", cust.email);
+        request.AddParameter("phone", cust.phone);
+        request.AddParameter("address", cust.address);
+        request.AddParameter("iceName", cust.iceName);
+        request.AddParameter("icePhone", cust.icePhone);
         request.AddParameter("imgUrl", imgDetails.secure_url);
+        request.AddParameter("publicImgId", imgDetails.public_id);
 
         request.AddParameter("bEmail", Decrypt.Base64Decode(settings._biz_Email.ToString()));
 
-        var dobMill = convert.DateToMillSec(Convert.ToDateTime(customer.dob));
+        var dobMill = convert.DateToMillSec(Convert.ToDateTime(cust.dob));
         request.AddParameter("dob", dobMill.ToString());
 
         //ONLY IF UNDER 18
-        if (customer.guardianName != "" && customer.guardianNum != "")
+        if (cust.guardianName != "" && cust.guardianNum != "")
         {
-            request.AddParameter("guardianName", customer.guardianName);
-            request.AddParameter("guardianNum", customer.guardianNum);
+            request.AddParameter("guardianName", cust.guardianName);
+            request.AddParameter("guardianNum", cust.guardianNum);
         }
 
         IRestResponse response = client.Execute(request);
@@ -124,6 +135,30 @@ public partial class AddMember : System.Web.UI.Page
         }
     }
 
+
+    //Deletes The Image From The Database
+    private void DeleteImage(CloudinaryApi.results imgDetails)
+    {
+        string key = WebConfigurationManager.AppSettings["CLOUDINARY_API_KEY"];
+        string secret = WebConfigurationManager.AppSettings["CLOUDINARY_API_SECRET"];
+        string name = WebConfigurationManager.AppSettings["CLOUDINARY_API_NAME"];
+
+
+        Account account = new Account(name, key, secret);
+        Cloudinary cloudinary = new Cloudinary(account);
+
+
+        var delParams = new DelResParams()
+        {
+            PublicIds = new List<string>() { imgDetails.public_id },
+            Invalidate = true
+        };
+        var delResult = cloudinary.DeleteResources(delParams);
+    }
+
+
+
+
     //Clear The Form
     private void ClearAddForm()
     {
@@ -137,7 +172,7 @@ public partial class AddMember : System.Web.UI.Page
         TbEmergencyNum.Text = "";
         TbName.Text = "";
     }
-   
+
 
 
     // --------------------------- Upload image To The Database On Cloudinary --------------------------- 
@@ -162,28 +197,17 @@ public partial class AddMember : System.Web.UI.Page
             string fname = Path.GetFileName(file.FileName);
             file.SaveAs(Server.MapPath(Path.Combine("~/App_Data/Images", fname)));
 
-            #region
-            // input = new byte[file.ContentLength];
-            //System.IO.Stream MyStream;
-            //// Initialize the stream.
-            //MyStream = file.InputStream;
-
-            //// Read the file into the byte array.
-            //MyStream.Read(input, 0, file.ContentLength);
-
-            //pathImg = "data:image/"
-            //                + Path.GetExtension(file.FileName).Replace(".", "")
-            //                + ";base64,"
-            //                + Convert.ToBase64String(input) + "\" />";
-            #endregion
 
             CloudinaryDotNet.Actions.ImageUploadParams uploadParams = new CloudinaryDotNet.Actions.ImageUploadParams()
             {
-                File = new CloudinaryDotNet.Actions.FileDescription(Server.MapPath("/App_Data/Images/" + file.FileName))
+                File = new CloudinaryDotNet.Actions.FileDescription(Server.MapPath("/App_Data/Images/" + file.FileName)),
+                Transformation = new Transformation().Width(300).Height(400).Crop("limit"),
+                Invalidate = true
             };
 
             //Upload Image
             CloudinaryDotNet.Actions.ImageUploadResult uploadResult = cloudinary.Upload(uploadParams);
+
 
             jsonObject = JsonConvert.DeserializeObject<CloudinaryApi.results>(uploadResult.JsonObj.ToString());
 
@@ -192,4 +216,8 @@ public partial class AddMember : System.Web.UI.Page
         }
         return (jsonObject as CloudinaryApi.results);
     }
+
+
+
+
 }
