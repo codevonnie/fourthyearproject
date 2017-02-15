@@ -11,6 +11,9 @@ using System.Web.Security;
 
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
 
 public partial class Arivals : System.Web.UI.Page
 {
@@ -19,9 +22,10 @@ public partial class Arivals : System.Web.UI.Page
 
     private TempCustomer _TempCust = new TempCustomer();
     private Boolean _newCust;
-    private string _custJson="null";
+    private string _custJson = "null";
+    private ConvertToMillSec convert = new ConvertToMillSec();
 
-   
+
     protected string GetCustomer { get { return _custJson; } }
     protected Boolean NewPerson { get { return _newCust; } }
 
@@ -50,23 +54,43 @@ public partial class Arivals : System.Web.UI.Page
     {
         Page.SetFocus(TbQRCode);//Refocus on InputBox
 
+
         //Update Control
         DivDisplay.Visible = false;
-        Membership.Visible = false;
+        MembershipControl.Visible = false;
 
         //Err,Success Messages
         DivSuccess.Visible = false;
         DivFailed.Visible = false;
         DivConnectionErr.Visible = false;
         DivSuccessCheckIn.Visible = false;
+        DivDeletedMember.Visible = false;
 
+
+        //PersonDetails
+        ImgPerson.Visible = true;
+        LblJoined.Visible = true;
+        ImgPerson.Visible = true;
+        PersonDetails.Visible = true;
+        BtnCheckin.Visible = true;
+        DropDownHide.Visible = true;
+        DivJoined.Visible = true;
+
+
+
+        DivTempPwd.Visible = false;
         DivFailedEmail.Visible = false;
-
         DivFailedScan.Visible = false;
     }
 
 
+
+    /*=================================================================================> Find Person Methods <=====================================================================
+    //****************************************************************************************************************************************************************************/
+
+
     //-------------------------------- Btn Check Member Click Event -------------------------------------------
+    //Try Catch Calls Relevent Methods
     protected void BtnCheckMember_Click(object sender, EventArgs e)
     {
         //Check that something was entered into the text box first 
@@ -125,6 +149,7 @@ public partial class Arivals : System.Web.UI.Page
 
 
     //-------------------------------- Display Person Modal ---------------------------------------------------
+    //Displays the person on the screen once found
     private void displayPerson(TempCustomer cust)
     {
         var joined = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.joined.ToString()));
@@ -145,11 +170,17 @@ public partial class Arivals : System.Web.UI.Page
         //Dont Display Membership if Null
         if (cust.membership.ToString() != "0")
         {
-            Membership.Visible = true;
+            MembershipControl.Visible = true;
             var memberDate = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.membership.ToString()));
             LblMember.Text = memberDate.ToString("dd/MM/yyyy");
         }
 
+        //Display The last time they Visited
+        if (cust.lastVisited.ToString() != "0")
+        {
+            var memberDate = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.lastVisited.ToString()));
+            LblLastVisited.Text = memberDate.ToString("dd/MM/yyyy");
+        }
 
         LblGuardNum.Text = cust.guardianNum.ToString();
         LblGuardName.Text = cust.guardianName.ToString();
@@ -166,6 +197,7 @@ public partial class Arivals : System.Web.UI.Page
 
 
     //-------------------------------- Calculate Age ----------------------------------------------------------
+    //Caluclates the age of the Person
     private string CalculateAge(string dob)
     {
         //Might need validation *******
@@ -196,9 +228,8 @@ public partial class Arivals : System.Web.UI.Page
 
 
 
-
-
-    //=================================================================================> Update Methods <==========================================================================
+    /*=================================================================================> Update Methods <==========================================================================
+    //*****************************************************************************************************************************************************************************/
 
 
     //-------------------------------- Update Person Info, Check In + Update Btns -----------------------------------------------------------
@@ -228,15 +259,17 @@ public partial class Arivals : System.Web.UI.Page
 
         //Check To see if the person is just checking in
         if (btn.ID == "BtnCheckin")
+        {
             cust.tempEmail = cust.email;
+            cust.lastVisited = convert.DateToMillSec(DateTime.Now).ToString();//Todays Current DateTim Now In Millseconds
+        }
         else
         {
             if (btn.ID == "BtnRemoveGuard" || btn.ID == "BtnRemoveMembership")
                 Cache["DD_CHOICE"] = btn.ID;
+
             cust = UpdateCustObj();
         }
-
-        ConvertToMillSec convert = new ConvertToMillSec();
 
         var request = new RestRequest("updatePerson", Method.PUT);
         request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
@@ -246,15 +279,22 @@ public partial class Arivals : System.Web.UI.Page
         request.AddParameter("phone", cust.phone);
         request.AddParameter("iceName", cust.iceName);
         request.AddParameter("icePhone", cust.icePhone);
-        request.AddParameter("joined", cust.joined);//milliseconds ?
+        request.AddParameter("joined", cust.joined);
         request.AddParameter("email", cust.email);
         request.AddParameter("imgUrl", cust.imgUrl);
         request.AddParameter("guardianName", cust.guardianName);
         request.AddParameter("guardianNum", cust.guardianNum);
         request.AddParameter("tempEmail", cust.tempEmail);
+        request.AddParameter("publicImgId", cust.publicImgId);
+
+        request.AddParameter("lastVisited", cust.lastVisited);
 
         if (btn.ID == "BtnCheckin")
-            cust.visited++;
+        {
+            int num = int.Parse(cust.visited);
+            num++;
+            cust.visited = num.ToString();
+        }
 
         request.AddParameter("visited", cust.visited);
 
@@ -264,7 +304,7 @@ public partial class Arivals : System.Web.UI.Page
 
             var mil = convert.DateToMillSec(memberDate);
             cust.membership = mil.ToString();//Update the Membership with a new Date (Miliseconds)
-            Membership.Visible = true;
+            MembershipControl.Visible = true;
         }
 
         request.AddParameter("membership", cust.membership);
@@ -279,7 +319,8 @@ public partial class Arivals : System.Web.UI.Page
         if (resObj.success == true)
         {
 
-            if ((Boolean)Cache.Get("CheckingIn")==true)
+            //Pass the Objects to Js here
+            if ((Boolean)Cache.Get("CheckingIn") == true)
             {
                 _newCust = true;
                 dynamic jsonect = JsonConvert.SerializeObject(cust);
@@ -346,17 +387,12 @@ public partial class Arivals : System.Web.UI.Page
                 tempCust.membership = "0";
                 LblMember.Text = tempCust.membership.ToString();
 
-                Membership.Visible = false;
+                MembershipControl.Visible = false;
                 break;
 
             case "BtnUpEmail":
                 tempCust.tempEmail = TbUpdate.Text.ToString();
                 LblEmail.Text = TbUpdate.Text.ToString();
-                break;
-
-            case "BntResetPwd":
-                //string password = Membership.GeneratePassword(6, 3);
-                //tempCust.tempPwd = password;
                 break;
 
             case "BthUpMembershipEndDate":
@@ -365,7 +401,7 @@ public partial class Arivals : System.Web.UI.Page
                 var memMill = convert.DateToMillSec(date);
 
                 tempCust.membership = memMill.ToString();
-                Membership.Visible = true;
+                MembershipControl.Visible = true;
                 LblMember.Text = date.ToString("dd/MM/yyyy");
                 break;
         }
@@ -376,10 +412,63 @@ public partial class Arivals : System.Web.UI.Page
     }
 
 
-    //-------------------------------- Update Choice Click Event ---------------------------------------
-    /* Method Gets the users choice from the DropDown box when a person has Arrived, located in the "Bootstrap Modal"
-     * Displays a "Update textbox" that updates its placeholder based on the Choice made.
-     */
+    //-------------------------------- Update Password ---------------------------------------
+    protected void BntResetPwd_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            UpdatePwd();
+        }
+        catch (Exception)
+        {
+            DivConnectionErr.Visible = true;
+        }
+    }
+
+
+    // Updates the users Pasword With a New Tempoary One
+    private void UpdatePwd()
+    {
+        TempCustomer cust = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
+
+        //Generate a random Password and replaces all non alphanumeric wiht numbers
+        string password = Membership.GeneratePassword(6, 3);
+        password = Regex.Replace(password, @"[^a-zA-Z0-9]", m => "9");
+
+        cust.tempPwd = "*x*" + password;
+
+        var client = new RestClient(port);
+
+        var request = new RestRequest("newPassword", Method.PUT);
+        request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
+        request.AddParameter("email", cust.email);
+        request.AddParameter("password", cust.tempPwd);
+
+        //SendRequest
+        IRestResponse response = client.Execute(request);
+
+        //Deserialize the result into the class provided
+        dynamic jsonObject = JsonConvert.DeserializeObject<ResponseMessage>(response.Content);
+        var resObj = jsonObject as ResponseMessage;
+
+        if (resObj.success == true)
+        {
+            DivTempPwd.InnerHtml = "Tempoary Password: <strong>" + cust.tempPwd + "</strong>";
+            DivTempPwd.Visible = true;
+
+        }
+        else
+            DivFailed.Visible = true;
+
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
+    }
+
+
+
+    /*-------------------------------- Update Choice Click Event ---------------------------------------
+    * Method Gets the users choice from the DropDown box when a person has Arrived, located in the "Bootstrap Modal"
+    * Displays a "Update textbox" that updates its placeholder based on the Choice made.
+    */
     protected void UpdateChoice_Click(object sender, EventArgs e)
     {
         Button btnInfo = sender as Button;
@@ -413,11 +502,95 @@ public partial class Arivals : System.Web.UI.Page
 
 
 
-    //=================================================================================> Local Storage <==========================================================================
+    /*=================================================================================> Delete Member <==========================================================================
+ //*****************************************************************************************************************************************************************************/
 
-    private void storePeople()
+
+    //Btn Click Event to call Delete Person Method
+    protected void BtnDeleteMember_Click(object sender, EventArgs e)
     {
+        try
+        {
+            DeleteMember();
+        }
+        catch (Exception)
+        {
+            DivConnectionErr.Visible = true;
+        }
+    }
 
+
+    //Deletes the person form the data base and all relationships assocciated with the Business
+    private void DeleteMember()
+    {
+        var client = new RestClient(port);
+        TempCustomer cust = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
+        try
+        {
+            var request = new RestRequest("deletePerson", Method.PUT);
+            request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
+            request.AddParameter("email", cust.email);
+            request.AddParameter("bEmail", Decrypt.Base64Decode(settings._biz_Email.ToString()));
+
+            IRestResponse response = client.Execute(request);
+
+            //Deserialize the result into the class provided
+            var jsonObject = JsonConvert.DeserializeObject<ResponseMessage>(response.Content);
+            ResponseMessage resObj = jsonObject as ResponseMessage;
+
+            if (resObj.success == true)
+            {
+                DeleteImage(cust);
+                HidePersonDetails();
+                DivDeletedMember.InnerHtml ="Success! Customer: "+cust.name+" Deleted!";
+            }
+
+            else
+                DivFailed.Visible = true;
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('show');</script>", false);
+        }
+        catch (Exception)
+        {
+            DivConnectionErr.Visible = true;
+        }
+
+    }
+
+    //Hide All The Details of a person
+    private void HidePersonDetails()
+    {
+        DivDeletedMember.Visible = true;
+        BtnCheckin.Visible = false;
+        DropDownHide.Visible = false;
+        ImgPerson.Visible = false;
+
+        LblJoined.Visible = false;
+        ImgPerson.Visible = false;
+        PersonDetails.Visible = false;
+        DivJoined.Visible = false;
+    }
+
+
+
+    //Deletes The Image From The Database
+    private void DeleteImage(TempCustomer cust)
+    {
+        string key = WebConfigurationManager.AppSettings["CLOUDINARY_API_KEY"];
+        string secret = WebConfigurationManager.AppSettings["CLOUDINARY_API_SECRET"];
+        string name = WebConfigurationManager.AppSettings["CLOUDINARY_API_NAME"];
+
+
+        Account account = new Account(name, key, secret);
+        Cloudinary cloudinary = new Cloudinary(account);
+
+
+        var delParams = new DelResParams()
+        {
+            PublicIds = new List<string>() { cust.publicImgId},
+            Invalidate = true
+        };
+        var delResult = cloudinary.DeleteResources(delParams);
     }
 
 

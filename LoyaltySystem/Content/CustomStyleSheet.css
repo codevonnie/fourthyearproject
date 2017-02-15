@@ -11,6 +11,10 @@
     float: left;
 }
 
+.HeaderColour {
+    color: lightblue;
+}
+
 
 .NavDDL {
     padding: 10px 10px !important;
@@ -30,12 +34,16 @@
     margin-top: 35px;
 }
 
+.MarginBot60 {
+    margin-bottom: 60px;
+}
+
 .MarginRight30 {
     margin-right: 30px;
 }
 
-.MarginRight50 {
-    margin-right: 50px;
+.MarginRight100 {
+    margin-right:100px;
 }
 
 .MarginTop60 {
@@ -182,6 +190,19 @@
 }
 
 
+.BtnDefaultPage {
+    width: 33%;
+    overflow: hidden;
+}
+
+
+.BtnGroupDefault {
+    margin-top: 5%;
+}
+
+
+
+
 /*ICON CSS Here*/
 .has-success .form-control-feedback {
     margin-top: 5px;
@@ -191,9 +212,6 @@
     margin-top: 5px;
 }
 
-/*fa-envelope-o {
-    background-color: red;
-}*/
 
 
 
@@ -270,6 +288,15 @@
     width: 50%;
 }
 
+
+/*barchar css here*/
+.bar {
+    fill: gainsboro;
+}
+
+    .bar:hover {
+        fill: darkseagreen;
+    }
 
 
 

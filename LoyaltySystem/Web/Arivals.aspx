@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Arivals.aspx.cs" Inherits="Arivals" %>
+﻿<%@ Page Title="Arivals" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Arivals.aspx.cs" Inherits="Arivals" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
@@ -52,55 +52,61 @@
             <div class="modal-content">
                 <div class="modal-header text-center ModalHeadColor RoundTop">
 
-                    <div class="dropdown" data-toggle="dropdown">
-                        <button class="fa fa-cogs fa-2x floatLeft BtnInvis" id="DdmSettings" data-toggle="dropdown" aria-hidden="true" aria-haspopup="true" aria-expanded="false">
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu MarginTop35 DropDownMenu">
+                    <div id="DropDownHide" runat="server">
+                        <div class="dropdown" data-toggle="dropdown">
+                            <button class="fa fa-cogs fa-2x floatLeft BtnInvis" id="DdmSettings" data-toggle="dropdown" aria-hidden="true" aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu MarginTop35 DropDownMenu">
 
-                            <li class="text-center h5">Update Person</li>
-                            <div class="DropDownContentColour">
+                                <li class="text-center h5">Update Person</li>
+                                <div class="DropDownContentColour">
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpName" runat="server" Text="Name" OnClick="UpdateChoice_Click" /></li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpName" runat="server" Text="Name" OnClick="UpdateChoice_Click" /></li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpEmail" runat="server" Text="Email" OnClick="UpdateChoice_Click" />
-                                </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpEmail" runat="server" Text="Email" OnClick="UpdateChoice_Click" />
+                                    </li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardName" runat="server" Text="Guardian Name" OnClick="UpdateChoice_Click" />
-                                </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardName" runat="server" Text="Guardian Name" OnClick="UpdateChoice_Click" />
+                                    </li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardNum" runat="server" Text="Guardian Number" OnClick="UpdateChoice_Click" />
-                                </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BtnUpGuardNum" runat="server" Text="Guardian Number" OnClick="UpdateChoice_Click" />
+                                    </li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BthUpMembershipEndDate" runat="server" Text="Add New Membership" OnClick="UpdateChoice_Click" />
-                                </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns btn-sm btn-block" ID="BthUpMembershipEndDate" runat="server" Text="Add New Membership" OnClick="UpdateChoice_Click" />
+                                    </li>
 
-                                <li role="presentation" class="divider"></li>
+                                    <li role="presentation" class="divider"></li>
 
-                                <li>
-                                    <div class="btn DropDownBtns DangerBtn btn-sm btn-block" id="DeleteDanger">Enable Danger Buttons</div>
-                                </li>
+                                    <li>
+                                        <div class="btn DropDownBtns DangerBtn btn-sm btn-block" id="DeleteDanger">Enable Danger Buttons</div>
+                                    </li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnRemoveGuard" runat="server" Text="Remove Guardian" OnClick="UpdatePersonInfo_Click" />
-                                </li>
-                                <li>
-                                    <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnRemoveMembership" runat="server" Text="Remove Membership" OnClick="UpdatePersonInfo_Click" />
-                                </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnRemoveGuard" runat="server" Text="Remove Guardian" OnClick="UpdatePersonInfo_Click" />
+                                    </li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnRemoveMembership" runat="server" Text="Remove Membership" OnClick="UpdatePersonInfo_Click" />
+                                    </li>
 
-                                <li>
-                                    <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BntResetPwd" runat="server" Text="Reset Password" OnClick="UpdatePersonInfo_Click" />
-                                </li>
-                            </div>
-                        </ul>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BntResetPwd" runat="server" Text="Reset Password" OnClick="BntResetPwd_Click" />
+                                    </li>
+                                    <li role="presentation" class="divider"></li>
+                                    <li>
+                                        <asp:Button class="btn DropDownBtns DangerBtn btn-sm btn-block" disabled="true" ID="BtnDeleteMember" runat="server" Text="Delete Member (CAUTION)" OnClick="BtnDeleteMember_Click" />
+                                    </li>
+                                </div>
+                            </ul>
+                        </div>
                     </div>
 
-                    <asp:Label ID="LblName" runat="server" CssClass="h1 MarginRight50 text-capitalize"></asp:Label>
+                    <asp:Label ID="LblName" runat="server" CssClass="h1 MarginRight100 text-capitalize"></asp:Label>
 
                     <div class="fa fa-times fa-2x CloseModal" id="BtnCloseModal" onclick="toggleModal()"></div>
 
@@ -108,7 +114,7 @@
 
                 <div class="modal-body text-center">
 
-                    <div class="text-muted">
+                    <div id="DivJoined" runat="server" class="text-muted">
                         <b>Joined:</b>
                         <span>
                             <asp:Label ID="LblJoined" runat="server"></asp:Label>
@@ -119,9 +125,9 @@
                     <asp:Image ID="ImgPerson" runat="server" Width="200" Height="200" class="img-responsive alignCenter img-rounded" />
                     <br />
 
-                    <div class="container-fluid LineHeight25 text-left maxWidthContainer">
+                    <div id="PersonDetails" runat="server" class="container-fluid LineHeight25 text-left maxWidthContainer">
 
-                        <div id="Membership" runat="server">
+                        <div id="MembershipControl" runat="server">
                             <div class="text-muted">
                                 <b>MemberShip Finished: </b>
                                 <span>
@@ -183,6 +189,15 @@
                                 </span>
                             </div>
                         </div>
+
+                        <div id="LastVisited" runat="server">
+                            <div class="text-muted">
+                                <b>Last Time Visited:</b>
+                                <span>
+                                    <asp:Label ID="LblLastVisited" runat="server"></asp:Label>
+                                </span>
+                            </div>
+                        </div>
                         <!--HideGuard-->
                     </div>
                     <!--Container-->
@@ -202,6 +217,13 @@
                         <div class="alert alert-success text-center" role="alert">
                             <strong>Update Successful!</strong>
                         </div>
+                    </div>
+
+
+                    <div id="DivDeletedMember" runat="server" class="alert alert-success text-center" role="alert">
+                    </div>
+
+                    <div id="DivTempPwd" class="alert alert-success text-center" runat="server" role="alert">
                     </div>
 
                     <div id="DivSuccessCheckIn" runat="server">
@@ -228,71 +250,79 @@
                 <div class="modal-footer RoundBottom">
                     <asp:Button class="btn btn-block btn-success btn-lg" ID="BtnCheckin" runat="server" Text="Check Person In" OnClick="UpdatePersonInfo_Click" />
                 </div>
-
-                <script type="text/javascript">  
-                    
-                    var check = "<%=NewPerson %>";
-
-                    //Toggle The Modal Per Person
-                    function toggleModal() {
-                        $('#myModal').modal('toggle');
-                    };
-
-                    //Enables The Delete buttons in the DDL
-                    $('#DeleteDanger').on('click', function (event) {
-                        event.preventDefault(); // To prevent following the link (optional)
-                        document.getElementById('<%=BtnRemoveGuard.ClientID%>').disabled = false;
-                        document.getElementById('<%=BtnRemoveMembership.ClientID %>').disabled = false;
-                        document.getElementById('<%=BntResetPwd.ClientID %>').disabled = false;
-                    });
-
-                    //Stops The Drop Down From Closing On Clicks inside The DDL
-                    $('.dropdown-menu').click(function (e) {
-                        e.stopPropagation();
-                    });
+            </div>
+        </div>
+    </div>
 
 
-                    console.log("Check For New Person: ", check);
-                    if (check === "True") {
-                        var cust = <%=GetCustomer%>;
+
+    <script type="text/javascript">  
+                   
+        //Toggle The Modal Per Person
+        function toggleModal() {
+            $('#myModal').modal('toggle');
+        };
+
+        //Enables The Delete buttons in the DDL
+        $('#DeleteDanger').on('click', function (event) {
+            event.preventDefault(); // To prevent following the link
+            document.getElementById('<%=BtnRemoveGuard.ClientID%>').disabled = false;
+            document.getElementById('<%=BtnRemoveMembership.ClientID %>').disabled = false;
+            document.getElementById('<%=BntResetPwd.ClientID %>').disabled = false;
+            document.getElementById('<%=BtnDeleteMember.ClientID %>').disabled = false;               
+        });
+
+        //Stops The Drop Down From Closing On Clicks inside The DDL
+        $('.dropdown-menu').click(function (e) {
+            e.stopPropagation();
+        });
+
+
+        var check = "<%=NewPerson %>";
+
+            console.log("Check For New Person: ", check);
+            if (check === "True") {
+                var cust = <%=GetCustomer%>;
                         var custList = new Array();
 
                         custObj = cust//Parse the data
 
-                        var msgObj = {};//Create a New Object Each Time an Arival Comes In
-                        msgObj.email = custObj.email;
-                        msgObj.name = custObj.name;
-                        msgObj.dob = custObj.dob;
-                        msgObj.phone = custObj.phone;
-                        msgObj.imgUrl = custObj.imgUrl;
-                        msgObj.joined = custObj.joined;
-                        msgObj.iceName = custObj.iceName;
-                        msgObj.icePhone = custObj.icePhone;
-                        msgObj.visited = custObj.visited;
-                        msgObj.membership = custObj.membership;
-                        msgObj.day = Date.now();
+                        var arvlObj = {};//Create a New Object Each Time an Arival Comes In
+                        arvlObj.email = custObj.email;
+                        arvlObj.name = custObj.name;
+                        arvlObj.dob = custObj.dob;
+                        arvlObj.phone = custObj.phone;
+                        arvlObj.imgUrl = custObj.imgUrl;
+                        arvlObj.joined = custObj.joined;
+                        arvlObj.iceName = custObj.iceName;
+                        arvlObj.icePhone = custObj.icePhone;
+                        arvlObj.visited = custObj.visited;
+                        arvlObj.membership = custObj.membership;
+                        arvlObj.day = Date.now();
 
                         //push the obj to an Array
-                        custList.push(msgObj);
+                        custList.push(arvlObj);
 
-                        //cHECK local Storage for other Arivals
+                        //CHECK local Storage for other Arivals
                         var ListOfCust =JSON.parse(localStorage.getItem("TodaysArivals"));
                         
+                        //Loop over all the Objects From Local Storage
                         if(ListOfCust!=null){
                             //Check For New Arivals Only and add to Array
                             ListOfCust.forEach(function (entry) {
                                 //Removes The Local Storage Every Day
-                                if(msgObj.day < entry.day){
+                                if(arvlObj.day < entry.day){
                                     return;
                                 }
-                                if (entry.name != msgObj.name)
+                                if (entry.name != arvlObj.name)
                                     custList.push(entry);
                             });                          
                         }
+
                         //Store The Array as a JSON.stringify in local storage / over write if all ready there
                         localStorage.setItem("TodaysArivals", JSON.stringify(custList));
                     }
 
-                </script>
+    </script>
 </asp:Content>
 
