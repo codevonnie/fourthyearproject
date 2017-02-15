@@ -64,9 +64,6 @@ public partial class AddMember : System.Web.UI.Page
         }
     }
 
-
-
-
     //---------------- Create/Return Customer Object ----------------
     private TempCustomer createCustomer()
     {
