@@ -92,22 +92,17 @@
             <h3>{{profile.visited}}</h3>
           </ion-item>
 
-          <ion-item ng-hide="profile.visited==0">
-            <h2 class="profile-list">Last Visited</h2>
-            <h3>{{lastVisited}}</h3>
-          </ion-item>
-
           <ion-item ng-hide="!membership">
             <h2 class="profile-list">Membership End Date</h2>
             <h3>{{membership}}</h3>
           </ion-item>
 
-          <ion-item ng-show="!profile.guardianName">
+          <ion-item ng-show="profile.guardianName!='null'">
             <h2 class="profile-list">Guardian Name</h2>
             <h3>{{profile.guardianName}}</h3>
           </ion-item>
 
-          <ion-item ng-show="!profile.guardianNum">
+          <ion-item ng-show="profile.guardianNum!='null'">
             <h2 class="profile-list">Guardian Number</h2>
             <h3>{{profile.guardianNum}}</h3>
           </ion-item>
