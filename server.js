@@ -223,7 +223,7 @@ router.delete('/deleteCompany', function (req, res) {
 router.post('/findPerson', function (req, res) {
   console.log("in findPerson ");
   var session = driver.session();
-
+  var visitedList;
   session
     .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' AND b.email='" + req.body.bEmail.trim() + "' Return a, b LIMIT 1")
     .then(function (result) {
@@ -235,6 +235,7 @@ router.post('/findPerson', function (req, res) {
         //Loop over Results, should always just be 1 returned
         result.records.forEach(function (record) {
           //If its A PERSON logging In
+          console.log("Dates Visited: " + record._fields[0].properties.datesVisited);
 
           //Send the Response Back [List]
           res.json({
@@ -254,6 +255,7 @@ router.post('/findPerson', function (req, res) {
             membership: record._fields[0].properties.membership,
             publicImgId: record._fields[0].properties.publicImgId,
 
+            datesVisited: record._fields[0].properties.datesVisited,
             lastVisited: record._fields[0].properties.lastVisited,
 
           });
@@ -304,9 +306,9 @@ router.put('/deletePerson', function (req, res) {
 router.put('/updatePerson', function (req, res) {
 
   var session = driver.session();
-
+  console.log(req.body.datesVisited);
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone + "', a.iceName='" + req.body.iceName.trim() + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.icePhone='" + req.body.icePhone + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.lastVisited='" + req.body.lastVisited + "', a.publicImgId='" + req.body.publicImgId + "', a.dob='" + req.body.dob + "', a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone + "', a.iceName='" + req.body.iceName.trim() + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.icePhone='" + req.body.icePhone + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.lastVisited='" + req.body.lastVisited + "', a.datesVisited=" + req.body.datesVisited + ", a.dob='" + req.body.dob + "', a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
@@ -367,7 +369,7 @@ function newPersonObj(req) {
   person.visited = "0";
   person.membership = "0";
   person.lastVisited = "0";
-
+  person.datesVisited = req.body.datesVisited;
   person.publicImgId = req.body.publicImgId;
 
   person.guardianName = null;

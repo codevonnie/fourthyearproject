@@ -15,6 +15,7 @@ var PersonSchema = new Schema({
     visited: String,
     lastVisited: String,
     membership: String,
+    datesVisited:Array,
     publicImgId: String,
     imgUrl:{
         type:String,
