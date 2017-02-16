@@ -20,6 +20,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 
+
+
+//         Why we should Close the driver after each Request
+// ------> https://github.com/neo4j/neo4j-javascript-driver <---------
+
+
+
+
+
 // ------> http://stackoverflow.com/questions/39239051/rs256-vs-hs256-whats-the-difference <---------
 //Stack overflow on why RS256 is better for encryption, good for Write Up
 var jwtCheck = jwt({
@@ -52,7 +61,7 @@ app.all('*', function (req, res, next) {
 
 
 // ----------------- Authentication Route For Persons/Buisness Via DataBase -------------------------------- 
-// POST http://localhost:8080/api/authenticate)
+// POST http://localhost:8100/api/authenticate)
 router.post('/authenticate', function (req, res) {
 
   var queryString = "";
@@ -107,21 +116,22 @@ router.post('/authenticate', function (req, res) {
 
               bEmail: record._fields[1].properties.email//BUSINESS EMAIL
             });
-            console.log('Found You! Permission Granted');
+
           }
           else {
             console.log('Found You! Permission Granted');
             res.json({ success: true, name: record._fields[0].properties.name })
           }
         });
-
-        session.close();//close the session
-        driver.close();////close driver
       }
+      session.close();
+      driver.close();////close driver
     })
     .catch(function (error) {
       console.log(error);
       res.json({ success: false });
+      session.close();
+      driver.close();////close driver
     });
 });
 
@@ -145,7 +155,7 @@ router.post('/addCompany', function (req, res) {
       console.log("Business created");
       res.json({ message: 'Business created!', success: true });
       session.close();
-      driver.close();
+      driver.close();////close driver
     })
     .catch(function (error) {
       // If error is a business with this email address already exists, return fail response
@@ -156,6 +166,8 @@ router.post('/addCompany', function (req, res) {
       else {
         res.send(error);
       }
+      session.close();
+      driver.close();////close driver
     });
 });
 
@@ -164,9 +176,9 @@ router.post('/addCompany', function (req, res) {
 router.post('/addPerson', function (req, res) {
   var session = driver.session();
 
-  var person = newPersonObj(req);      // create a new instance of the Person model
+  var person = newPersonObj(req);  // Create a new instance of the Person model
 
-  var joined = new Date(); // Person join date is the current date/time of entry
+  var joined = new Date();         // Person join date is the current date/time of entry
   var mill = joined.getTime();
 
   person.joined = mill.toString(); // Join date is converted to milliseconds
@@ -177,18 +189,22 @@ router.post('/addPerson', function (req, res) {
       console.log("Person created");
       res.json({ message: 'Person created!', success: true });
       session.close();
+      driver.close();////close driver
     })
     .catch(function (error) {
       console.log(error);
       var s = error.fields[0].message;
-      if (s.includes("already exists")) {
+
+      if (s.includes("already exists"))
         res.json({ message: "Person Already Exists", success: false });
-      }
-      else {
+      else
         res.send(error);
-      }
-    })
-})//addPerson
+
+      session.close();
+      driver.close();////close driver
+    });
+
+});//addPerson
 
 
 //----------------------------------- DELETE A Business BY EMAIL  -------------------------- *FIX* --------
@@ -208,11 +224,12 @@ router.delete('/deleteCompany', function (req, res) {
         res.json({ success: false, message: 'Problem Deleting Business Check Email/Password' });
 
       session.close();
-      driver.close();
+      driver.close();////close driver
     })
     .catch(function (error) {
-
       res.send(error);
+      session.close();
+      driver.close();////close driver
     });
 });
 
@@ -229,7 +246,6 @@ router.post('/findPerson', function (req, res) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
       if (result.records[0] != null) {
-        //res.json({ success: true, message: 'Person Found!' });
 
         //Loop over Results, should always just be 1 returned
         result.records.forEach(function (record) {
@@ -256,7 +272,6 @@ router.post('/findPerson', function (req, res) {
 
             datesVisited: record._fields[0].properties.datesVisited
 
-
           });
         })
       }
@@ -265,16 +280,16 @@ router.post('/findPerson', function (req, res) {
         res.json({ success: false, message: 'Cannot Access Unassociated Members' });
         console.log("Cannot Access Unassociated Members");
       }
-
-
-      session.close();//close the session
+      session.close();
       driver.close();////close driver
     })
     .catch(function (err) {
       console.log(err);
       res.json({ success: false, message: err });
-    })
-})
+      session.close();
+      driver.close();////close driver
+    });
+});
 
 
 //----------------------------------- DELETE A Person ----------------------------------------------
@@ -285,6 +300,7 @@ router.put('/deletePerson', function (req, res) {
   session
     .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email + "' AND b.email='" + req.body.bEmail + "' OPTIONAL MATCH (a)-[r]-(b) DETACH DELETE a,r Return a, b LIMIT 1")
     .then(function (result) {
+
       // IF count(*) Returns > 0, Entry has been made
       if (result.records[0] != null)
         res.json({ success: true, message: 'User Deleted' });
@@ -292,22 +308,23 @@ router.put('/deletePerson', function (req, res) {
         res.json({ success: false, message: 'Problem Deleting User Check Name/Email' });
 
       session.close();
-      driver.close();
+      driver.close();////close driver
     })
     .catch(function (error) {
       console.log(error);
       res.json({ success: false, message: err });
-    })
-})//deletePerson
+      session.close();
+      driver.close();////close driver
+    });
+});//deletePerson
 
 
 //----------------------------------- UPDATE A Person -----------------------------------------------------
 router.put('/updatePerson', function (req, res) {
 
   var session = driver.session();
-  console.log(req.body.datesVisited);
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone + "', a.iceName='" + req.body.iceName.trim() + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.icePhone='" + req.body.icePhone + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.datesVisited=" + req.body.datesVisited + ", a.dob='" + req.body.dob + "', a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.membership='" + req.body.membership + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.visited='" + req.body.visited + "', a.datesVisited=" + req.body.datesVisited + ", a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
@@ -317,12 +334,14 @@ router.put('/updatePerson', function (req, res) {
         res.json({ success: false, message: 'Problem Updating User, Check Name/Email' });
 
       session.close();
-      //driver.close();
+      driver.close();////close driver
     })
     .catch(function (error) {
       res.json({ success: false, message: "Email Already In Use" });
-    })
-})//updateperson
+      session.close();
+      driver.close();////close driver
+    });
+});//updateperson
 
 
 //----------------------------------- SET NEW PASSWORD (FOR FIRST LOG IN) -------------------------------- 
@@ -341,13 +360,15 @@ router.put('/newPassword', function (req, res) {
         res.json({ success: false, message: 'Problem Updating User Check Name/Email' });
 
       session.close();
-      //driver.close();
+      driver.close();////close driver
     })
     .catch(function (error) {
       console.log(error);
       res.json({ success: false, message: err });
-    })
-})//newPassword
+      session.close();
+      driver.close();////close driver
+    });
+});//newPassword
 
 
 //----------------------------------- Create A New Person Object From Http Request  -----------------------
@@ -399,12 +420,14 @@ router.post('/topTenVisited', function (req, res) {
       });
 
       res.json({ success: true, message: topTenList });//send the bizList as a response
-
-      session.close();//close the session
+      session.close();
+      driver.close();////close driver
     })
     .catch(function (error) {
       console.log(error);
       res.json({ success: false, message: "Something Happened" });//send the bizList as a response
+      session.close();
+      driver.close();////close driver
     });
 });
 
@@ -424,13 +447,14 @@ router.post('/visitedTotal', function (req, res) {
       });
 
       res.json({ success: true, message: topTenList });//send the bizList as a response
-
-      session.close();//close the session
-      //driver.close();////close driver
+      session.close();
+      driver.close();////close driver
     })
     .catch(function (error) {
       console.log(error);
       res.json({ success: false, message: "Something Happened" });//send the bizList as a response
+      session.close();
+      driver.close();////close driver
     });
 });
 
@@ -443,4 +467,4 @@ app.use('/api', router);
 // Server listens on either Local OR Heroku port
 //=============================================================================
 app.listen(port);
-console.log('Magic happens on port ' + port);
+console.log('Magic Happens On Port ' + port);
