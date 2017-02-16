@@ -19,8 +19,8 @@ using System.Globalization;
 
 public partial class _Default : System.Web.UI.Page
 {
-    private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
-    //private string port = WebConfigurationManager.AppSettings["API_PORT"];
+    //private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
+    private string port = WebConfigurationManager.AppSettings["API_PORT"];
     // private System.Web.HttpCookie authCookie;
 
     public class VisitedData

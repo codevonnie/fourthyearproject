@@ -17,8 +17,8 @@ using CloudinaryDotNet;
 
 public partial class Arivals : System.Web.UI.Page
 {
-    private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
-    //private string port = WebConfigurationManager.AppSettings["API_PORT"];
+    //private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
+    private string port = WebConfigurationManager.AppSettings["API_PORT"];
 
     private TempCustomer _TempCust = new TempCustomer();
     private Boolean _newCust;
