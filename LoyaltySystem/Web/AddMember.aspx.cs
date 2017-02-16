@@ -195,12 +195,11 @@ public partial class AddMember : System.Web.UI.Page
         if (file != null && file.ContentLength > 0)
         {
             string fname = Path.GetFileName(file.FileName);
-            file.SaveAs(Server.MapPath(Path.Combine("~/App_Data/Images", fname)));
-
+            file.SaveAs(Server.MapPath(Path.Combine("../Images/", fname)));
 
             ImageUploadParams uploadParams = new CloudinaryDotNet.Actions.ImageUploadParams()
             {
-                File = new CloudinaryDotNet.Actions.FileDescription(Server.MapPath("/App_Data/Images/" + file.FileName)),
+                File = new FileDescription(Server.MapPath("../Images/" + file.FileName)),
                 Transformation = new Transformation().Width(300).Height(400).Crop("limit"),
                 Invalidate = true
             };
@@ -212,7 +211,7 @@ public partial class AddMember : System.Web.UI.Page
             jsonObject = JsonConvert.DeserializeObject<CloudinaryApi.results>(uploadResult.JsonObj.ToString());
 
             //Remove the Image from storage again
-            File.Delete(Server.MapPath(Path.Combine("~/App_Data/Images", fname)));
+            File.Delete(Server.MapPath(Path.Combine("../Images/", fname)));
         }
         return (jsonObject as CloudinaryApi.results);
     }
