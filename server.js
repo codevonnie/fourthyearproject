@@ -390,7 +390,7 @@ function newPersonObj(req) {
 //----------------------------------- GET Top 10 Visited  --------------------------------------------------
 router.post('/topTenVisited', function (req, res) {
 
-  var queryTopTen = "Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE b.email='" + req.body.bEmail + "' WITH a ORDER BY a.lastvisited DESC Return a LIMIT 10";
+  var queryTopTen = "Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE b.email='" + req.body.bEmail + "' WITH a ORDER BY a.visited DESC Return a LIMIT 10";
   var session = driver.session();//Create a new session
   session.run(queryTopTen)
     .then(function (result) {
