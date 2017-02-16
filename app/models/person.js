@@ -13,7 +13,6 @@ var PersonSchema = new Schema({
     joined: String,
     dob: String,
     visited: String,
-    lastVisited: String,
     membership: String,
     datesVisited:Array,
     publicImgId: String,

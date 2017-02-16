@@ -103,9 +103,9 @@ router.post('/authenticate', function (req, res) {
               guardianNum: record._fields[0].properties.guardianNum,
               visited: record._fields[0].properties.visited,
               membership: record._fields[0].properties.membership,
-              lastVisited: record._fields[0].properties.lastVisited,
+              datesVisited: record._fields[0].properties.datesVisited,
 
-              bEmail: record._fields[1].properties.email,//BUSINESS EMAIL
+              bEmail: record._fields[1].properties.email//BUSINESS EMAIL
             });
             console.log('Found You! Permission Granted');
           }
@@ -170,10 +170,9 @@ router.post('/addPerson', function (req, res) {
   var mill = joined.getTime();
 
   person.joined = mill.toString(); // Join date is converted to milliseconds
-  person.lastVisited = mill.toString();
 
   session
-    .run("MATCH (b:Business {email: '" + req.body.bEmail.trim().toLowerCase() + "'}) Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:'" + person.joined + "', dob:'" + person.dob + "', email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', visited:'" + person.visited + "', membership:'" + person.membership + "', lastVisited:'" + person.lastVisited + "', publicImgId:'" + person.publicImgId + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
+    .run("MATCH (b:Business {email: '" + req.body.bEmail.trim().toLowerCase() + "'}) Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:'" + person.joined + "', dob:'" + person.dob + "', email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', visited:'" + person.visited + "', membership:'" + person.membership + "', publicImgId:'" + person.publicImgId + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
     .then(function () {
       console.log("Person created");
       res.json({ message: 'Person created!', success: true });
@@ -255,8 +254,8 @@ router.post('/findPerson', function (req, res) {
             membership: record._fields[0].properties.membership,
             publicImgId: record._fields[0].properties.publicImgId,
 
-            datesVisited: record._fields[0].properties.datesVisited,
-            lastVisited: record._fields[0].properties.lastVisited,
+            datesVisited: record._fields[0].properties.datesVisited
+
 
           });
         })
@@ -308,7 +307,7 @@ router.put('/updatePerson', function (req, res) {
   var session = driver.session();
   console.log(req.body.datesVisited);
   session
-    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone + "', a.iceName='" + req.body.iceName.trim() + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.icePhone='" + req.body.icePhone + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.lastVisited='" + req.body.lastVisited + "', a.datesVisited=" + req.body.datesVisited + ", a.dob='" + req.body.dob + "', a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.membership='" + req.body.membership + "', a.phone='" + req.body.phone + "', a.iceName='" + req.body.iceName.trim() + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.icePhone='" + req.body.icePhone + "', a.joined='" + req.body.joined + "', a.visited='" + req.body.visited + "', a.datesVisited=" + req.body.datesVisited + ", a.dob='" + req.body.dob + "', a.imgUrl='" + req.body.imgUrl + "', a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
     .then(function (result) {
 
       // IF count(*) Returns > 0, Updating has been made successfully
@@ -368,8 +367,6 @@ function newPersonObj(req) {
 
   person.visited = "0";
   person.membership = "0";
-  person.lastVisited = "0";
-  person.datesVisited = req.body.datesVisited;
   person.publicImgId = req.body.publicImgId;
 
   person.guardianName = null;
