@@ -188,7 +188,7 @@ angular.module('starter.controllers', [])
     $scope.profile.icePhone = parseInt(profileData.icePhone); //convert phone numbers to strings
     $scope.profile.phone = parseInt(profileData.phone);
      
-    //convert date milliseconds to date string
+    //convert date milliseconds to date string - local variables so person object is not amended
     var joined = new Date(parseInt(profileData.joined)).toDateString();
     var dob = new Date(parseInt(profileData.dob)).toDateString();
     var membership = membership = new Date(parseInt(profileData.membership)).toDateString();;
