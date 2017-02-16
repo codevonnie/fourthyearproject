@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Newtonsoft.Json;
 using RestSharp;
-using System.Configuration;
-using System.Diagnostics;
-using System.Web.Security;
-using System.Security.Principal;
 using System.Web.Configuration;
 using System.Web.UI.HtmlControls;
 using System.Globalization;
@@ -21,14 +13,13 @@ public partial class _Default : System.Web.UI.Page
 {
     //private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
     private string port = WebConfigurationManager.AppSettings["API_PORT"];
-    // private System.Web.HttpCookie authCookie;
 
     public class VisitedData
     {
-        public List<Data> data { get; set; }
+        public List<DataSet> data { get; set; }
     }
 
-    public class Data
+    public class DataSet
     {
         public string Month { get; set; }
         public int Visits { get; set; }
@@ -61,25 +52,6 @@ public partial class _Default : System.Web.UI.Page
         };
     }
 
-
-
-    //Surround in a try catch
-    private void GetCustomers()
-    {
-        //var client = new RestClient(port);
-
-        //var request = new RestRequest("businessMembers", Method.GET);  //----------------------Get Customers not Business
-        //request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
-
-        //IRestResponse response = client.Execute(request);
-        //var content = response.Content; // raw content as string
-
-        ////Deserialize the result into the class provided
-        //dynamic jsonObject = JsonConvert.DeserializeObject<BuisinessRoot>(response.Content);
-        //var bizObj = jsonObject as BuisinessRoot;
-
-        //bindData(bizObj);
-    }
 
 
     protected void BtnTopVisited_Click(object sender, EventArgs e)
@@ -116,22 +88,19 @@ public partial class _Default : System.Web.UI.Page
         }
     }
 
-
+    //Displays the Person(s) with the highest Visited amount and generates the Html
     private void DisplayTopVisited(List<TempCustomer> custObjList)
     {
-
         //Sort List By visited in desc order
-        var sortedList = custObjList.OrderByDescending(i => i.visited).ToList();
         int count = 1;
-        foreach (var cust in sortedList)
+
+        foreach (var cust in custObjList)
         {
             HtmlGenericControl licontrol = new HtmlGenericControl();
             licontrol.Attributes["class"] = "list-group-item justify-content-between text-capitalize";
             licontrol.TagName = "li";
             licontrol.InnerText = cust.name;
 
-            //if (count % 2 == 0)
-            //    licontrol.Attributes["class"] += " list-group-item-info";
 
             HtmlGenericControl spancontrol = new HtmlGenericControl();
             spancontrol.TagName = "span";
@@ -151,9 +120,7 @@ public partial class _Default : System.Web.UI.Page
     }
 
 
-
-
-    //-------------------------------- Visited  BarChart -----------------------------------------------------
+    //-------------------------------- Visited  BarChart Request-----------------------------------------------------
     private void VisitedBarChart()
     {
         var client = new RestClient(port);
@@ -179,42 +146,44 @@ public partial class _Default : System.Web.UI.Page
      */
     private void SortAllVisited(List<TempCustomer> custObjList)
     {
-        Data data = new Data();
+        DataSet data = new DataSet();
         Dictionary<string, int> tempDic = new Dictionary<string, int>();
 
+        var culture = CultureInfo.DefaultThreadCurrentCulture;
+        var dateTimeInfo = DateTimeFormatInfo.GetInstance(culture);
+
+        //Fills the Dictonary with all the months in the year by short name
+        foreach (string name in dateTimeInfo.AbbreviatedMonthNames)
+        {
+            tempDic.Add(name, 0);
+        }
+        tempDic.Remove("");
+
+
+        //Loop over everyone in the List then loop through all the dates they have been here, 
+        //Adding 1 to every month they have been to the park
         foreach (var cust in custObjList)
         {
-            //Convert the Mill to DateTime
-            var month = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.lastVisited));
-
-            //Get the current month by number eg 1-12
-            string CurrentMonth = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(month.Month);
-
-            //If the Dic Has the month already add 1 to the value else add a new month
-            if (tempDic.ContainsKey(CurrentMonth))
+            foreach (var date in cust.datesVisited)
             {
-                int value;
-                if (tempDic.TryGetValue(CurrentMonth, out value))
-                    tempDic[CurrentMonth] = value + 1;
+                //Convert the Mill to DateTime
+                var month = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(date));
+
+                string CurrentMonth = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(month.Month);
+
+                //If the Dic Has the month already add 1 to the value else add a new month
+                if (tempDic.ContainsKey(CurrentMonth))
+                {
+                    int value;
+                    if (tempDic.TryGetValue(CurrentMonth, out value))
+                        tempDic[CurrentMonth] = value + 1;
+                }
             }
-            else
-                tempDic.Add(CurrentMonth, 0);
-
         }
-
-        //Temp Data for chart
-        tempDic.Add("Jan", 20);
-        tempDic.Add("April", 54);
-        tempDic.Add("Dec", 145);
-        tempDic.Add("May", 45);
-        tempDic.Add("June", 35);
-        tempDic.Add("July", 75);
+        
 
         //Convert The Dictonary To A List of Objects
-        _custList.data = tempDic.Select(p => new Data { Month = p.Key, Visits = p.Value }).ToList();
-
-        //Sort List By Visits Number
-        _custList.data = _custList.data.OrderBy(x => x.Visits).ToList();
+        _custList.data = tempDic.Select(p => new DataSet { Month = p.Key, Visits = p.Value }).ToList();
 
         //Register the js script
         Page.ClientScript.RegisterStartupScript(this.GetType(), "DisplayBarChart", "DisplayChart()", true);
@@ -229,8 +198,7 @@ public partial class _Default : System.Web.UI.Page
         }
         catch (Exception)
         {
-
-            throw;
+         
         }
     }
 }

@@ -60,7 +60,7 @@ function newPin(newLat, newLng, message) {
     });
 
     //CLICK EVENT
-    google.maps.event.addListener(marker, 'click', function () {
+    google.maps.event.addListener(marker, 'mousedown', function () {
         //Changes the Color of the Icon once Clicked to show message as Viewed
         markerMessage = marker;
         marker.setIcon(iconBase + "green-dot.png");

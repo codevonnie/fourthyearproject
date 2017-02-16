@@ -5,8 +5,7 @@ using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.UI;
 
-using System.IO;
-using System.Web;
+using System.Linq;
 using System.Web.Security;
 
 using System.Web.UI.WebControls;
@@ -14,6 +13,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
+using System.Web.Script.Serialization;
 
 public partial class Arivals : System.Web.UI.Page
 {
@@ -175,12 +175,15 @@ public partial class Arivals : System.Web.UI.Page
             LblMember.Text = memberDate.ToString("dd/MM/yyyy");
         }
 
-        //Display The last time they Visited
-        if (cust.lastVisited.ToString() != "0")
+
+        if (cust.datesVisited != null)
         {
-            var memberDate = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(cust.lastVisited.ToString()));
-            LblLastVisited.Text = memberDate.ToString("dd/MM/yyyy");
+            List<string> HsList = cust.datesVisited.ToList();
+            var lastVisited = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(HsList.Max()));
+            LblLastVisited.Text = lastVisited.ToString("dd/MM/yyyy");
         }
+
+
 
         LblGuardNum.Text = cust.guardianNum.ToString();
         LblGuardName.Text = cust.guardianName.ToString();
@@ -255,13 +258,42 @@ public partial class Arivals : System.Web.UI.Page
         Button btn = sender as Button;
         TempCustomer cust = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
 
+        HashSet<string> datesVisitedHas = cust.datesVisited;
+
+        //List<string> datesVisitedList = cust.datesVisited;
+
+        //IF the List is empty create a new one
+        if (datesVisitedHas == null)
+            datesVisitedHas = new HashSet<string>();
+
+
         var client = new RestClient(port);
 
         //Check To see if the person is just checking in
         if (btn.ID == "BtnCheckin")
         {
             cust.tempEmail = cust.email;
-            cust.lastVisited = convert.DateToMillSec(DateTime.Now).ToString();//Todays Current DateTim Now In Millseconds
+
+            //Todays Current DateTim Now In Millseconds
+            var today= convert.DateToMillSec(DateTime.Now).ToString();
+
+            //Add the current Milliseconds to the list
+            datesVisitedHas.Add(today);
+
+            //Tempoary Data used for BarChart
+            datesVisitedHas.Add("1487289600000");
+            datesVisitedHas.Add("1487376000000");
+            datesVisitedHas.Add("1487462400000");
+            datesVisitedHas.Add("1489968000000");
+            datesVisitedHas.Add("1503183600000");
+
+            cust.datesVisited = datesVisitedHas;
+
+            int num = int.Parse(cust.visited);
+            num++;
+            cust.visited = num.ToString();
+
+
         }
         else
         {
@@ -285,17 +317,11 @@ public partial class Arivals : System.Web.UI.Page
         request.AddParameter("guardianName", cust.guardianName);
         request.AddParameter("guardianNum", cust.guardianNum);
         request.AddParameter("tempEmail", cust.tempEmail);
-        request.AddParameter("publicImgId", cust.publicImgId);
 
-        request.AddParameter("lastVisited", cust.lastVisited);
+        var jsonSerialiser = new JavaScriptSerializer();
+        var datesVisitedJson = jsonSerialiser.Serialize(cust.datesVisited);
 
-        if (btn.ID == "BtnCheckin")
-        {
-            int num = int.Parse(cust.visited);
-            num++;
-            cust.visited = num.ToString();
-        }
-
+        request.AddParameter("datesVisited", datesVisitedJson);
         request.AddParameter("visited", cust.visited);
 
         if (cust.membership != "0") // Could have a Membership Already so maby a function to check if membership is out-of-date
@@ -542,7 +568,7 @@ public partial class Arivals : System.Web.UI.Page
             {
                 DeleteImage(cust);
                 HidePersonDetails();
-                DivDeletedMember.InnerHtml ="Success! Customer: "+cust.name+" Deleted!";
+                DivDeletedMember.InnerHtml = "Success! Customer: " + cust.name + " Deleted!";
             }
 
             else
@@ -587,7 +613,7 @@ public partial class Arivals : System.Web.UI.Page
 
         var delParams = new DelResParams()
         {
-            PublicIds = new List<string>() { cust.publicImgId},
+            PublicIds = new List<string>() { cust.publicImgId },
             Invalidate = true
         };
         var delResult = cloudinary.DeleteResources(delParams);

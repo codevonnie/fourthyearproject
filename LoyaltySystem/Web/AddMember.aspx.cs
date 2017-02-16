@@ -4,13 +4,11 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Security;
-using System.Web.UI.WebControls;
 
 public partial class AddMember : System.Web.UI.Page
 {
@@ -54,8 +52,9 @@ public partial class AddMember : System.Web.UI.Page
             try
             {
                 cloudImg = StoreImgOnCloudinary();
-
+                Console.Write("Image Created");
                 newCustomerRequest(cloudImg);
+                Console.Write("Person Created");
             }
             catch (Exception)
             {
@@ -185,8 +184,8 @@ public partial class AddMember : System.Web.UI.Page
 
         dynamic jsonObject = new CloudinaryApi.results();
 
-        CloudinaryDotNet.Account account = new CloudinaryDotNet.Account(name, key, secret);
-        CloudinaryDotNet.Cloudinary cloudinary = new CloudinaryDotNet.Cloudinary(account);
+        Account account = new CloudinaryDotNet.Account(name, key, secret);
+        Cloudinary cloudinary = new CloudinaryDotNet.Cloudinary(account);
 
 
         HttpPostedFile file = Request.Files["ctl00$ContentPlaceHolder1$ImagePath"];
@@ -199,7 +198,7 @@ public partial class AddMember : System.Web.UI.Page
             file.SaveAs(Server.MapPath(Path.Combine("~/App_Data/Images", fname)));
 
 
-            CloudinaryDotNet.Actions.ImageUploadParams uploadParams = new CloudinaryDotNet.Actions.ImageUploadParams()
+            ImageUploadParams uploadParams = new CloudinaryDotNet.Actions.ImageUploadParams()
             {
                 File = new CloudinaryDotNet.Actions.FileDescription(Server.MapPath("/App_Data/Images/" + file.FileName)),
                 Transformation = new Transformation().Width(300).Height(400).Crop("limit"),
@@ -207,7 +206,7 @@ public partial class AddMember : System.Web.UI.Page
             };
 
             //Upload Image
-            CloudinaryDotNet.Actions.ImageUploadResult uploadResult = cloudinary.Upload(uploadParams);
+            ImageUploadResult uploadResult = cloudinary.Upload(uploadParams);
 
 
             jsonObject = JsonConvert.DeserializeObject<CloudinaryApi.results>(uploadResult.JsonObj.ToString());

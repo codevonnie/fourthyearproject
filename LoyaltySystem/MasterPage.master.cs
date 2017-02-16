@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Services;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 public partial class MasterPage : System.Web.UI.MasterPage
 {
     private UserSettings settings = new UserSettings();
+
+    //used For Auth and Checking Who messages are for
     private string check;
     private string email;
     protected string LoggedInStatus { get { return check; } }
@@ -31,26 +28,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
         };
     }
 
-    //private void init()
-    //{
-    //    var scriptManager = ScriptManager.GetCurrent(Page);
-    //    if (scriptManager == null) return;
-    //    Boolean alreadyRegistered = false;
-
-    //    ScriptReference SRef = new ScriptReference();
-    //    SRef.Path = "~/Scripts/MessageServerListener.js";
-
-
-    //        if (!scriptManager.Scripts.Contains(SRef))
-    //        {
-    //        scriptManager.Scripts.Add(new ScriptReference { Path = "~/Scripts/MessageServerListener.js" });
-    //    }
-
-
-    //}
-
-
-
+    //Switch the text on the login/logout button
     public void logStatus(String check)
     {
         if (check == "true")
@@ -59,24 +37,15 @@ public partial class MasterPage : System.Web.UI.MasterPage
             BtnLogIn.Text = "LogIn";
     }
 
-    public String messageBoxNumber
-    {
-        get { return messageBoxCount.InnerText; }
-        set { messageBoxCount.InnerText = value; }
-    }
 
-
+    //Check if logged in our out
     protected void LogOut_Click(object sender, EventArgs e)
     {
         if (check == "true")
         {
             Cache.Remove("Settings");
             Cache.Remove("CUSTOMER_OBJ");
+            Response.Redirect("LoginPage.aspx", true);
         }
-
-        else
-            Page.ClientScript.RegisterStartupScript(this.GetType(), "CallMyFunction", "SendListToPage()", false);
-
-        Response.Redirect("LoginPage.aspx", true);
     }
 }

@@ -123,7 +123,7 @@
                             file: {
                                 extension: 'jpeg,jpg,png',// Jpg,Jpeg,Png only
                                 type: 'image/jpeg,image/png',
-                                maxSize: 2097152,   // 2048 * 1024 8MB Important as cloudinary is 10mb max
+                                maxSize: 10000000,   //10MB Important as cloudinary is 10mb max
                                 message: 'The selected file is not valid.<br/>JPG/JPEG/PNG Only<br/>File Size Limit: 10Mb'
                             }
                         }
