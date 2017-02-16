@@ -74,21 +74,6 @@ function newPin(newLat, newLng, message) {
         infowindow.open(map, marker);
     });
 
-    //CLICK EVENT
-    google.maps.event.addListener(marker, 'click', function () {
-        //Changes the Color of the Icon once Clicked to show message as Viewed
-        markerMessage = marker;
-        marker.setIcon(iconBase + "green-dot.png");
-        LatClick = this.position.lat();
-        LongClick = this.position.lng();
-
-        LatClick = parseFloat(LatClick).toFixed(6); //*************************** FIX IF NEEDED
-        LongClick = parseFloat(LongClick).toFixed(6);
-
-        // Calling the open method of the infoWindow        
-        infowindow.open(map, marker);
-    });
-
     markerArray.push(marker);
 }
 
