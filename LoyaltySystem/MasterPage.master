@@ -8,7 +8,7 @@
 
     <link href="Content/bootstrap.css" rel="stylesheet" />
     <link href="Content/CustomStyleSheet.css" rel="stylesheet" />
-    <link href="Content/font-awesome.css" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
     <link href="Content/jasny-bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/css/bootstrapValidator.min.css" />
 
