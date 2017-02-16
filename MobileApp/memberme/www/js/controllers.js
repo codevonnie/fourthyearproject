@@ -191,14 +191,16 @@ angular.module('starter.controllers', [])
     //convert date milliseconds to date string - local variables so person object is not amended
     var joined = new Date(parseInt(profileData.joined)).toDateString();
     var dob = new Date(parseInt(profileData.dob)).toDateString();
-    var membership = membership = new Date(parseInt(profileData.membership)).toDateString();;
+    var membership = new Date(parseInt(profileData.membership)).toDateString();
+    var lastVisited = new Date(parseInt(profileData.lastVisited)).toDateString();
     
     $scope.joined = joined;
     $scope.dob = dob;
+    $scope.lastVisited = lastVisited;
 
     
     //if membership is not a valid date set it to null or save the date value to the scope
-    if(membership=='Invalid Date'){
+    if(membership=='Invalid Date' || profileData.membership=='0'){
       $scope.membership = null;
     }
     else{

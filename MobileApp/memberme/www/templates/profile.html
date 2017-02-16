@@ -92,6 +92,11 @@
             <h3>{{profile.visited}}</h3>
           </ion-item>
 
+          <ion-item ng-hide="profile.visited==0">
+            <h2 class="profile-list">Last Visited</h2>
+            <h3>{{lastVisited}}</h3>
+          </ion-item>
+
           <ion-item ng-hide="!membership">
             <h2 class="profile-list">Membership End Date</h2>
             <h3>{{membership}}</h3>
