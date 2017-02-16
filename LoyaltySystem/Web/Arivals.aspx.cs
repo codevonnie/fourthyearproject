@@ -258,14 +258,11 @@ public partial class Arivals : System.Web.UI.Page
         Button btn = sender as Button;
         TempCustomer cust = (TempCustomer)Cache.Get("CUSTOMER_OBJ");
 
-        HashSet<string> datesVisitedHas = cust.datesVisited;
-
-        //List<string> datesVisitedList = cust.datesVisited;
+        HashSet<string> visitHashSet = cust.datesVisited;
 
         //IF the List is empty create a new one
-        if (datesVisitedHas == null)
-            datesVisitedHas = new HashSet<string>();
-
+        if (visitHashSet == null)
+            visitHashSet = new HashSet<string>();
 
         var client = new RestClient(port);
 
@@ -278,21 +275,20 @@ public partial class Arivals : System.Web.UI.Page
             var today= convert.DateToMillSec(DateTime.Now).ToString();
 
             //Add the current Milliseconds to the list
-            datesVisitedHas.Add(today);
+            visitHashSet.Add(today);
 
             //Tempoary Data used for BarChart
-            datesVisitedHas.Add("1487289600000");
-            datesVisitedHas.Add("1487376000000");
-            datesVisitedHas.Add("1487462400000");
-            datesVisitedHas.Add("1489968000000");
-            datesVisitedHas.Add("1503183600000");
+            visitHashSet.Add("1487289600000");
+            visitHashSet.Add("1487376000000");
+            visitHashSet.Add("1487462400000");
+            visitHashSet.Add("1489968000000");
+            visitHashSet.Add("1503183600000");
 
-            cust.datesVisited = datesVisitedHas;
+            cust.datesVisited = visitHashSet;
 
             int num = int.Parse(cust.visited);
             num++;
             cust.visited = num.ToString();
-
 
         }
         else
@@ -306,23 +302,17 @@ public partial class Arivals : System.Web.UI.Page
         var request = new RestRequest("updatePerson", Method.PUT);
         request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
         request.AddParameter("name", cust.name);
-        request.AddParameter("address", cust.address);
-        request.AddParameter("dob", cust.dob);
-        request.AddParameter("phone", cust.phone);
-        request.AddParameter("iceName", cust.iceName);
-        request.AddParameter("icePhone", cust.icePhone);
-        request.AddParameter("joined", cust.joined);
         request.AddParameter("email", cust.email);
-        request.AddParameter("imgUrl", cust.imgUrl);
         request.AddParameter("guardianName", cust.guardianName);
         request.AddParameter("guardianNum", cust.guardianNum);
         request.AddParameter("tempEmail", cust.tempEmail);
+        request.AddParameter("visited", cust.visited);
 
+        //Convert the cust.datesVisited to a json obj
         var jsonSerialiser = new JavaScriptSerializer();
         var datesVisitedJson = jsonSerialiser.Serialize(cust.datesVisited);
 
         request.AddParameter("datesVisited", datesVisitedJson);
-        request.AddParameter("visited", cust.visited);
 
         if (cust.membership != "0") // Could have a Membership Already so maby a function to check if membership is out-of-date
         {

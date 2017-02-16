@@ -52,9 +52,7 @@ public partial class AddMember : System.Web.UI.Page
             try
             {
                 cloudImg = StoreImgOnCloudinary();
-                Console.Write("Image Created");
                 newCustomerRequest(cloudImg);
-                Console.Write("Person Created");
             }
             catch (Exception)
             {

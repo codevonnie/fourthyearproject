@@ -32,8 +32,6 @@ function CreateArivals() {
         if (custList.hasOwnProperty(key)) {
             var val = custList[key];
 
-            console.log(val);
-
             var para = document.createElement("div");
             para.className += "col-xs-6 col-sm-4 placeholder DisplayPersonBox text-left";
 

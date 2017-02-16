@@ -112,7 +112,6 @@
 
                     messageObj = JSON.parse(e.data)//Parse the data
 
-                    console.log("Waithing For Messages");
                     //Check to see if the message Is for the Biz
                     if (BizEmail === messageObj.business) {
                         console.log("Message Recieved!");
