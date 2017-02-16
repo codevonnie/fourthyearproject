@@ -172,7 +172,7 @@ router.post('/addPerson', function (req, res) {
   person.joined = mill.toString(); // Join date is converted to milliseconds
 
   session
-    .run("MATCH (b:Business {email: '" + req.body.bEmail.trim().toLowerCase() + "'}) Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:'" + person.joined + "', dob:'" + person.dob + "', email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', visited:'" + person.visited + "', membership:'" + person.membership + "', publicImgId:'" + person.publicImgId + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
+    .run("MATCH (b:Business {email: '" + req.body.bEmail.trim().toLowerCase() + "'}) Create (a:Person {name:'" + person.name + "', address:'" + person.address + "', phone:'" + person.phone + "', iceName:'" + person.iceName + "', icePhone:'" + person.icePhone + "', joined:'" + person.joined + "', dob:'" + person.dob + "', email:'" + person.email + "', imgUrl:'" + person.imgUrl + "', password:'" + person.password + "', visited:'" + person.visited + "', membership:'" + person.membership + "', publicImgId:'" + person.publicImgId + "', datesVisited:'" + person.datesVisited + "', guardianName:'" + person.guardianName + "', guardianNum:'" + person.guardianNum + "'}) CREATE (a)-[:IS_A_MEMBER]->(b)-[:HAS_A_MEMBER]->(a) RETURN COUNT(*)")
     .then(function () {
       console.log("Person created");
       res.json({ message: 'Person created!', success: true });
