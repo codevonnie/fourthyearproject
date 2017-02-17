@@ -104,7 +104,7 @@ angular.module('starter.services', [])
      //sends updated profile details to server updatePerson method
      var updateProfile = function(user) {
        return $q(function(resolve, reject) {
-         $http.put(API_ENDPOINT.url + '/updatePerson', user).then(function(result) {
+         $http.put(API_ENDPOINT.url + '/mobileUpdatePerson', user).then(function(result) {
            if (result.data.success) {
              console.log(user);
              resolve(result.data.message);

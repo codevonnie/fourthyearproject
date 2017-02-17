@@ -40,12 +40,12 @@
 
           <ion-item>
             <h2 class="profile-list">Emergency Contact No.</h2>
-            <h3>{{profile.icePhone}}</h3>
+            <h3>{{tempProfile.icePhone}}</h3>
             <ion-option-button class="button-info" ng-click="edit()">
                 Edit
               </ion-option-button>
               <div ng-show="toggle">
-                    <input type="number" ng-model="profile.icePhone" placeholder="Enter new details" ></input>
+                    <input type="number" ng-model="tempProfile.icePhone" placeholder="Enter new details" ></input>
                     <button ng-click="submit()">Submit</button>
                     <button ng-click="cancel()">Cancel</button>
                     </div>
@@ -76,12 +76,12 @@
 
           <ion-item>
             <h2 class="profile-list">Phone No.</h2>
-            <h3>{{profile.phone}}</h3>
+            <h3>{{tempProfile.phone}}</h3>
             <ion-option-button class="button-info" ng-click="edit()">
                 Edit
               </ion-option-button>
               <div ng-show="toggle">
-                    <input type="number" ng-model="profile.phone" placeholder="Enter new details"></input>
+                    <input type="number" ng-model="tempProfile.phone" placeholder="Enter new details"></input>
                     <button ng-click="submit()">Submit</button>
                     <button ng-click="cancel()">Cancel</button>
                     </div>

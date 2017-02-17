@@ -178,6 +178,7 @@ angular.module('starter.controllers', [])
 .controller('ProfileCtrl', function($scope, AuthService, API_ENDPOINT, $http, $state, $ionicListDelegate, $ionicPopup, ConnectivityMonitor) {
   
     $scope.profile={}; //empty profile object
+    $scope.tempProfile={};
     $scope.origProfile={};
     $scope.toggle=false; 
     $scope.listCanSwipe = true; //profile list is swipeable
@@ -185,9 +186,8 @@ angular.module('starter.controllers', [])
     profileData=JSON.parse(profileData); //parse JSON object
     $scope.profile=profileData; //save JSON object to $scope variable
     $scope.qrcode=$scope.profile.email; //qrcode text is the object 
-    $scope.profile.icePhone = parseInt(profileData.icePhone); //convert phone numbers to strings
-    $scope.profile.phone = parseInt(profileData.phone);
-    console.log(profileData);
+    $scope.tempProfile.icePhone = parseInt(profileData.icePhone); //convert phone numbers to strings
+    $scope.tempProfile.phone = parseInt(profileData.phone);
     //convert date milliseconds to date string - local variables so person object is not amended
     var joined = new Date(parseInt(profileData.joined)).toDateString();
     var dob = new Date(parseInt(profileData.dob)).toDateString();
@@ -217,8 +217,8 @@ angular.module('starter.controllers', [])
       profileData=window.localStorage.getItem('profile');//get profile details from local storage
       profileData=JSON.parse(profileData); //parse JSON object
       $scope.profile=profileData; //save JSON object to $scope variable
-      $scope.profile.icePhone = parseInt(profileData.icePhone); //convert phone number string to number
-      $scope.profile.phone = parseInt(profileData.phone);
+      $scope.tempProfile.icePhone = parseInt(profileData.icePhone); //convert phone number string to number
+      $scope.tempProfile.phone = parseInt(profileData.phone);
     }
     //submit function for profile edits
     $scope.submit = function() {
@@ -240,12 +240,11 @@ angular.module('starter.controllers', [])
       AuthService.checkAuthOnRefresh(); //check if token has expired
       $scope.toggle=!$scope.toggle; //hide input box
       $scope.profile.tempEmail=$scope.profile.email; //set tempEmail for updateMethod on server
-      $scope.profile.icePhone = $scope.profile.icePhone.toString();//convert phone number string to number
-      $scope.profile.phone = $scope.profile.phone.toString();
+      $scope.profile.icePhone = $scope.tempProfile.icePhone.toString();//convert phone number string to number
+      $scope.profile.phone = $scope.tempProfile.phone.toString();
       profileData=$scope.profile;
       AuthService.updateProfile(profileData).then(onSuccess, onError); //call AuthService method updateProfile and pass profileData object
-      $scope.profile.icePhone = parseInt(profileData.icePhone); //convert phone numbers to strings
-      $scope.profile.phone = parseInt(profileData.phone);
+
 
       }//end else
 
@@ -256,7 +255,8 @@ angular.module('starter.controllers', [])
             title: 'Success',
             template: "Details updated."
             });
-
+              
+        
         profileData=$scope.profile; //save updated $scope obj to profileData obj
         window.localStorage.setItem('profile', JSON.stringify(profileData)); //set updated profile details to local storage
       }
@@ -305,6 +305,7 @@ angular.module('starter.controllers', [])
   //empty object to take sos details for sending to business
   $scope.sos={};
   $scope.emer=true;
+  $scope.toggle=true;
 
     //submit function called from sos page when Send SOS button is clicked
   $scope.submit=function(){
