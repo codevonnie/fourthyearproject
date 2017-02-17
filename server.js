@@ -217,8 +217,8 @@ router.delete('/deleteCompany', function (req, res) {
 
     .then(function (result) {
 
-      // IF count(*) Returns > 0, Entry has been made
-      if (result.records.length != 0)
+      // IF result.summary.counters._stats.nodesDeleted > 0 business has been deleted successfully
+      if (result.summary.counters._stats.nodesDeleted > 0)
         res.json({ success: true, message: 'Business Deleted' });
       else
         res.json({ success: false, message: 'Problem Deleting Business Check Email/Password' });
@@ -301,8 +301,10 @@ router.put('/deletePerson', function (req, res) {
     .run("Match (a:Person)-[r:IS_A_MEMBER]->(b:Business) WHERE a.email='" + req.body.email + "' AND b.email='" + req.body.bEmail + "' OPTIONAL MATCH (a)-[r]-(b) DETACH DELETE a,r Return a, b LIMIT 1")
     .then(function (result) {
 
-      // IF count(*) Returns > 0, Entry has been made
-      if (result.records[0] != null)
+      console.log(result.summary.counters._stats.nodesDeleted);
+
+      // IF result.summary.counters._stats.nodesDeleted > 0 person has been deleted successfully
+      if (result.summary.counters._stats.nodesDeleted > 0)
         res.json({ success: true, message: 'User Deleted' });
       else
         res.json({ success: false, message: 'Problem Deleting User Check Name/Email' });
@@ -327,8 +329,8 @@ router.put('/updatePerson', function (req, res) {
     .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.membership='" + req.body.membership + "', a.guardianName='" + req.body.guardianName + "', a.guardianNum='" + req.body.guardianNum + "', a.visited='" + req.body.visited + "', a.datesVisited=" + req.body.datesVisited + ", a.email='" + req.body.tempEmail.toLowerCase() + "' return COUNT(*)")
     .then(function (result) {
 
-      // IF count(*) Returns > 0, Updating has been made successfully
-      if (result.records[0] != null)
+     // IF result.summary.counters._stats.propertiesSet Returns > 0, Updating has been made successfully
+      if (result.summary.counters._stats.propertiesSet > 0)
         res.json({ success: true, message: 'User Details Updated' });
       else
         res.json({ success: false, message: 'Problem Updating User, Check Name/Email' });
@@ -352,9 +354,9 @@ router.put('/newPassword', function (req, res) {
   session
     .run("Match (a:Person) WHERE a.email='" + req.body.email + "' SET a.password='" + req.body.password + "' return COUNT(*)")
     .then(function (result) {
-
-      // IF count(*) Returns > 0, Updating has been made successfully
-      if (result.records.length > 0)
+      console.log(result.summary.counters._stats.propertiesSet);
+      // IF result.summary.counters._stats.propertiesSet Returns > 0, Updating has been made successfully
+      if (result.summary.counters._stats.propertiesSet > 0)
         res.json({ success: true, message: 'User Password Updated' });
       else
         res.json({ success: false, message: 'Problem Updating User Check Name/Email' });
@@ -369,6 +371,33 @@ router.put('/newPassword', function (req, res) {
       driver.close();////close driver
     });
 });//newPassword
+
+//----------------------------------- MOBILE APP UPDATE PERSON DETAILS-----------------------------------------------------
+router.put('/mobileUpdatePerson', function (req, res) {
+
+  var session = driver.session();
+  session
+    .run("Match (a:Person) WHERE a.email='" + req.body.email.trim().toLowerCase() + "' SET a.name='" + req.body.name.trim() + "', a.address='" + req.body.address.trim() + "', a.phone='" + req.body.phone + "', a.iceName='" + req.body.iceName.trim() + "', a.icePhone='" + req.body.icePhone + "' return COUNT(a)")
+    .then(function (result) {
+
+      console.log(result.summary.counters._stats.propertiesSet);
+      // IF result.summary.counters._stats.propertiesSet Returns > 0, Updating has been made successfully
+      //var checkCount=JSON.stringify(result.records[0]._fieldLookup);
+      //console.log(checkCout);
+      if (result.summary.counters._stats.propertiesSet > 0)
+        res.json({ success: true, message: 'User Details Updated' });
+      else
+        res.json({ success: false, message: 'Problem Updating User, Check Name/Email' });
+
+      session.close();
+      driver.close();
+    })
+    .catch(function (error) {
+      res.json({ success: false, message: "Email Already In Use" });
+      session.close();
+      driver.close();////close driver
+    })
+})//mobileUpdatePerson
 
 
 //----------------------------------- Create A New Person Object From Http Request  -----------------------
