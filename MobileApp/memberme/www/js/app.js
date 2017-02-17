@@ -18,10 +18,13 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-    //timeout function for splashscreen to disappear once app is loaded
-    // setTimeout(function() {
-    //     navigator.splashscreen.hide();
-    // }, 10000);
-
+    //run splashscreen until device is ready
+    document.addEventListener("deviceready", onDeviceReady, false);
+      function onDeviceReady() {
+      setTimeout(function() {
+      navigator.splashscreen.hide();
+      }, 2000);
+      }
+    
   });
 });

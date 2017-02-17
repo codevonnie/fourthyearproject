@@ -3,7 +3,7 @@ angular.module('starter.controllers', [])
 .controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, jwtHelper, ConnectivityMonitor, $ionicLoading) {
   
   $scope.user={}; //user object for displaying profile details
-  $scope.logo="img/logo.png"; //sample logo
+  $scope.logo="img/logo1.png"; //sample logo
 
   var logInDetails = window.localStorage.getItem('signIn'); //check localStorage for stored sign in details
 

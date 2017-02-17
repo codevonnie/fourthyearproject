@@ -1,6 +1,7 @@
 <ion-view title="Please sign in">
   <ion-content class="padding content-stable" overflow-scroll="false">
         <img class="logo" ng-src={{logo}}>
+    <form ng-submit"login(user)">
     <div class="list login">
       <label class="item item-input item-floating-label">
         <span class="input-label">Email</span>
@@ -11,11 +12,12 @@
         <input type="password" placeholder="Password" ng-model="user.password">
       </label>
     </div>
-    <div class="padding">
+    <div>
             <p ng-show="emailVal">* Please enter a valid email address</p>
         </div>
         <div class="padding">
-            <button type="button" class="button button-full button-positive" ng-disabled="loginButton" ng-click="login(user)">Login</button>
+            <button type="submit" class="button button-full button-positive" ng-disabled="loginButton" ng-click="login(user)">Login</button>
         </div>
+    </form>
   </ion-content>
 </ion-view>
