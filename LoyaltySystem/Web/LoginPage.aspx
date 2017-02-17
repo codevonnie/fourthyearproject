@@ -179,7 +179,7 @@
                             </div>
                         </div>
 
-                      <%-- No Connection--%>
+                        <%-- No Connection--%>
                         <div id="DivConnectionErr" runat="server">
                             <div class="alert alert-danger text-center" role="alert">
                                 <strong>OOPS! Connection Error - Reconnect Or Try Again Later! </strong>
@@ -188,7 +188,7 @@
                     </div>
 
                     <%--Footer--%>
-                    <div class="modal-footer">                       
+                    <div class="modal-footer">
                         <div class="form-group">
                             <asp:Button CssClass="btn btn-success btn-lg btn-block" ID="BtnSignIn" runat="server" Text="Sign In" OnClick="singInBtn_Click" />
                         </div>
@@ -274,18 +274,14 @@
                                 <asp:TextBox ID="TbAddress" runat="server" CssClass="form-control" placeholder="Current Address"></asp:TextBox>
                             </div>
 
-                            <%-- Error Msgs--%>
-                            <div class="form-group text-center">
-                                <div id="errMeesages"></div>
-                            </div>
 
                             <%-- Failed New Comp--%>
-                            <div id="DivFailedNewComp" runat="server">
-                                <div class="alert alert-danger text-center" role="alert">
-                                    <strong>Invalid Input Try Again!</strong>
-                                </div>
+                            <div id="DivFailedNewComp" runat="server" class="alert alert-danger text-center" role="alert">
                             </div>
 
+                             <%-- Success New Comp--%>
+                            <div id="DivSuccess" runat="server" class="alert alert-success text-center" role="alert">
+                            </div>
                         </div>
                     </div>
 

@@ -22,6 +22,7 @@ public partial class LoginPage : System.Web.UI.Page
         DivFailed.Visible = false;
         DivFailedNewComp.Visible = false;
         DivConnectionErr.Visible = false;
+        DivSuccess.Visible = false;
     }
 
     //---------------------------------------------------------------> Log In Stuff Below <----------------------------------------------------------
@@ -100,8 +101,17 @@ public partial class LoginPage : System.Web.UI.Page
     //Btn Click event calls nessassary Methods 
     protected void BtnCheckPersonIn_Click(object sender, EventArgs e)
     {
-        Company comp = NewCompanyObject();
-        CreateNewCompany(Authorization.GetAuth(), comp);
+        try
+        {
+            Company comp = NewCompanyObject();
+            CreateNewCompany(Authorization.GetAuth(), comp);
+        }
+        catch (Exception)
+        {
+            DivFailedNewComp.Visible = true;
+            DivFailedNewComp.InnerText = "Connection Error! Please Try Again Later...";
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('toggle');</script>", false);
+        }
     }
 
     //Create a new Company Object
@@ -141,12 +151,20 @@ public partial class LoginPage : System.Web.UI.Page
         //If Success
         if (bizObj.success == true)
         {
-            TbEmail.Text = comp.email;
-            //Trigger the JS 
+            Cache.Remove("Settings");
+            Cache.Remove("CUSTOMER_OBJ");
+
+            DivSuccess.Visible = true;
+            DivSuccess.InnerText = "Welcome To MemberMe!\n Close Me and Log in Again";
             ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('toggle');</script>", false);
         }
+
         //If Failed To Create A new Buisiness
         else
+        {
             DivFailedNewComp.Visible = true;
+            DivFailedNewComp.InnerText = "Company Exists With Email Already, Try Another.";
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('toggle');</script>", false);
+        }
     }
 }
