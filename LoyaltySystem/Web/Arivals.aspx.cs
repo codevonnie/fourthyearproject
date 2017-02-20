@@ -277,12 +277,12 @@ public partial class Arivals : System.Web.UI.Page
             //Add the current Milliseconds to the list
             visitHashSet.Add(today);
 
-            //Tempoary Data used for BarChart
-            visitHashSet.Add("1487289600000");
-            visitHashSet.Add("1487376000000");
-            visitHashSet.Add("1487462400000");
-            visitHashSet.Add("1489968000000");
-            visitHashSet.Add("1503183600000");
+            //Tempoary Data used for BarChart           ---------------------------- REMOVE THIS AFTER TESTING --------------------------------
+            visitHashSet.Add("1512432000000");
+            visitHashSet.Add("1509840000000");
+            visitHashSet.Add("1493938800000");
+            visitHashSet.Add("1502751600000");
+            visitHashSet.Add("1484438400000");
 
             cust.datesVisited = visitHashSet;
 

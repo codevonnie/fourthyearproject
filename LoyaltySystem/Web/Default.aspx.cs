@@ -94,7 +94,10 @@ public partial class _Default : System.Web.UI.Page
         //Sort List By visited in desc order
         int count = 1;
 
-        foreach (var cust in custObjList)
+        //Sort the list by converting the string to a number, imortant as str "11" < str "2"
+        List<TempCustomer> SortedList = custObjList.OrderByDescending(o => Convert.ToInt32(o.visited)).ToList();
+
+        foreach (var cust in SortedList)
         {
             HtmlGenericControl licontrol = new HtmlGenericControl();
             licontrol.Attributes["class"] = "list-group-item justify-content-between text-capitalize";

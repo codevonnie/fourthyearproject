@@ -281,10 +281,8 @@
             </div>
             <div class="modal-footer">
                 <div class="form-group">
-                    <div id="DivSuccess" runat="server">
-                        <div class="alert alert-success text-center" role="alert">
-                            <strong>New Member Created!</strong>
-                        </div>
+
+                    <div id="DivSuccess" runat="server" class="alert alert-success text-center" role="alert">
                     </div>
 
                     <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="false" ShowSummary="true" CssClass="text-center" ValidationGroup="VgErrorMessages" DisplayMode="List" ForeColor="#CC3300" />

@@ -94,11 +94,12 @@ public partial class AddMember : System.Web.UI.Page
         //Generate a random Password and replaces all non alphanumeric wiht numbers
         string password = Membership.GeneratePassword(6, 3);
         password = Regex.Replace(password, @"[^a-zA-Z0-9]", m => "9");
+        cust.tempPwd = "*x*" + password;
 
         var request = new RestRequest("addPerson", Method.POST);
         request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
         request.AddParameter("name", cust.name);
-        request.AddParameter("password", "*x*" + password);//random password
+        request.AddParameter("password", cust.tempPwd);//random password
         request.AddParameter("email", cust.email);
         request.AddParameter("phone", cust.phone);
         request.AddParameter("address", cust.address);
@@ -128,6 +129,7 @@ public partial class AddMember : System.Web.UI.Page
         if (resObj.success == true)
         {
             DivSuccess.Visible = true;
+            DivSuccess.InnerHtml = cust.name + " Created, Tempoary Password is: <b>" + cust.tempPwd+"</b>";
             ClearAddForm();
         }
     }
