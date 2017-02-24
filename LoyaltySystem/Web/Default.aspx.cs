@@ -25,11 +25,8 @@ public partial class _Default : System.Web.UI.Page
         public int Visits { get; set; }
     }
 
-
-
     private static VisitedData _custList = new VisitedData();
     private static CustomersList _tempList = new CustomersList();
-
 
     protected string VisitData { get { return JsonConvert.SerializeObject(_custList.data); } }
 
@@ -58,7 +55,8 @@ public partial class _Default : System.Web.UI.Page
     {
         try
         {
-            TopVisited();
+            HtmlButton btn = sender as HtmlButton;
+            TopVisited(btn);
         }
         catch (Exception)
         {
@@ -68,7 +66,7 @@ public partial class _Default : System.Web.UI.Page
 
 
     //-------------------------------- Top 10 Visited-----------------------------------------------------
-    private void TopVisited()
+    private void TopVisited(HtmlButton btn)
     {
         var client = new RestClient(port);
 
@@ -84,25 +82,44 @@ public partial class _Default : System.Web.UI.Page
 
         if (custObjList.success == "true")
         {
-            DisplayTopVisited(custObjList.message);
+            DisplayTopVisited(btn, custObjList.message);
         }
     }
 
     //Displays the Person(s) with the highest Visited amount and generates the Html
-    private void DisplayTopVisited(List<TempCustomer> custObjList)
+    private void DisplayTopVisited(HtmlButton btn, List<TempCustomer> custObjList)
     {
         //Sort List By visited in desc order
-        int count = 1;
+        List<TempCustomer> SortedList = new List<TempCustomer>();
 
         //Sort the list by converting the string to a number, imortant as str "11" < str "2"
-        List<TempCustomer> SortedList = custObjList.OrderByDescending(o => Convert.ToInt32(o.visited)).ToList();
+        if (btn.ID == "BtnTopVisited")
+        {
+            SortedList = custObjList.OrderByDescending(o => Convert.ToInt32(o.visited)).ToList();
+            modalHeader.InnerHtml = "<h1 class=\"text - center\" style=\"color: goldenrod\">Top 10 Visitors</h1>";
+        }
+        else
+        {
+            SortedList = custObjList.OrderBy(lv => lv.datesVisited.Max()).ThenBy(o => Convert.ToInt32(o.visited)).ToList();
+            //SortedList = custObjList.OrderBy(o => Convert.ToInt32(o.visited)).ThenBy(lv => lv.datesVisited.Max()).ToList();
+            modalHeader.InnerHtml = "<h1 class=\"text-center\" style=\"color: goldenrod\">Top 10 Least Recent</h1>";
+        }
 
         foreach (var cust in SortedList)
         {
             HtmlGenericControl licontrol = new HtmlGenericControl();
             licontrol.Attributes["class"] = "list-group-item justify-content-between text-capitalize";
             licontrol.TagName = "li";
-            licontrol.InnerText = cust.name;
+
+
+            //Get When the Person was last here Max()
+            if (btn.ID == "BtnLeastRecent")
+            {
+                List<string> HsList = cust.datesVisited.ToList();
+                var lastVisited = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(HsList.Max()));
+                licontrol.InnerText = lastVisited.ToString("dd/MM/yyyy") + " --> ";
+            }
+            licontrol.InnerHtml += cust.name;
 
 
             HtmlGenericControl spancontrol = new HtmlGenericControl();
@@ -114,8 +131,6 @@ public partial class _Default : System.Web.UI.Page
 
             // add to the new div, not to the panel
             UlTopChart.Controls.Add(licontrol);
-
-            count++;
         }
 
         //Toggle The Top Ten Score Board
@@ -183,7 +198,7 @@ public partial class _Default : System.Web.UI.Page
                 }
             }
         }
-        
+
 
         //Convert The Dictonary To A List of Objects
         _custList.data = tempDic.Select(p => new DataSet { Month = p.Key, Visits = p.Value }).ToList();
@@ -201,7 +216,7 @@ public partial class _Default : System.Web.UI.Page
         }
         catch (Exception)
         {
-         
+
         }
     }
 }

@@ -278,18 +278,18 @@ public partial class Arivals : System.Web.UI.Page
             visitHashSet.Add(today);
 
             //Tempoary Data used for BarChart           ---------------------------- REMOVE THIS AFTER TESTING --------------------------------
-            visitHashSet.Add("1512432000000");
+            /*visitHashSet.Add("1512432000000");
             visitHashSet.Add("1509840000000");
             visitHashSet.Add("1493938800000");
             visitHashSet.Add("1502751600000");
             visitHashSet.Add("1484438400000");
-
+            */
             cust.datesVisited = visitHashSet;
 
             int num = int.Parse(cust.visited);
             num++;
             cust.visited = num.ToString();
-
+            LblLastVisited.Text = DateTime.Now.ToString("dd/MM/yyyy");
         }
         else
         {

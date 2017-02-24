@@ -116,12 +116,18 @@ function RemoveMessage() {
     for (var key in MessageObjects) {
         if (MessageObjects.hasOwnProperty(key)) {
             var pin = MessageObjects[key];
+            var lat = pin.latitude.toString();
+            var lon = pin.longitude.toString();
 
-            var lat = pin.latitude;
-            var lon = pin.longitude;
 
+            //Check The Length Of the pin as .toFixed bombs out otherwise
+            if (lat.substring(lat.indexOf(".") + 1).length > 6 || lon.substring(lon.indexOf(".") + 1).length > 6) {
+                lat = pin.latitude.toFixed(6);
+                lon = pin.longitude.toFixed(6);
+            }
             //Remove The Pin Clicked From The Array
-            if (lat.toFixed(6) === LatClick && lon.toFixed(6) === LongClick) {
+
+            if (lat === LatClick && lon === LongClick) {
                 MessageObjects.splice(key, 1);
 
                 num--;

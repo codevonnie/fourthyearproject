@@ -19,6 +19,7 @@
         <div class="btn-group btn-group-lg TxtAreaSize BtnGroupDefault" role="group">
             <button type="button" class="btn btn-info BtnDefaultPage" onclick="DisplayArivals()">Arrivals</button>
             <button type="button" id="BtnTopVisited" runat="server" onserverclick="BtnTopVisited_Click" class="btn btn-info BtnDefaultPage">Top Visitors</button>
+            <button type="button" id="BtnLeastRecent" runat="server" onserverclick="BtnTopVisited_Click" class="btn btn-info BtnDefaultPage">Least Recent</button>
             <button type="button" id="BtnBarChart" class="btn btn-info BtnDefaultPage" onserverclick="BtnBarChart_ServerClick" runat="server">BarChart</button>
         </div>
 
@@ -38,8 +39,8 @@
     <div id="TopTenModal" style="display: none;">
         <div class="modal-dialog">
             <div class="modal-content ">
-                <div class="modal-header">
-                    <h1 class="text-center" style="color: goldenrod">Top 10 Visitors</h1>
+                <div class="modal-header" id="modalHeader" runat="server">
+
                 </div>
 
                 <%--Modal Body--%>
