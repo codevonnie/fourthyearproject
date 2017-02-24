@@ -99,7 +99,7 @@ public partial class LoginPage : System.Web.UI.Page
     //---------------------------------------------------------------> Register Company Page Stuff Below <----------------------------------------------------------
 
     //Btn Click event calls nessassary Methods 
-    protected void BtnCheckPersonIn_Click(object sender, EventArgs e)
+    protected void BtnCheckCompanyIn_Click(object sender, EventArgs e)
     {
         try
         {
