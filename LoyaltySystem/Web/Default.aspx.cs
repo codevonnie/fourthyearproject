@@ -96,7 +96,7 @@ public partial class _Default : System.Web.UI.Page
         if (btn.ID == "BtnTopVisited")
         {
             SortedList = custObjList.OrderByDescending(o => Convert.ToInt32(o.visited)).ToList();
-            modalHeader.InnerHtml = "<h1 class=\"text - center\" style=\"color: goldenrod\">Top 10 Visitors</h1>";
+            modalHeader.InnerHtml = "<h1 class=\"text-center\" style=\"color: goldenrod\">Top 10 Visitors</h1>";
         }
         else
         {

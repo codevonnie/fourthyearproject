@@ -287,7 +287,7 @@
 
                     <!--Modal Footer-->
                     <div class="modal-footer RoundBottom">
-                        <asp:Button CssClass="btn btn-block btn-success btn-lg" ID="BtnSubmitCompany" runat="server" Text="Submit" OnClick="BtnCheckPersonIn_Click" />
+                        <asp:Button CssClass="btn btn-block btn-success btn-lg" ID="BtnSubmitCompany" runat="server" Text="Submit" OnClick="BtnCheckCompanyIn_Click" />
                     </div>
                 </div>
             </div>
