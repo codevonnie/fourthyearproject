@@ -8,7 +8,8 @@
         <img class="profile-image" ng-src="{{profile.imgUrl}}">
         
         <ion-list show-delete="shouldShowDelete" can-swipe="listCanSwipe">
-          <ion-item>
+          <ion-item class="item item-icon-right">
+            <i class="icon ion-ios-arrow-left"></i>
             <h2 class="profile-list">Name</h2>
             <h3>{{profile.name}}</h3>
              <ion-option-button class="button-info" ng-click="edit()">
@@ -26,7 +27,8 @@
             <h3>{{dob}}</h3>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="item item-icon-right">
+            <i class="icon ion-ios-arrow-left"></i>
             <h2 class="profile-list">Emergency Contact</h2>
             <h3>{{profile.iceName}}</h3>
             <ion-option-button class="button-info" ng-click="edit()">
@@ -39,7 +41,8 @@
                     </div>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="item item-icon-right">
+            <i class="icon ion-ios-arrow-left"></i>
             <h2 class="profile-list">Emergency Contact No.</h2>
             <h3>{{tempProfile.icePhone}}</h3>
             <ion-option-button class="button-info" ng-click="edit()">
@@ -62,7 +65,8 @@
             <h3>{{profile.email}}</h3>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="item item-icon-right">
+            <i class="icon ion-ios-arrow-left"></i>
             <h2 class="profile-list">Address</h2>
             <h3>{{profile.address}}</h3>
             <ion-option-button class="button-info" ng-click="edit()">
@@ -75,7 +79,8 @@
                     </div>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="item item-icon-right">
+            <i class="icon ion-ios-arrow-left"></i>
             <h2 class="profile-list">Phone No.</h2>
             <h3>{{tempProfile.phone}}</h3>
             <ion-option-button class="button-info" ng-click="edit()">
