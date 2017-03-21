@@ -4,10 +4,8 @@ using System;
 using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.UI;
-
 using System.Linq;
 using System.Web.Security;
-
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -272,18 +270,20 @@ public partial class Arivals : System.Web.UI.Page
             cust.tempEmail = cust.email;
 
             //Todays Current DateTim Now In Millseconds
-            var today= convert.DateToMillSec(DateTime.Now).ToString();
+            var today = convert.DateToMillSec(DateTime.Now).ToString();
 
             //Add the current Milliseconds to the list
             visitHashSet.Add(today);
 
-            //Tempoary Data used for BarChart           ---------------------------- REMOVE THIS AFTER TESTING --------------------------------
+            #region Temp Data for testing         
             /*visitHashSet.Add("1512432000000");
             visitHashSet.Add("1509840000000");
             visitHashSet.Add("1493938800000");
             visitHashSet.Add("1502751600000");
             visitHashSet.Add("1484438400000");
             */
+            #endregion
+
             cust.datesVisited = visitHashSet;
 
             int num = int.Parse(cust.visited);
@@ -458,7 +458,7 @@ public partial class Arivals : System.Web.UI.Page
         var request = new RestRequest("newPassword", Method.PUT);
         request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
         request.AddParameter("email", cust.email);
-        request.AddParameter("password", cust.tempPwd);
+        request.AddParameter("password", Encrypt.Base64Encode(cust.tempPwd));
 
         //SendRequest
         IRestResponse response = client.Execute(request);
@@ -519,7 +519,7 @@ public partial class Arivals : System.Web.UI.Page
 
 
     /*=================================================================================> Delete Member <==========================================================================
- //*****************************************************************************************************************************************************************************/
+    //*****************************************************************************************************************************************************************************/
 
 
     //Btn Click Event to call Delete Person Method

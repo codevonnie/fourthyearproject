@@ -31,10 +31,6 @@
     <div id="chart" class="center-block"></div>
 
 
-
-
-
-
     <%--Modal Top Ten--%>
     <div id="TopTenModal" style="display: none;">
         <div class="modal-dialog">

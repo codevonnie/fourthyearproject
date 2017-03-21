@@ -44,8 +44,8 @@
         });
 
         $(document).ready(function () {
-            $('#myModal').bootstrapValidator({
-                container: '#errMeesages',
+            $('#RegisterModal').bootstrapValidator({
+                container: '#InvalidCompany',
                 feedbackIcons: {
                     valid: 'glyphicon glyphicon-ok',
                     invalid: 'glyphicon glyphicon-remove',
@@ -194,7 +194,7 @@
                         </div>
 
                         <div class="form-group">
-                            <button class="btn btn-info btn-lg btn-block" id="BtnRegister" onclick="toggleModal();return false" data-target="#myModal">Register</button>
+                            <button class="btn btn-info btn-lg btn-block" id="BtnRegister" onclick="toggleModal();return false" data-target="#RegisterModal">Register</button>
                         </div>
                     </div>
 
@@ -205,7 +205,7 @@
 
 
     <!-- Modal -->
-    <div class="modal fade MarginTop60" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade MarginTop60" id="RegisterModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div id="AddPersonForm">
             <div class="modal-dialog">
                 <div class="modal-content textFontFamilyBody">
@@ -227,6 +227,7 @@
                                     <i class="fa fa-id-card-o iconWidth" aria-hidden="true"></i>
                                 </span>
                                 <asp:TextBox ID="TbName" runat="server" CssClass="form-control" placeholder="Name"></asp:TextBox>
+                                <asp:RequiredFieldValidator runat="server" ID="RequiredFieldValidator6" ControlToValidate="TbName" ErrorMessage="Please Enter A Name" Display="None" ValidationGroup="VSNewComp" />
                             </div>
 
                             <%-- Email--%>
@@ -236,6 +237,7 @@
                                     <i class="fa fa-envelope-o iconWidth" aria-hidden="true"></i>
                                 </span>
                                 <asp:TextBox ID="TbEmailNew" runat="server" CssClass="form-control" placeholder="Email Address" TextMode="Email" AutoCompleteType="Email"></asp:TextBox>
+                                <asp:RequiredFieldValidator runat="server" ID="RequiredFieldValidator1" ControlToValidate="TbEmailNew" ErrorMessage="Please Enter An Email" Display="None" ValidationGroup="VSNewComp" />
                             </div>
 
                             <%-- Pwd--%>
@@ -245,6 +247,7 @@
                                     <i class="fa fa-id-card-o iconWidth" aria-hidden="true"></i>
                                 </span>
                                 <asp:TextBox ID="TbPasswordNew" runat="server" TextMode="Password" CssClass="form-control" placeholder="Password"></asp:TextBox>
+                                <asp:RequiredFieldValidator runat="server" ID="RequiredFieldValidator2" ControlToValidate="TbPasswordNew" ErrorMessage="Please Enter A Password" Display="None" ValidationGroup="VSNewComp" />
                             </div>
 
                             <%-- Num--%>
@@ -254,6 +257,7 @@
                                     <i class="fa fa-phone iconWidth" aria-hidden="true"></i>
                                 </span>
                                 <asp:TextBox ID="TbContactNum" runat="server" CssClass="form-control" placeholder="Contact Number"></asp:TextBox>
+                                <asp:RequiredFieldValidator runat="server" ID="RequiredFieldValidator3" ControlToValidate="TbContactNum" ErrorMessage="Please Enter A Contact Number" Display="None" ValidationGroup="VSNewComp" />
                             </div>
 
                             <%-- Enum--%>
@@ -263,6 +267,7 @@
                                     <i class="fa fa-phone iconWidth" aria-hidden="true"></i>
                                 </span>
                                 <asp:TextBox ID="TbEmergencyNum" runat="server" CssClass="form-control" placeholder="Emergency Contact Number"></asp:TextBox>
+                                <asp:RequiredFieldValidator runat="server" ID="RequiredFieldValidator4" ControlToValidate="TbEmergencyNum" ErrorMessage="Please Enter An Emergency Number" Display="None" ValidationGroup="VSNewComp" />
                             </div>
 
                             <%-- Add--%>
@@ -272,14 +277,21 @@
                                     <i class="fa fa-map-marker iconWidth" aria-hidden="true"></i>
                                 </span>
                                 <asp:TextBox ID="TbAddress" runat="server" CssClass="form-control" placeholder="Current Address"></asp:TextBox>
+                                <asp:RequiredFieldValidator runat="server" ID="RequiredFieldValidator5" ControlToValidate="TbAddress" ErrorMessage="Please Enter An Address" Display="None" ValidationGroup="VSNewComp" />
                             </div>
 
+                            <%--Error Messages--%>
+                            <div class="form-group text-center">
+                                <div id="InvalidCompany"></div>
+                            </div>
+
+                            <asp:ValidationSummary ID="ValidationSummaryNewComp" runat="server" ShowMessageBox="false" ShowSummary="true" CssClass="text-center" ValidationGroup="VSNewComp" DisplayMode="List" ForeColor="#CC3300" />
 
                             <%-- Failed New Comp--%>
                             <div id="DivFailedNewComp" runat="server" class="alert alert-danger text-center" role="alert">
                             </div>
 
-                             <%-- Success New Comp--%>
+                            <%-- Success New Comp--%>
                             <div id="DivSuccess" runat="server" class="alert alert-success text-center" role="alert">
                             </div>
                         </div>
@@ -287,7 +299,7 @@
 
                     <!--Modal Footer-->
                     <div class="modal-footer RoundBottom">
-                        <asp:Button CssClass="btn btn-block btn-success btn-lg" ID="BtnSubmitCompany" runat="server" Text="Submit" OnClick="BtnCheckCompanyIn_Click" />
+                        <asp:Button CssClass="btn btn-block btn-success btn-lg" ID="BtnSubmitCompany" runat="server" Text="Submit" OnClick="BtnRegisterCompany_Click" ValidationGroup="VSNewComp" />
                     </div>
                 </div>
             </div>
@@ -298,7 +310,7 @@
     <!--Function called Via C# programaticaly to show Modal -->
     <script type="text/javascript">
         function toggleModal() {
-            $('#myModal').modal('toggle');
+            $('#RegisterModal').modal('toggle');
         };      
     </script>
 

@@ -49,8 +49,8 @@ public partial class LoginPage : System.Web.UI.Page
         UserSettings settings = new UserSettings();
 
         var request = new RestRequest("authenticate", Method.POST);
-        request.AddParameter("email", TbEmail.Text); //email fro Textbox
-        request.AddParameter("password", TbPassword.Text); //pwd from Textbox
+        request.AddParameter("email", TbEmail.Text); //email from Textbox
+        request.AddParameter("password", Encrypt.Base64Encode(TbPassword.Text)); //pwd from Textbox
         request.AddParameter("type", "business");
         request.AddHeader("Authorization", auth.token_type + " " + auth.access_token);
 
@@ -80,9 +80,9 @@ public partial class LoginPage : System.Web.UI.Page
             settings._auth_Token = Encrypt.Base64Encode(auth.access_token);
             settings._biz_Name = Encrypt.Base64Encode(bizObj.name);
             settings._auth_Type = Encrypt.Base64Encode(auth.token_type);
-            settings._loggedIn= Encrypt.Base64Encode(successAuth);
+            settings._loggedIn = Encrypt.Base64Encode(successAuth);
             settings._biz_Email = Encrypt.Base64Encode(TbEmail.Text);
-            
+
             // ------------------------ TEMP CACHE KEYS ETC Encrypted ------------------------ 
             Cache["Settings"] = settings;
 
@@ -99,18 +99,21 @@ public partial class LoginPage : System.Web.UI.Page
     //---------------------------------------------------------------> Register Company Page Stuff Below <----------------------------------------------------------
 
     //Btn Click event calls nessassary Methods 
-    protected void BtnCheckCompanyIn_Click(object sender, EventArgs e)
+    protected void BtnRegisterCompany_Click(object sender, EventArgs e)
     {
-        try
+        if (Page.IsValid)
         {
-            Company comp = NewCompanyObject();
-            CreateNewCompany(Authorization.GetAuth(), comp);
-        }
-        catch (Exception)
-        {
-            DivFailedNewComp.Visible = true;
-            DivFailedNewComp.InnerText = "Connection Error! Please Try Again Later...";
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('toggle');</script>", false);
+            try
+            {
+                Company comp = NewCompanyObject();
+                CreateNewCompany(Authorization.GetAuth(), comp);
+            }
+            catch (Exception)
+            {
+                DivFailedNewComp.Visible = true;
+                DivFailedNewComp.InnerText = "Connection Error! Please Try Again Later...";
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#RegisterModal').modal('toggle');</script>", false);
+            }
         }
     }
 
@@ -134,7 +137,7 @@ public partial class LoginPage : System.Web.UI.Page
 
         var request = new RestRequest("addCompany", Method.POST);
         request.AddParameter("email", comp.email); //email fro Textbox
-        request.AddParameter("password", comp.password); //Pwd from Textbox
+        request.AddParameter("password", Encrypt.Base64Encode(comp.password)); //Pwd from Textbox
         request.AddParameter("address", comp.address); //address from Textbox
         request.AddParameter("emergencyNum", comp.emergencyNum); //emergencyNum from Textbox
         request.AddParameter("phone", comp.phone); //phone from Textbox
@@ -156,7 +159,7 @@ public partial class LoginPage : System.Web.UI.Page
 
             DivSuccess.Visible = true;
             DivSuccess.InnerText = "Welcome To MemberMe!\n Close Me and Log in Again";
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('toggle');</script>", false);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#RegisterModal').modal('toggle');</script>", false);
         }
 
         //If Failed To Create A new Buisiness
@@ -164,7 +167,7 @@ public partial class LoginPage : System.Web.UI.Page
         {
             DivFailedNewComp.Visible = true;
             DivFailedNewComp.InnerText = "Company Exists With Email Already, Try Another.";
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#myModal').modal('toggle');</script>", false);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ModalView", "<script>$('#RegisterModal').modal('toggle');</script>", false);
         }
     }
 }

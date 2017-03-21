@@ -1,7 +1,7 @@
 ﻿
 var map;
-var lonitude = 12.556663;
-var latitude = 48.1293954;
+var latitude = 53.2840871;
+var lonitude = -9.1187937;
 var markerMessage;
 var markerArray = [];
 var MessageObjects;
@@ -143,11 +143,8 @@ function RemoveMessage() {
 }
 
 
-
-
-/*Functions below get the users Current Location, and alerts them if it cant get it maby just display message instead of Alert?
-*/
-
+//Functions below get the users Current Location, and alerts them if it cant get it maby just display message instead of Alert?
+//Only Works In Https 
 function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition, showError);
@@ -165,7 +162,7 @@ function showPosition(position) {
 
 function showError(error) {
     if (error.code === 1) {
-        alert("User denied the request for Geolocation.");
+        alert("User denied the request for Geolocation.\nHttps Connection Required");
     }
     else if (err.code === 2) {
         alert("Location information is unavailable.");

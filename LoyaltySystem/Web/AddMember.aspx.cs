@@ -43,6 +43,7 @@ public partial class AddMember : System.Web.UI.Page
     }
 
 
+    //---------------- Add new Member Click Event ----------------
     protected void BtnSubmit_Click(object sender, EventArgs e)
     {
         if (Page.IsValid)
@@ -60,8 +61,6 @@ public partial class AddMember : System.Web.UI.Page
             }
         }
     }
-
-
 
 
     //---------------- Create/Return Customer Object ----------------
@@ -82,8 +81,7 @@ public partial class AddMember : System.Web.UI.Page
     }
 
 
-    //---------------- Post to API Route addPerson  ---------------- ***************** FIX *********
-    //NEEDS VALIDATION ON INPUTS
+    //---------------- Post to API Route addPerson  ---------------- 
     private void newCustomerRequest(CloudinaryApi.results imgDetails)
     {
         TempCustomer cust = createCustomer();
@@ -99,7 +97,7 @@ public partial class AddMember : System.Web.UI.Page
         var request = new RestRequest("addPerson", Method.POST);
         request.AddHeader("Authorization", Decrypt.Base64Decode(settings._auth_Type.ToString()) + " " + Decrypt.Base64Decode(settings._auth_Token.ToString()));
         request.AddParameter("name", cust.name);
-        request.AddParameter("password", cust.tempPwd);//random password
+        request.AddParameter("password", Encrypt.Base64Encode(cust.tempPwd));//random password
         request.AddParameter("email", cust.email);
         request.AddParameter("phone", cust.phone);
         request.AddParameter("address", cust.address);
@@ -156,8 +154,6 @@ public partial class AddMember : System.Web.UI.Page
     }
 
 
-
-
     //Clear The Form
     private void ClearAddForm()
     {
@@ -171,7 +167,6 @@ public partial class AddMember : System.Web.UI.Page
         TbEmergencyNum.Text = "";
         TbName.Text = "";
     }
-
 
 
     // --------------------------- Upload image To The Database On Cloudinary --------------------------- 
@@ -214,8 +209,6 @@ public partial class AddMember : System.Web.UI.Page
         }
         return (jsonObject as CloudinaryApi.results);
     }
-
-
 
 
 }

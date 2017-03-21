@@ -36,7 +36,6 @@ public partial class _Default : System.Web.UI.Page
 
     private void Page_Load(object sender, EventArgs e)
     {
-
         try
         {
             settings = Cache.Get("Settings") as UserSettings;
@@ -65,7 +64,7 @@ public partial class _Default : System.Web.UI.Page
     }
 
 
-    //-------------------------------- Top 10 Visited-----------------------------------------------------
+    //-------------------------------- Top 10 Visited / Least Recently Visited-----------------------------------------------------
     private void TopVisited(HtmlButton btn)
     {
         var client = new RestClient(port);
@@ -92,7 +91,7 @@ public partial class _Default : System.Web.UI.Page
         //Sort List By visited in desc order
         List<TempCustomer> SortedList = new List<TempCustomer>();
 
-        //Sort the list by converting the string to a number, imortant as str "11" < str "2"
+        //Sort the list by converting the string to a number, important as str "11" < str "2"
         if (btn.ID == "BtnTopVisited")
         {
             SortedList = custObjList.OrderByDescending(o => Convert.ToInt32(o.visited)).ToList();
@@ -100,8 +99,8 @@ public partial class _Default : System.Web.UI.Page
         }
         else
         {
-            SortedList = custObjList.OrderBy(lv => lv.datesVisited.Max()).ThenBy(o => Convert.ToInt32(o.visited)).ToList();
-            //SortedList = custObjList.OrderBy(o => Convert.ToInt32(o.visited)).ThenBy(lv => lv.datesVisited.Max()).ToList();
+            //Sort in Assending order the datesVisited ThenByDescending visited total 
+            SortedList = custObjList.OrderBy(lv => lv.datesVisited.Max()).ThenByDescending(o => Convert.ToInt32(o.visited)).ToList();        
             modalHeader.InnerHtml = "<h1 class=\"text-center\" style=\"color: goldenrod\">Top 10 Least Recent</h1>";
         }
 
@@ -177,7 +176,6 @@ public partial class _Default : System.Web.UI.Page
         }
         tempDic.Remove("");
 
-
         //Loop over everyone in the List then loop through all the dates they have been here, 
         //Adding 1 to every month they have been to the park
         foreach (var cust in custObjList)
@@ -198,7 +196,6 @@ public partial class _Default : System.Web.UI.Page
                 }
             }
         }
-
 
         //Convert The Dictonary To A List of Objects
         _custList.data = tempDic.Select(p => new DataSet { Month = p.Key, Visits = p.Value }).ToList();

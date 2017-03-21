@@ -165,6 +165,7 @@
             <div class="modal-header customerHeader">
                 <h1 class="text-center">Create New Member</h1>
             </div>
+
             <div id="AddPersonForm">
                 <div class="modal-body">
                     <div class="container-fluid">
@@ -249,7 +250,7 @@
                                     <span class="fileinput-new">Select file</span>
                                     <span class="fileinput-exists">Change</span>
                                     <input type="file" name="" runat="server" id="ImagePath" />
-                                    <asp:RequiredFieldValidator runat="server" ID="RequiredFieldValidator7" ControlToValidate="ImagePath" ErrorMessage="Please Enter An File" Display="None" ValidationGroup="VgErrorMessages" />
+                                    <asp:RequiredFieldValidator runat="server" ID="RequiredFieldValidator7" ControlToValidate="ImagePath" ErrorMessage="Please Enter A File" Display="None" ValidationGroup="VgErrorMessages" />
                                 </span>
 
                                 <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
