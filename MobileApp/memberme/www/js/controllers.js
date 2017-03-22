@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
  
-.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, jwtHelper, ConnectivityMonitor, $ionicLoading) {
+.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, $ionicModal, jwtHelper, ConnectivityMonitor, $ionicLoading, base64) {
   
   $scope.user={}; //user object for displaying profile details
   $scope.logo="img/logo1.png"; //sample logo
@@ -61,6 +61,7 @@ angular.module('starter.controllers', [])
   //login method called when user presses login button - passes entered user details  
   $scope.login = function(user) {
 
+      user.password = base64.encode(user.password); //encrypt pas
       //if user is not connected to the internet - popup alert shows
       if(!ConnectivityMonitor.isOnline()){
           var alertPopup = $ionicPopup.alert({
@@ -73,7 +74,7 @@ angular.module('starter.controllers', [])
         
         $ionicLoading.hide(); //hide loading icon if call is successful
         $scope.check={}; //object for new password entry
-        
+        user.password = base64.decode(user.password);//decrypt for check
         //if user password starts with *x* - it's the first time login so open set password modal
         if(user.password.startsWith("*x*")){
 
@@ -128,7 +129,7 @@ angular.module('starter.controllers', [])
           }
           else{
             $scope.message="";
-            $scope.user.password=$scope.check.pass; //set user password to inputted password
+            $scope.user.password=base64.encode($scope.check.pass); //encrypt and set user password to inputted password
             //send new user object to setPassword service
             AuthService.setPassword(user).then(function(response){
                 $scope.modal.hide(); //hide modal
