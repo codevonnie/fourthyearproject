@@ -9,6 +9,11 @@ function DisplayArivals() {
     document.getElementById('TopTenModal').style.display = 'none';
     document.getElementById('chart').style.display = 'none';
 
+    //Remove All Duplicates on Multiple clicks
+    while (element.hasChildNodes()) {
+        element.removeChild(element.lastChild);
+    }
+
     if (localStorage) {
         custList = JSON.parse(localStorage.getItem("TodaysArivals"));
 
@@ -34,6 +39,7 @@ function CreateArivals() {
 
             var para = document.createElement("div");
             para.className += "col-xs-6 col-sm-4 placeholder DisplayPersonBox text-left";
+            para.id = "";
 
             var img = document.createElement("img");
             img.src = val.imgUrl;

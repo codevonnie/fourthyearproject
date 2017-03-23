@@ -20,7 +20,7 @@
             <button type="button" class="btn btn-info BtnDefaultPage" onclick="DisplayArivals()">Arrivals</button>
             <button type="button" id="BtnTopVisited" runat="server" onserverclick="BtnTopVisited_Click" class="btn btn-info BtnDefaultPage">Top Visitors</button>
             <button type="button" id="BtnLeastRecent" runat="server" onserverclick="BtnTopVisited_Click" class="btn btn-info BtnDefaultPage">Least Recent</button>
-            <button type="button" id="BtnBarChart" class="btn btn-info BtnDefaultPage" onserverclick="BtnBarChart_ServerClick" runat="server">BarChart</button>
+            <button type="button" id="BtnBarChart" class="btn btn-info BtnDefaultPage" onserverclick="BtnBarChart_ServerClick" runat="server">Bar Chart</button>
         </div>
 
         <h1 id="HeaderTitle" class="page-header HeaderColour"></h1>

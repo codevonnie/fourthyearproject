@@ -13,7 +13,7 @@ using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
 using System.Web.Script.Serialization;
 
-public partial class Arivals : System.Web.UI.Page
+public partial class Arivals : Page
 {
     //private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
     private string port = WebConfigurationManager.AppSettings["API_PORT"];
