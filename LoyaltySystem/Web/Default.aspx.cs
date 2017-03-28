@@ -9,7 +9,7 @@ using System.Web.Configuration;
 using System.Web.UI.HtmlControls;
 using System.Globalization;
 
-public partial class _Default : System.Web.UI.Page
+public partial class _Default : Page
 {
     //private string port = WebConfigurationManager.AppSettings["LOCAL_PORT"];
     private string port = WebConfigurationManager.AppSettings["API_PORT"];
@@ -81,12 +81,12 @@ public partial class _Default : System.Web.UI.Page
 
         if (custObjList.success == "true")
         {
-            DisplayTopVisited(btn, custObjList.message);
+            DisplayVisited(btn, custObjList.message);
         }
     }
 
     //Displays the Person(s) with the highest Visited amount and generates the Html
-    private void DisplayTopVisited(HtmlButton btn, List<TempCustomer> custObjList)
+    private void DisplayVisited(HtmlButton btn, List<TempCustomer> custObjList)
     {
         //Sort List By visited in desc order
         List<TempCustomer> SortedList = new List<TempCustomer>();
@@ -99,7 +99,7 @@ public partial class _Default : System.Web.UI.Page
         }
         else
         {
-            //Sort in Assending order the datesVisited ThenByDescending visited total 
+            //Sort in Ascending order the datesVisited ThenByDescending visited total 
             SortedList = custObjList.OrderBy(lv => lv.datesVisited.Max()).ThenByDescending(o => Convert.ToInt32(o.visited)).ToList();        
             modalHeader.InnerHtml = "<h1 class=\"text-center\" style=\"color: goldenrod\">Top 10 Least Recent</h1>";
         }

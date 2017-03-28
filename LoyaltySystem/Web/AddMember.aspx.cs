@@ -178,8 +178,8 @@ public partial class AddMember : System.Web.UI.Page
 
         dynamic jsonObject = new CloudinaryApi.results();
 
-        Account account = new CloudinaryDotNet.Account(name, key, secret);
-        Cloudinary cloudinary = new CloudinaryDotNet.Cloudinary(account);
+        Account account = new Account(name, key, secret);
+        Cloudinary cloudinary = new Cloudinary(account);
 
 
         HttpPostedFile file = Request.Files["ctl00$ContentPlaceHolder1$ImagePath"];
@@ -191,7 +191,7 @@ public partial class AddMember : System.Web.UI.Page
             string fname = Path.GetFileName(file.FileName);
             file.SaveAs(Server.MapPath(Path.Combine("../Images/", fname)));
 
-            ImageUploadParams uploadParams = new CloudinaryDotNet.Actions.ImageUploadParams()
+            ImageUploadParams uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(Server.MapPath("../Images/" + file.FileName)),
                 Transformation = new Transformation().Width(300).Height(400).Crop("limit"),
