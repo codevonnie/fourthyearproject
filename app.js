@@ -31,7 +31,6 @@ var messageObj = { status: "", message: "", latitude: "", longitude: "", email: 
 
 // ------------------------ POST SendMessage Route ---------------------------------
 //Send an SOS Post message to the Route and respond with Status Code 200 (ok)
-
 router.post('/sendMessage', function (req, res) {
 
   messageObj.message = req.body.message;
