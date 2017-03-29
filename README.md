@@ -1,7 +1,12 @@
-# MemberMe - Membership System
+
+                                    __  __                _               __  __      
+                                   |  \/  | ___ _ __ ___ | |__   ___ _ __|  \/  | ___ 
+                                   | |\/| |/ _ \ '_ ` _ \| '_ \ / _ \ '__| |\/| |/ _ \
+                                   | |  | |  __/ | | | | | |_) |  __/ |  | |  | |  __/
+                                   |_|  |_|\___|_| |_| |_|_.__/ \___|_|  |_|  |_|\___|
 
 # Introduction
-The initial idea for this project was to create a generic membership system for businesses.
+MemberMe is a Membership Sytem designed for Businesses. It enables them to manage new/old members, help speed up the process of check-ins and help find members in Distress faster using Geolocation via Google Maps.
 
 # Project Structure
 The Project Was Broken up into Four Main Branches:
