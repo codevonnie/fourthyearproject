@@ -15,7 +15,7 @@ The Project Was Broken up into Four Main Branches:
 
  This branch contains the Web Application, which was Developed in Visual Studio 2015 using Asp.net.
  
- The Web App Enabled a Business to:
+ The Web App Enables a Business to:
 
 * Set up a personal Account on the MemberMe Web App.
 * Add/Update/Delete New Members.
@@ -27,7 +27,7 @@ The Project Was Broken up into Four Main Branches:
 
  This branch contains the Mobile Appliaction, which was Developed using Ionic.
  
- The Mobile Application Enabled Members to:
+ The Mobile Application Enables Members to:
   
 * View/Update Personal information
 * Send SOS Messages To Associated Business.
@@ -38,7 +38,7 @@ The Project Was Broken up into Four Main Branches:
 
  This branch contains the Main Server Api, which both the Web/Mobile app send Http Rest request to, to retrive data from our graph  DataBase.
  
- The Server contains several routes, which acomplish the following:
+ The Server contains several routes, which accomplish the following:
    
   * Login - Business/Members.
   * Autherization Validation. 
