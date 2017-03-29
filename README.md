@@ -1,4 +1,4 @@
-# Membership Web Application
+# Web Application
 ## Brief
 This Branch is the Administrator side of the Membership Project, Aka "The Web App". 
 
