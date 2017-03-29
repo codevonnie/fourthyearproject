@@ -6,7 +6,7 @@ The initial idea for this project was to create a generic membership system for 
 # Project Structure
 The Project Was Broken up into Four Main Branches:
 
-1. **Master-WebApp**
+1. **[Master-WebApp](https://github.com/codevonnie/fourthyearproject/tree/Master-WebApp)**
 
  This branch contains the Web Application, which was Developed in Visual Studio 2015 using Asp.net.
  
@@ -18,7 +18,7 @@ The Project Was Broken up into Four Main Branches:
 * Display SOS Messages on a google map with the locations of Members In Distress.
 * Check Customers In Via QR Code or Email.
 
-2. **Master-MobileApp**
+2. **[Master-MobileApp](https://github.com/codevonnie/fourthyearproject/tree/Master-MobileApp)**
 
  This branch contains the Mobile Appliaction, which was Developed using Ionic.
  
@@ -29,7 +29,7 @@ The Project Was Broken up into Four Main Branches:
 * Create a Person QR Code, Used for Fast Check-ins.
 * See The Total Amount of Times They Visited a Business 
 
-3. **Master-MainServer**
+3. **[Master-MainServer](https://github.com/codevonnie/fourthyearproject/tree/Master-MainServer)**
 
  This branch contains the Main Server Api, which both the Web/Mobile app send Http Rest request to, to retrive data from our graph  DataBase.
  
@@ -41,7 +41,7 @@ The Project Was Broken up into Four Main Branches:
   * Retrive Valid - Member/Business Data
   * Retive Analytic Data
 
-4. **Master-MessageServer**
+4. **[Master-MessageServer](https://github.com/codevonnie/fourthyearproject/tree/Master-MessageServer)**
 
  This branch contains the SOS Message Server Api, which handles all the SOS messages sent from the Members. These messages then get sent to there associated business. 
   
