@@ -4,14 +4,14 @@
 
 This Branch is the Members side of the Membership Project, Aka "The Mobile App".
 
-The Mobile App is an ionic application and was developed in NodeJs.
+The Mobile App is an Ionic application and was developed in Visual Studio Code.
 
 The Mobile App Enables Members to:
 
-* Login to Personal Account.
-* Update/Delete Personal Info.
-* Send SOS Messages to Associated Business With Geolocation.
-* Check-in to bussiness with the Personal BarCode.
+* Login to Personal Account
+* Update/Delete Personal Info
+* Send SOS Messages to associated Business With geolocation coordinates
+* Check-in to bussiness with a personalised QR Code
 
 ## Running the Mobile App
 
