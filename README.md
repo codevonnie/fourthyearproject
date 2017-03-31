@@ -13,9 +13,9 @@ Below are the steps To run the Server locally:
 * Download the Source Code into a local folder
 * Install [Nodejs](https://nodejs.org/en/)
 * Open the folder in your favorite Text Editor, we used [Visual Studio Code](https://code.visualstudio.com/download))
-* Open up the Integrated Terminal on VS Code.
-* CD into the Projects Directory if not already there.
-* Run the Following command to run the server locally.
+* Open up the Integrated Terminal on VS Code
+* CD into the Projects Directory if not already there
+* Run the Following command to run the server locally
 ```
 node .\server
 ```
