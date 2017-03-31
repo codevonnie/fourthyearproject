@@ -1,11 +1,11 @@
 # Message Server - Api
 
 ## Brief
-The following branch contains a Messaging Server, developed using NodeJs. It acts as the Middle Man between the Web App and the Mobile App.
+The following branch contains a Messaging Server, developed using NodeJs. It acts as the middle man between the Web App and the Mobile App.
 
 It allows Businesses on the Web App to connect to the server over Http using Server Side Events and wait for any outgoing messages from the server without continual polling.
 
-SOS Messages are sent to a Route setup on the Api via Http Rest from The Mobile App, which in turn, are then sent out to connected Companies on the Web App.
+SOS Messages are sent to a route setup on the Api using Http RESTful request from the Mobile App, which in turn, are then sent out to connected Companies on the Web App.
 
 
 ## Running The Server
