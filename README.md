@@ -17,16 +17,15 @@ The Mobile App enables customers to:
 
 Below is how the Mobile Application can be run:
 
-**ToDo - Insert Apk link Below**
 1. Download the [Apk](https://github.com/codevonnie/fourthyearproject/blob/Master-MobileApp/android-debug.apk) onto your Android Device and install. (Requires Developer Mode to be Activated)
 
 Or
 
-2. Locally (Please note, npm must be installed to run application)
+2. Locally (Please note, [NodeJs](https://nodejs.org/en/) must be installed to run the application)
 
 * Download the Source code from this branch into a local folder
 * Open folder in a text editor (we recommend using Visual Studio Code)
-* Open the Integrated Terminal or use Bash to run command "npm install" (installs necessary dependencies)
+* Open the Integrated Terminal or use Bash to run command "npm install" (Installs necessary dependencies)
 * CD to www folder of project and type command "ionic serve --lab" to run app in browser
 
 ## Test Login Credentials
