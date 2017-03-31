@@ -1,4 +1,4 @@
-# Message Server - Api
+# Message Server - API
 
 ## Brief
 The following branch contains a Messaging Server, developed using NodeJs. It acts as the middle man between the Web App and the Mobile App.
