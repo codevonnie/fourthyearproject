@@ -5,7 +5,7 @@ The following branch contains a Main Server, developed using NodeJs.
 
 This Branch acts as the Middle Man between the Web/Mobile App and the Database.
 
-Http Rest Requests are sent from the Web/Mobile App to the differnt Routes on ther API. The API then retrieves data from the Database according to the Route and sends it back as a response.
+Http RESTful Requests are sent from the Web/Mobile App to the differnt Routes on ther API. The API then retrieves data from the Database according to the Route and sends it back as a response.
 
 ## Running The Server
 Below are the following Steps To run the Server Locally:
