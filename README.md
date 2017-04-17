@@ -8,6 +8,9 @@
 # Introduction
 MemberMe is a Membership Sytem designed for Businesses. It enables them to manage new/old members, help speed up the process of check-ins and help find members in Distress faster using Geolocation via Google Maps.
 
+# Project Dissertation
+The project dissertation can be found [here](https://github.com/codevonnie/fourthyearproject/blob/master/Dissertation.pdf).
+
 # Project Structure
 The Project Was Broken up into Four Main Branches:
 
