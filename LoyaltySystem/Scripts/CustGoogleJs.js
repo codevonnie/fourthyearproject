@@ -21,7 +21,7 @@ function initMap() {
         zoom: 10
     });
 
-    getLocation();
+    //getLocation();
 
     if (localStorage) {
         MessageObjects = JSON.parse(localStorage.getItem("MessageObjects"));

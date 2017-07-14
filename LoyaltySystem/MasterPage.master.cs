@@ -12,19 +12,19 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        try
-        {
-            settings = Cache.Get("Settings") as UserSettings;
-            if (settings._loggedIn == null || settings._biz_Email == null || settings._auth_Token == null || settings._auth_Type == null)
-                return;
+            try
+            {
+                settings = Cache.Get("Settings") as UserSettings;
+                if (settings._loggedIn == null || settings._biz_Email == null || settings._auth_Token == null || settings._auth_Type == null)
+                    return;
 
-            email = Decrypt.Base64Decode(settings._biz_Email.ToString());
-            check = "true";
-            logStatus(check);
-        }
-        catch (Exception)
-        {
-        };
+                email = Decrypt.Base64Decode(settings._biz_Email.ToString());
+                check = "true";
+                logStatus(check);
+            }
+            catch (Exception)
+            {
+            };
     }
 
     //Switch the text on the login/logout button

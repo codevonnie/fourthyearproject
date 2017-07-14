@@ -68,7 +68,7 @@
                             <a class="MessageEnvelope AddPointer fa fa-envelope-o fa-2x navbar-brand" id="EnvelopeBox" runat="server" href="Web/Map.aspx" aria-hidden="true"><span runat="server" class="AddPointer MessageBox" id="messageBoxCount"></span></a>
                         </li>
                         <li>
-                            <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click" /></li>
+                            <asp:Button ID="BtnLogIn" CssClass="navbar-brand BtnInvis" runat="server" Text="LogIn" aria-hidden="true" OnClick="LogOut_Click" TabIndex="2" UseSubmitBehavior="False" /></li>
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->

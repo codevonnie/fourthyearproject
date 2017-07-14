@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Arivals" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Arivals.aspx.cs" Inherits="Arivals" %>
+﻿<%@ Page Title="Arrivals" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Arivals.aspx.cs" Inherits="Arivals" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
@@ -17,7 +17,8 @@
                     <span class="input-group-addon">
                         <i class="fa fa-barcode iconWidth"></i>
                     </span>
-                    <asp:TextBox ID="TbQRCode" runat="server" class="form-control" placeholder="BarCode OR Email" TextMode="SingleLine"></asp:TextBox>
+                    <asp:TextBox ID="TbQRCode" runat="server" class="form-control" 
+                        ViewStateMode="Enabled" placeholder="BarCode OR Email" TextMode="SingleLine" data-target="#myModal"></asp:TextBox>
                 </div>
             </div>
 
@@ -35,8 +36,7 @@
                             <strong>OOPS! Connection Error - Reconnect Or Try Again Later!</strong>
                         </div>
                     </div>
-
-                    <asp:Button ID="BtnCheckMember" class="btn btn-primary btn-block btn-lg" runat="server" Text="Check Member" OnClick="BtnCheckMember_Click" data-target="#myModal" />
+                        <asp:Button ID="BtnCheckMember" class="btn btn-primary btn-block btn-lg" runat="server" Text="Check Member" OnClick="BtnCheckMember_Click" data-target="#myModal" />
                 </div>
             </div>
         </div>
@@ -280,48 +280,48 @@
 
         var check = "<%=NewPerson %>";
 
-            console.log("Check For New Person: ", check);
-            if (check === "True") {
-                var cust = <%=GetCustomer%>;
-                        var custList = new Array();
+        console.log("Check For New Person: ", check);
+        if (check === "True") {
+            var cust = <%=GetCustomer%>;
+                var custList = new Array();
 
-                        custObj = cust//Parse the data
+                custObj = cust//Parse the data
 
-                        var arvlObj = {};//Create a New Object Each Time an Arival Comes In
-                        arvlObj.email = custObj.email;
-                        arvlObj.name = custObj.name;
-                        arvlObj.dob = custObj.dob;
-                        arvlObj.phone = custObj.phone;
-                        arvlObj.imgUrl = custObj.imgUrl;
-                        arvlObj.joined = custObj.joined;
-                        arvlObj.iceName = custObj.iceName;
-                        arvlObj.icePhone = custObj.icePhone;
-                        arvlObj.visited = custObj.visited;
-                        arvlObj.membership = custObj.membership;
-                        arvlObj.day = Date.now();
+                var arvlObj = {};//Create a New Object Each Time an Arival Comes In
+                arvlObj.email = custObj.email;
+                arvlObj.name = custObj.name;
+                arvlObj.dob = custObj.dob;
+                arvlObj.phone = custObj.phone;
+                arvlObj.imgUrl = custObj.imgUrl;
+                arvlObj.joined = custObj.joined;
+                arvlObj.iceName = custObj.iceName;
+                arvlObj.icePhone = custObj.icePhone;
+                arvlObj.visited = custObj.visited;
+                arvlObj.membership = custObj.membership;
+                arvlObj.day = Date.now();
 
-                        //push the obj to an Array
-                        custList.push(arvlObj);
+                //push the obj to an Array
+                custList.push(arvlObj);
 
-                        //CHECK local Storage for other Arivals
-                        var ListOfCust =JSON.parse(localStorage.getItem("TodaysArivals"));
+                //CHECK local Storage for other Arivals
+                var ListOfCust =JSON.parse(localStorage.getItem("TodaysArivals"));
                         
-                        //Loop over all the Objects From Local Storage
-                        if(ListOfCust!=null){
-                            //Check For New Arivals Only and add to Array
-                            ListOfCust.forEach(function (entry) {
-                                //Removes The Local Storage Every Day
-                                if(arvlObj.day < entry.day){
-                                    return;
-                                }
-                                if (entry.name != arvlObj.name)
-                                    custList.push(entry);
-                            });                          
+                //Loop over all the Objects From Local Storage
+                if(ListOfCust!=null){
+                    //Check For New Arivals Only and add to Array
+                    ListOfCust.forEach(function (entry) {
+                        //Removes The Local Storage Every Day
+                        if(arvlObj.day < entry.day){
+                            return;
                         }
+                        if (entry.name != arvlObj.name)
+                            custList.push(entry);
+                    });                          
+                }
 
-                        //Store The Array as a JSON.stringify in local storage / over write if all ready there
-                        localStorage.setItem("TodaysArivals", JSON.stringify(custList));
-                    }
+                //Store The Array as a JSON.stringify in local storage / over write if all ready there
+                localStorage.setItem("TodaysArivals", JSON.stringify(custList));
+            }
 
     </script>
 </asp:Content>

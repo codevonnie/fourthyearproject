@@ -95,6 +95,13 @@ public partial class Arivals : Page
         try
         {
             String custEmail = TbQRCode.Text.ToString();
+
+            if (custEmail.Contains("\""))
+            {
+                custEmail = custEmail.Replace("\"", "@");
+            }
+
+
             FindPerson(custEmail);
         }
         catch (Exception)
@@ -143,6 +150,7 @@ public partial class Arivals : Page
         }
 
         TbQRCode.Text = "";//Reset Text
+        TbQRCode.Focus();
     }
 
 
